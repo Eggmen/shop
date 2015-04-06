@@ -5,7 +5,7 @@
             <params>
                 <param name="rights">3</param>
                 <param name="tableName">shop_colours</param>
-                <param name="config">site/modules/shop/config/ColourEditor.component.xml</param>
+                <param name="config">core/modules/shop/config/ColourEditor.component.xml</param>
             </params>
         </component>
     </container>

@@ -5,7 +5,7 @@
 			<params>
 				<param name="rights">3</param>
 				<param name="tableName">shop_feature_groups</param>
-				<param name="config">site/modules/shop/config/FeatureGroupEditor.component.xml</param>
+				<param name="config">core/modules/shop/config/FeatureGroupEditor.component.xml</param>
 			</params>
 		</component>
 	</container>

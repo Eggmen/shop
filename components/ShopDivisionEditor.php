@@ -140,7 +140,7 @@ class ShopDivisionEditor extends DivisionEditor {
 	protected function showUserEditor() {
 		$this->request->shiftPath(1);
 		$this->userEditor =
-			$this->document->componentManager->createComponent('userEditor', 'Energine\shop\components\UserEditor', array('config' => 'site/modules/shop/config/UserEditor.component.xml'));
+			$this->document->componentManager->createComponent('userEditor', 'Energine\shop\components\UserEditor', array('config' => 'core/modules/shop/config/UserEditor.component.xml'));
 		$this->userEditor->run();
 	}
 

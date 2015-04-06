@@ -200,7 +200,7 @@ class GoodsEditor extends Grid {
 	protected function showSmapSelector() {
 		$this->request->shiftPath(1);
 		$this->divisionEditor = ComponentManager::createBlockFromDescription(
-			ComponentManager::getDescriptionFromFile('../site/modules/shop/templates/content/site_div_selector.content.xml'));
+			ComponentManager::getDescriptionFromFile('../core/modules/shop/templates/content/site_div_selector.content.xml'));
 		$this->divisionEditor->run();
 	}
 
@@ -209,7 +209,7 @@ class GoodsEditor extends Grid {
 	 */
 	protected function relationEditor() {
 		$sp = $this->getStateParams(true);
-		$params = array('config' => 'site/modules/shop/config/GoodsRelationEditor.component.xml');
+		$params = array('config' => 'core/modules/shop/config/GoodsRelationEditor.component.xml');
 
 		if (isset($sp['goods_id'])) {
 			$this->request->shiftPath(2);
@@ -227,7 +227,7 @@ class GoodsEditor extends Grid {
 	 */
 	protected function featureEditor() {
 		$sp = $this->getStateParams(true);
-		$params = array('config' => 'site/modules/shop/config/GoodsFeatureEditor.component.xml');
+		$params = array('config' => 'core/modules/shop/config/GoodsFeatureEditor.component.xml');
 
 		if (isset($sp['goods_id'])) {
 			$this->request->shiftPath(2);

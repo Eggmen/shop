@@ -5,7 +5,7 @@
             <params>
                 <param name="rights">3</param>
                 <param name="tableName">shop_producers</param>
-                <param name="config">site/modules/shop/config/ProducerEditor.component.xml</param>
+                <param name="config">core/modules/shop/config/ProducerEditor.component.xml</param>
             </params>
         </component>
     </container>

@@ -73,7 +73,7 @@ class FeatureEditor extends Grid {
      */
     protected function optionEditor() {
         $sp = $this->getStateParams(true);
-        $params = array('config' => 'site/modules/shop/config/FeatureOptionEditor.component.xml');
+        $params = array('config' => 'core/modules/shop/config/FeatureOptionEditor.component.xml');
 
         if (isset($sp['feature_id'])) {
             $this->request->shiftPath(2);
