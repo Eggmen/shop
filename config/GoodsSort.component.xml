@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+	<state name="main">
+		<fields>
+			<field name="field" type="hidden" default="price" tableName="sort" />
+			<field name="dir" type="hidden" default="asc" tableName="sort" />
+		</fields>
+		<toolbar name="sort_toolbar">
+			<control id="price" title="BTN_SORT_GOODS_PRICE" type="button" />
+			<control id="name" title="BTN_SORT_GOODS_NAME" type="button" />
+		</toolbar>
+	</state>
+</configuration>
