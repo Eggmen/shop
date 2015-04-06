@@ -14,23 +14,82 @@ class GoodsList extends DBDataSet {
 
 	protected $div_feature_ids = array();
 	protected $filter_data = array();
+	protected $sort_data = array();
 
     public function __construct($name, array $params = null) {
+
         parent::__construct($name, $params);
+
         $this->setTableName('shop_goods');
         $this->setOrder(array('goods_price' => QAL::ASC));
 		$this -> div_feature_ids = $this -> getDivisionFeatureIds();
+
 		$this -> filter_data = $this -> getFilterData();
 		$filter = $this -> getFilterWhereConditions();
 		$this->setFilter($filter);
+
+		$this -> sort_data = $this -> getSortData();
+		$sort = $this -> getSortConditions();
+		$this->setOrder($sort);
+
 	}
 
 	protected function getDivisionFeatureIds() {
+
 		return $this->dbh->getColumn(
 			'shop_sitemap2features',
 			'feature_id',
 			array('smap_id' => $this -> document -> getID())
 		);
+
+	}
+
+	public function getSortData() {
+		if (isset($_REQUEST['sort'])) {
+			$field = isset($_REQUEST['sort']['field']) ? $_REQUEST['sort']['field'] : 'price';
+			if (!in_array($field, array('price', 'name'))) $field = 'price';
+			$dir = isset($_REQUEST['sort']['dir']) ? $_REQUEST['sort']['dir'] : 'asc';
+			if (!in_array($dir, array('asc', 'desc'))) $dir = 'asc';
+			$_SESSION['goods_sort'] = array(
+				'field' => $field,
+				'dir' => $dir
+			);
+			return $_SESSION['goods_sort'];
+		} elseif (isset($_SESSION['goods_sort'])) {
+			return $_SESSION['goods_sort'];
+		} else {
+			return array(
+				'field' => 'price',
+				'dir' => 'asc'
+			);
+		}
+	}
+
+	protected function getSortConditions() {
+
+		switch ($this -> sort_data['field']) {
+			case 'price':
+				$field = 'goods_price';
+			break;
+			case 'name':
+				$field = 'goods_name';
+			break;
+			default:
+				$field = 'goods_price';
+		}
+
+		switch ($this -> sort_data['dir']) {
+			case 'asc':
+				$dir = QAL::ASC;
+			break;
+			case 'desc':
+				$dir = QAL::DESC;
+			break;
+			default:
+				$dir = QAL::ASC;
+		}
+
+		return array($field => $dir);
 	}
 
 	public function getFilterData() {

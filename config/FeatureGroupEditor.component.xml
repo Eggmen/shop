@@ -5,7 +5,7 @@
 	<state name="main">
 		<fields>
 			<field name="group_id"/>
-			<field name="group_pid"/>
+			<!-- <field name="group_pid"/> -->
 			<field name="group_name"/>
 			<field name="group_description"/>
 			<field name="group_is_active"/>
