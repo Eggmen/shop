@@ -200,7 +200,7 @@ class GoodsEditor extends Grid {
 	protected function showSmapSelector() {
 		$this->request->shiftPath(1);
 		$this->divisionEditor = ComponentManager::createBlockFromDescription(
-			ComponentManager::getDescriptionFromFile('../core/modules/shop/templates/content/site_div_selector.content.xml'));
+			ComponentManager::getDescriptionFromFile('../core/modules/shop/templates/content/site_div_selector.container.xml'));
 		$this->divisionEditor->run();
 	}
 
