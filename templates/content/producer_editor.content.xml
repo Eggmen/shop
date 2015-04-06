@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<content>
+    <container name="producerContainer" block="alfa" widget="static">
+        <component name="producerEditor" class="Energine\shop\components\ProducerEditor">
+            <params>
+                <param name="rights">3</param>
+                <param name="tableName">shop_producers</param>
+                <param name="config">site/modules/shop/config/ProducerEditor.component.xml</param>
+            </params>
+        </component>
+    </container>
+</content>

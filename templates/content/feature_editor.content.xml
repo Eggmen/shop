@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<content>
+    <container name="featureContainer" block="alfa" widget="static">
+        <component name="featureEditor" class="Energine\shop\components\FeatureEditor">
+            <params>
+                <param name="rights">3</param>
+                <param name="tableName">shop_features</param>
+                <param name="config">site/modules/shop/config/FeatureEditor.component.xml</param>
+            </params>
+        </component>
+    </container>
+</content>

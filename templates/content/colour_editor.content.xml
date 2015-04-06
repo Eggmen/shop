@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<content>
+    <container name="colourContainer" block="alfa" widget="static">
+        <component name="colourEditor" class="Energine\share\components\Grid">
+            <params>
+                <param name="rights">3</param>
+                <param name="tableName">shop_colours</param>
+                <param name="config">site/modules/shop/config/ColourEditor.component.xml</param>
+            </params>
+        </component>
+    </container>
+</content>

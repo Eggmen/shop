@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+	<state name="main">
+		<javascript>
+			<behavior name="GoodsFilter"/>
+		</javascript>
+		<fields>
+			<field name="price"/>
+			<field name="features"/>
+		</fields>
+		<toolbar>
+			<control id="filter" title="BTN_FILTER" type="button" onclick="filter"/>
+		</toolbar>
+	</state>
+</configuration>
