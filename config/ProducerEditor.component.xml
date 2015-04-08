@@ -3,15 +3,15 @@
 <!-- Включает основные методы и панели инструментов -->
 <configuration>
     <state name="main">
+        <filter>
+            <field name="producer_name"/>
+            <field name="producer_is_active"/>
+        </filter>
         <fields>
             <field name="producer_id"/>
-            <field name="producer_ext_id"/>
-            <field name="producer_segment"/>
-			<field name="producer_margin"/>
+            <field name="producer_is_active"/>
             <field name="producer_name"/>
             <field name="producer_description"/>
-            <field name="producer_order_num"/>
-            <field name="producer_is_active"/>
         </fields>
         <javascript>
             <behavior name="GridManager"/>

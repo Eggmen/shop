@@ -3,7 +3,7 @@
 	<container name="currencyEditorContainer" block="alfa" widget="static">
 		<component name="currencyEditor" class="Energine\share\components\Grid">
 			<params>
-				<param name="rights">3</param>
+				<param name="rights">1</param>
 				<param name="tableName">shop_currencies</param>
 				<param name="config">core/modules/shop/config/CurrencyEditor.component.xml</param>
 			</params>

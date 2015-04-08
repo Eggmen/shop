@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<!-- Базовая конфигурация для сетки  -->
-<!-- Включает основные методы и панели инструментов -->
+
 <configuration>
     <state name="main">
         <fields>
             <field name="currency_id"/>
             <field name="currency_name"/>
             <field name="currency_code"/>
-			<field name="currency_rate"/>
-			<field name="currency_is_default"/>
-			<field name="currency_is_active"/>
+            <field name="currency_rate"/>
+            <field name="currency_is_default"/>
+            <field name="currency_is_active"/>
         </fields>
         <javascript>
             <behavior name="GridManager"/>
         </javascript>
         <toolbar>
-            <control id="add" title="BTN_ADD" type="button" onclick="add"/>
-            <control id="edit" title="BTN_EDIT" type="button" onclick="edit"/>
-            <control id="delete" title="BTN_DELETE" type="button" onclick="del"/>
+            <control id="view" title="BTN_VIEW" type="button" onclick="view" ro_rights="1" fc_rights="1"/>
+            <control id="add" title="BTN_ADD" type="button" onclick="add" ro_rights="2" fc_rights="2"/>
+            <control id="edit" title="BTN_EDIT" type="button" onclick="edit" ro_rights="2" fc_rights="2"/>
+            <control id="delete" title="BTN_DELETE" type="button" onclick="del" ro_rights="2" fc_rights="2"/>
         </toolbar>
     </state>
     <state name="getRawData">
@@ -28,7 +28,7 @@
             <pattern>/get-data/[sortField]-[sortDir]/page-[pageNumber]/</pattern>
         </uri_patterns>
     </state>
-    <state name="add">
+    <state name="add" rights="2">
         <uri_patterns>
             <pattern>/add/</pattern>
         </uri_patterns>
@@ -40,7 +40,7 @@
             <control id="list" title="BTN_CLOSE" type="button" onclick="close"/>
         </toolbar>
     </state>
-    <state name="edit">
+    <state name="edit" rights="2">
         <uri_patterns>
             <pattern>/[int]/edit/</pattern>
         </uri_patterns>
@@ -52,14 +52,25 @@
             <control id="list" title="BTN_CLOSE" type="button" onclick="close"/>
         </toolbar>
     </state>
-    <state name="save">
+    <state name="save" rights="2">
         <uri_patterns>
             <pattern>/save/</pattern>
         </uri_patterns>
     </state>
-    <state name="delete">
+    <state name="delete" rights="2">
         <uri_patterns>
             <pattern>/[int]/delete/</pattern>
         </uri_patterns>
+    </state>
+    <state name="view">
+        <uri_patterns>
+            <pattern>/[int]/</pattern>
+        </uri_patterns>
+        <javascript>
+            <behavior name="Form"/>
+        </javascript>
+        <toolbar>
+            <control id="list" title="BTN_CLOSE" type="button" onclick="close"/>
+        </toolbar>
     </state>
 </configuration>
