@@ -1,11 +1,11 @@
 <?php
 /**
  * @file
- * ShopDivisionEditor
+ * DivisionEditor
  *
  * It contains the definition to:
  * @code
- * class ShopDivisionEditor;
+ * class DivisionEditor;
  * @endcode
  *
  * @author dr.Pavka
@@ -15,18 +15,18 @@
  */
 namespace Energine\shop\components;
 
-use Energine\share\components\DivisionEditor, Energine\share\gears, Energine\share\gears\FieldDescription, Energine\share\gears\JSONDivBuilder, Energine\share\gears\Data, Energine\share\gears\Builder, Energine\share\gears\Field, Energine\share\gears\DataDescription,  Energine\share\gears\Document, Energine\shop\gears\ShopDivisionSaver,Energine\share\gears\TagManager,  Energine\share\gears\SystemException, Energine\share\gears\JSONCustomBuilder, Energine\share\gears\QAL;
+use  Energine\share\gears, Energine\share\gears\FieldDescription, Energine\share\gears\JSONDivBuilder, Energine\share\gears\Data, Energine\share\gears\Builder, Energine\share\gears\Field, Energine\share\gears\DataDescription,  Energine\share\gears\Document, Energine\shop\gears\ShopDivisionSaver,Energine\share\gears\TagManager,  Energine\share\gears\SystemException, Energine\share\gears\JSONCustomBuilder, Energine\share\gears\QAL;
 
 /**
  * Shop division editor.
  *
  * @code
- * class ShopDivisionEditor;
+ * class DivisionEditor;
  * @endcode
  *
  * @final
  */
-class ShopDivisionEditor extends DivisionEditor {
+class DivisionEditor extends \Energine\share\components\DivisionEditor {
 
 	/**
 	 * Overloaded (copy-paste) just to change saver to ShopDivisionSaver

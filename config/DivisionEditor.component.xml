@@ -120,7 +120,6 @@
             <field name="smap_html_title"/>
             <field name="smap_meta_keywords"/>
             <field name="smap_meta_description"/>
-			<field name="colour_id"/>
 		</fields>
         <javascript>
             <behavior name="ShopDivForm"/>
@@ -160,7 +159,6 @@
             <field name="smap_html_title"/>
             <field name="smap_meta_keywords"/>
             <field name="smap_meta_description"/>
-			<field name="colour_id"/>
 		</fields>
         <javascript>
             <behavior name="ShopDivForm"/>
