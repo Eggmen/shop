@@ -3,9 +3,7 @@
     <container name="producerContainer" block="alfa" widget="static">
         <component name="producerEditor" class="Energine\shop\components\ProducerEditor">
             <params>
-                <param name="rights">3</param>
-                <param name="tableName">shop_producers</param>
-                <param name="config">core/modules/shop/config/ProducerEditor.component.xml</param>
+                <param name="rights">2</param>
             </params>
         </component>
     </container>

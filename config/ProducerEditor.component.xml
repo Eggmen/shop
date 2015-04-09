@@ -11,7 +11,6 @@
             <field name="producer_id"/>
             <field name="producer_is_active"/>
             <field name="producer_name"/>
-            <field name="producer_description"/>
         </fields>
         <javascript>
             <behavior name="GridManager"/>

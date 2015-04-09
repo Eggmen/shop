@@ -3,7 +3,7 @@
     <container name="goodsContainer" block="alfa" widget="static">
         <component name="goodsEditor" class="Energine\shop\components\GoodsEditor">
             <params>
-                <param name="rights">3</param>
+                <param name="rights">2</param>
                 <param name="tableName">shop_goods</param>
                 <param name="config">core/modules/shop/config/GoodsEditor.component.xml</param>
             </params>
