@@ -33,7 +33,7 @@ class DivisionEditor extends \Energine\share\components\DivisionEditor {
         if (($tableName == 'shop_features') && ($keyName == 'feature_id')) {
             // Для main убираем список значений в селекте, ни к чему он там
             if ($this->getState() !== self::DEFAULT_STATE_NAME) {
-                $result = $this->dbh->getForeignKeyData($tableName, $keyName, $this->document->getLang(), ['shop_features.feature_is_active' => true], ['shop_features_translation.feature_name' => QAL::ASC ]);
+                $result = $this->dbh->getForeignKeyData($tableName, $keyName, $this->document->getLang(), ['shop_features.feature_is_active' => true], ['shop_features_translation.feature_name' => QAL::ASC]);
             }
         } else {
             $result = parent::getFKData($tableName, $keyName);
@@ -47,8 +47,15 @@ class DivisionEditor extends \Energine\share\components\DivisionEditor {
     protected function showUserEditor() {
         $this->request->shiftPath(1);
         $this->userEditor =
-            $this->document->componentManager->createComponent('userEditor', 'Energine\shop\components\UserEditor', array('config' => 'core/modules/shop/config/UserEditor.component.xml'));
+            $this->document->componentManager->createComponent('userEditor', 'Energine\shop\components\UserEditor', ['config' => 'core/modules/shop/config/UserEditor.component.xml']);
         $this->userEditor->run();
+    }
+
+    protected function showRoleEditor() {
+        $this->request->shiftPath(1);
+        $this->roleEditor =
+            $this->document->componentManager->createComponent('roleEditor', 'Energine\shop\components\RoleEditor', ['config' => 'core/modules/user/config/RoleEditor.component.xml']);
+        $this->roleEditor->run();
     }
 
 
