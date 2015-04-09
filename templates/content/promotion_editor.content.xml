@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<content>
+	<container name="promotionContainer" block="alfa" widget="static">
+		<component name="promotionEditor" class="Energine\shop\components\PromotionEditor">
+			<params>
+				<param name="rights">3</param>
+				<param name="tableName">shop_promotions</param>
+				<param name="config">core/modules/shop/config/PromotionEditor.component.xml</param>
+			</params>
+		</component>
+	</container>
+</content>
