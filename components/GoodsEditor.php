@@ -19,7 +19,11 @@ use Energine\share\components\Grid,
     Energine\share\gears\Field,
     Energine\share\gears\ComponentManager,
     Energine\share\gears\Sitemap;
+use Energine\share\gears\DataDescription;
 use Energine\share\gears\Translit;
+use Energine\share\gears\TreeBuilder;
+use Energine\share\gears\TreeNode;
+use Energine\share\gears\TreeNodeList;
 
 /**
  * Goods editor.
@@ -51,7 +55,7 @@ class GoodsEditor extends Grid {
     /**
      * @copydoc Grid::__construct
      */
-    public function __construct($name, array $params = null) {
+    public function __construct($name, array $params = NULL) {
         parent::__construct($name, $params);
         $this->setTableName('shop_goods');
     }
@@ -64,9 +68,9 @@ class GoodsEditor extends Grid {
     protected function defineParams() {
         return array_merge(
             parent::defineParams(),
-            array(
+            [
                 'selector' => false,
-            )
+            ]
         );
     }
 
@@ -79,7 +83,7 @@ class GoodsEditor extends Grid {
 
         parent::prepare();
 
-        if (in_array($this->getState(), array('add', 'edit'))) {
+        if (in_array($this->getState(), ['add', 'edit'])) {
 
             // relations
             $fd = new FieldDescription('relations');
@@ -118,7 +122,7 @@ class GoodsEditor extends Grid {
      */
     protected function loadDataDescription() {
         $result = parent::loadDataDescription();
-        if (in_array($this->getState(), array('add', 'edit'))) {
+        if (in_array($this->getState(), ['add', 'edit'])) {
             $result['smap_id']['key'] = false;
         }
         return $result;
@@ -131,42 +135,53 @@ class GoodsEditor extends Grid {
 
         $result = parent::createDataDescription();
 
-        if (in_array($this->getState(), array('add', 'edit'))) {
+        if (in_array($this->getState(), ['add', 'edit'])) {
 
             // smap_id - as drop-down with only shop categories (to simplify)
             $fd = $result->getFieldDescriptionByName('smap_id');
             $fd->setType(FieldDescription::FIELD_TYPE_SELECT);
-            $fd->setAvailableValues(array());
+            $fd->setAvailableValues([]);
 
-            $site_id = E()->getConfigValue('shop.site_id');
-            $catalog_id = E()->getConfigValue('shop.catalog_category_id');
-            $map = E()->getMap($site_id);
-            $par = $map->getTree()->getNodeById($catalog_id);
-            $catalog_nodes = ($par) ? $par->getChildren()->asList(true) : array();
-            $values = array();
+            $site_id = E()->getSiteManager()->getSitesByTag('shop', true);
 
-            $buildCatalogItemName = function ($info, Sitemap $map, $catalog_id) {
-                $names = array($info['Name']);
-                $pid = $info['Pid'];
-                while ($pid != $catalog_id) {
-                    $node = $map->getDocumentInfo($pid);
-                    $pid = $node['Pid'];
-                    $names[] = $node['Name'];
-                }
-                return implode(' : ', array_reverse($names));
-            };
-
-            foreach ($catalog_nodes as $id => $node) {
-                if (!$map->getTree()->getNodeById($id)->hasChildren()) {
-                    $info = $map->getDocumentInfo($id);
-                    $name = $buildCatalogItemName($info, $map, $catalog_id);
-                    $values[] = array(
-                        'key' => $id,
-                        'value' => $name
-                    );
-                }
+            if ($this->document->getRights() < ACCESS_FULL) {
+                $site_id = array_intersect($site_id, $this->document->getUser()->getSites());
             }
-            $fd->loadAvailableValues($values, 'key', 'value');
+            $root = new TreeNodeList();
+
+            foreach ($site_id as $siteID) {
+                $map = E()->getMap($siteID);
+
+                $root->add($siteRoot = new TreeNode($siteID . '-0'));
+                $ids = $map->getPagesByTag('catalogue');
+                foreach ($ids as $id) {
+                    $siteRoot->addChild($p = $map->getTree()->getNodeById($id));
+                }
+                inspect($p->asList());
+            }
+            $dd = new DataDescription();
+            $dd->load(
+                [
+                    'id' => [
+                        'key' => true,
+                        'nullable' => false,
+                        'type' => FieldDescription::FIELD_TYPE_INT,
+                        'length' => 10,
+                        'index' => 'PRI'
+                    ],
+                    'name' => [
+                        'key' => false,
+                        'nullable' => false,
+                        'type' => FieldDescription::FIELD_TYPE_STRING,
+                        'length' => 255,
+                        'index' => false
+                    ]
+                ]
+            );
+            $b = new TreeBuilder();
+            $b->setTree($root);
+            $b->setDataDescription($dd);
+
         }
         return $result;
     }
@@ -211,7 +226,7 @@ class GoodsEditor extends Grid {
      */
     protected function relationEditor() {
         $sp = $this->getStateParams(true);
-        $params = array('config' => 'core/modules/shop/config/GoodsRelationEditor.component.xml');
+        $params = ['config' => 'core/modules/shop/config/GoodsRelationEditor.component.xml'];
 
         if (isset($sp['goods_id'])) {
             $this->request->shiftPath(2);
@@ -229,7 +244,7 @@ class GoodsEditor extends Grid {
      */
     protected function featureEditor() {
         $sp = $this->getStateParams(true);
-        $params = array('config' => 'core/modules/shop/config/GoodsFeatureEditor.component.xml');
+        $params = ['config' => 'core/modules/shop/config/GoodsFeatureEditor.component.xml'];
 
         if (isset($sp['goods_id'])) {
             $this->request->shiftPath(2);
@@ -301,7 +316,7 @@ class GoodsEditor extends Grid {
 			WHERE (goods_id IS NULL AND session_id=%s) or (goods_id = %1$s)',
             $goodsID, session_id()
         );
-        $smapID = $this->dbh->getScalar('shop_goods', 'smap_id', array('goods_id' => $goodsID));
+        $smapID = $this->dbh->getScalar('shop_goods', 'smap_id', ['goods_id' => $goodsID]);
         // remove all incorrect feature values
         $this->dbh->modify(
             'DELETE FROM shop_feature2good_values
