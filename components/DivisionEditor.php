@@ -47,7 +47,7 @@ class DivisionEditor extends \Energine\share\components\DivisionEditor {
     protected function showUserEditor() {
         $this->request->shiftPath(1);
         $this->userEditor =
-            $this->document->componentManager->createComponent('userEditor', 'Energine\shop\components\UserEditor', ['config' => 'core/modules/shop/config/UserEditor.component.xml']);
+            $this->document->componentManager->createComponent('userEditor', 'Energine\user\components\UserEditor', ['config' => 'core/modules/shop/config/UserEditor.component.xml']);
         $this->userEditor->run();
     }
 

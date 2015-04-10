@@ -10,16 +10,9 @@ use Energine\share\gears\SiteManager;
 use Energine\share\gears\Translit;
 
 class ProducerEditor extends Grid {
-    private $multishop = false;
-
     public function __construct($name, array $params = NULL) {
         parent::__construct($name, $params);
         $this->setTableName('shop_producers');
-        $cols = array_keys($this->dbh->getColumnsInfo($this->getTableName()));
-        //inspect($cols);
-        if (in_array('producer_site_multi', $cols)) {
-            $this->multishop = true;
-        }
     }
 
     protected function createDataDescription() {
@@ -39,7 +32,7 @@ class ProducerEditor extends Grid {
      */
     protected function getFKData($fkTableName, $fkKeyName) {
         $filter = $order = [];
-        if ($this->multishop && ($fkKeyName == 'site_id')) {
+        if ($fkKeyName == 'site_id') {
             //оставляем только те сайты где есть магазины
             if ($sites = E()->getSiteManager()->getSitesByTag('shop')) {
                 $filter = array_map(function ($site) {
@@ -58,28 +51,22 @@ class ProducerEditor extends Grid {
     }
 
     protected function getRawData() {
-        if ($this->multishop && $this->document->getRights() != ACCESS_FULL) {
+        if ($this->document->getRights() < ACCESS_FULL) {
             //отбираем тех производителей права на которые есть у текущего пользователя
-            //то есть те, у которых есть в перечен привязанных сайтов, сайты,
-
-            //все магазины
-            $sites = E()->getSiteManager()->getSitesByTag('shop');
-            //ищем в них те разделы
+            //то есть те, у которых есть в перечен привязанных сайтов
+            $this->addFilterCondition([$this->getTableName().'.producer_id' => $this->dbh->getColumn('shop_producers2sites', 'producer_id', ['site_id' => $this->document->getUser()->getSites()])]);
         }
         parent::getRawData();
     }
 
     protected function saveData() {
-        //Для всех с не админскими правами принудительно выставляем в те сайты на которые у юзера есть права
-        if ($this->multishop && $this->document->getRights() < ACCESS_FULL) {
-            foreach ($sites = E()->getSiteManager()->getSitesByTag('shop') as $site) {
-
-            }
-
-        }
-
         if (empty($_POST[$this->getTableName()]['producer_segment'])) {
             $_POST[$this->getTableName()]['producer_segment'] = Translit::asURLSegment($_POST[$this->getTranslationTableName()][E()->getLanguage()->getDefault()]['producer_name']);
+        }
+
+        //Для всех с не админскими правами принудительно выставляем в те сайты на которые у юзера есть права
+        if (($this->document->getRights() < ACCESS_FULL)) {
+            $_POST[$this->getTableName()]['producer_site_multi'] = $this->document->getUser()->getSites();
         }
 
         $r = parent::saveData();
