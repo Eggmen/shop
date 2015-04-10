@@ -523,6 +523,66 @@ class GoodsList extends DBDataSet {
 			$f->setRowData(0, $builder->getResult());
 			// на выходе получаем строковые значения поля
 		}
+
+		// выводим активные акции
+		if ($fd = $this->getDataDescription()->getFieldDescriptionByName('promotions')) {
+
+			$fd->setType(FieldDescription::FIELD_TYPE_CUSTOM);
+
+			$f = new Field('promotions');
+			$this->getData()->addField($f);
+
+			$builder = new SimpleBuilder();
+			$localData = new Data();
+
+			$promotions_data = $this -> dbh -> select(
+				'select p.promotion_id,
+					p.promotion_start_date,
+					p.promotion_end_date,
+					pt.promotion_name,
+					pt.promotion_description_rtf,
+					DATEDIFF(p.promotion_end_date, NOW()) as days_left
+				from shop_promotions p
+				join shop_goods2promotions gp on p.promotion_id = gp.promotion_id and gp.goods_id = %s
+				left join shop_promotions_translation pt on p.promotion_id = pt.promotion_id and pt.lang_id = %s
+				where p.promotion_is_active = 1 and p.promotion_start_date <= NOW() and p.promotion_end_date >= NOW()',
+				$id,
+				$this -> document -> getLang()
+			);
+			if (!is_array($promotions_data)) $promotions_data = array();
+
+			$localData->load($promotions_data);
+
+			$dataDescription = new DataDescription();
+			$ffd =  new FieldDescription('promotion_id');
+			$dataDescription->addFieldDescription($ffd);
+
+			$ffd = new FieldDescription('promotion_name');
+			$ffd->setType(FieldDescription::FIELD_TYPE_STRING);
+			$dataDescription->addFieldDescription($ffd);
+
+			$ffd = new FieldDescription('promotion_description_rtf');
+			$ffd->setType(FieldDescription::FIELD_TYPE_STRING);
+			$dataDescription->addFieldDescription($ffd);
+
+			$ffd = new FieldDescription('promotion_start_date');
+			$ffd->setType(FieldDescription::FIELD_TYPE_DATE);
+			$dataDescription->addFieldDescription($ffd);
+
+			$ffd = new FieldDescription('promotion_end_date');
+			$ffd->setType(FieldDescription::FIELD_TYPE_DATE);
+			$dataDescription->addFieldDescription($ffd);
+
+			$ffd = new FieldDescription('days_left');
+			$ffd->setType(FieldDescription::FIELD_TYPE_INT);
+			$dataDescription->addFieldDescription($ffd);
+
+			$builder->setData($localData);
+			$builder->setDataDescription($dataDescription);
+
+			$builder->build();
+			$f->setRowData(0, $builder->getResult());
+		}
 	}
 
 	/**
