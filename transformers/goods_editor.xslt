@@ -69,7 +69,7 @@
 		</td>
 	</xsl:template>
 
-    <xsl:template match="field[@name='smap_id' and ancestor::component[@class='GoodsEditor']]" mode="field_content">
+    <xsl:template match="field[@name='smap_id' and ancestor::component[@class='GoodsEditor']]" mode="field_input">
         <select>
             <xsl:call-template name="PRODUCTS_SMAP_SELECTOR">
                 <xsl:with-param name="RECORDSET" select="recordset"/>
