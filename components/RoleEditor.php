@@ -14,7 +14,7 @@ class RoleEditor extends \Energine\user\components\RoleEditor {
         $filter = $order = [];
         if ($table == 'share_sites' && $key == 'site_id') {
             foreach (E()->getSiteManager()->getSitesByTag('shop') as $site) {
-                $filter['share_sites.site_id'][] = $site->id;
+                $filter['share_sites.site_id'][] = (string)$site;
             }
         }
 

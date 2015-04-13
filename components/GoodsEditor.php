@@ -19,6 +19,7 @@ use Energine\share\components\Grid,
     Energine\share\gears\Field,
     Energine\share\gears\ComponentManager,
     Energine\share\gears\Sitemap;
+use Energine\share\gears\Data;
 use Energine\share\gears\DataDescription;
 use Energine\share\gears\Translit;
 use Energine\share\gears\TreeBuilder;
@@ -136,29 +137,46 @@ class GoodsEditor extends Grid {
         $result = parent::createDataDescription();
 
         if (in_array($this->getState(), ['add', 'edit'])) {
-
             // smap_id - as drop-down with only shop categories (to simplify)
             $fd = $result->getFieldDescriptionByName('smap_id');
-            $fd->setType(FieldDescription::FIELD_TYPE_SELECT);
-            $fd->setAvailableValues([]);
+            $fd->setType(FieldDescription::FIELD_TYPE_CUSTOM);
+        }
+        return $result;
+    }
 
+    protected function createData(){
+        $result = parent::createData();
+
+        if(in_array($this->getState(), ['add', 'edit'])){
             $site_id = E()->getSiteManager()->getSitesByTag('shop', true);
 
             if ($this->document->getRights() < ACCESS_FULL) {
                 $site_id = array_intersect($site_id, $this->document->getUser()->getSites());
             }
             $root = new TreeNodeList();
-
+            $da = [];
             foreach ($site_id as $siteID) {
                 $map = E()->getMap($siteID);
-
-                $root->add($siteRoot = new TreeNode($siteID . '-0'));
+                $siteRoot = $root->add(new TreeNode($siteID . '-0'));
+                array_push($da, [
+                    'id' => $siteID . '-0',
+                    'name' =>E()->getSiteManager()->getSiteByID($siteID)->name,
+                    'isLabel' => true,
+                ]);
+                foreach($map->getInfo() as $id=>$nodeData){
+                    array_push($da, [
+                        'id' => $id,
+                        'name' => $nodeData['Name'],
+                        'isLabel' => false,
+                    ]);
+                }
                 $ids = $map->getPagesByTag('catalogue');
                 foreach ($ids as $id) {
-                    $siteRoot->addChild($p = $map->getTree()->getNodeById($id));
+                    $siteRoot->addChild($map->getTree()->getNodeById($id));
                 }
-                inspect($p->asList());
+
             }
+
             $dd = new DataDescription();
             $dd->load(
                 [
@@ -170,19 +188,28 @@ class GoodsEditor extends Grid {
                         'index' => 'PRI'
                     ],
                     'name' => [
-                        'key' => false,
                         'nullable' => false,
                         'type' => FieldDescription::FIELD_TYPE_STRING,
                         'length' => 255,
                         'index' => false
-                    ]
+                    ],
+                    'isLabel' => [
+                        'type' => FieldDescription::FIELD_TYPE_BOOL,
+                    ],
+
                 ]
             );
+            $d = new Data();
+            $d->load($da);
+            //inspect($d);
             $b = new TreeBuilder();
             $b->setTree($root);
             $b->setDataDescription($dd);
-
+            $b->setData($d);
+            $b->build();
+            $f = $result->getFieldByName('smap_id')->setData($b->getResult(), true);
         }
+
         return $result;
     }
 

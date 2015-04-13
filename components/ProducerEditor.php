@@ -36,7 +36,7 @@ class ProducerEditor extends Grid {
             //оставляем только те сайты где есть магазины
             if ($sites = E()->getSiteManager()->getSitesByTag('shop')) {
                 $filter = array_map(function ($site) {
-                    return $site->id;
+                    return (string)$site;
                 }, $sites);
                 $filter['share_sites.site_id'] = $filter;
                 $order['share_sites_translation.site_name'] = QAL::ASC;

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <xsl:stylesheet
 		xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+        xmlns:str="http://exslt.org/strings"
+        extension-element-prefixes="str"
 		version="1.0">
 
 	<!-- доп атрибуты вкладки цен -->
@@ -67,5 +69,52 @@
 		</td>
 	</xsl:template>
 
+    <xsl:template match="field[@name='smap_id' and ancestor::component[@class='GoodsEditor']]" mode="field_content">
+        <select>
+            <xsl:call-template name="PRODUCTS_SMAP_SELECTOR">
+                <xsl:with-param name="RECORDSET" select="recordset"/>
+            </xsl:call-template>
+        </select>
+    </xsl:template>
+    
+    <xsl:template name="PRODUCTS_SMAP_SELECTOR">
+        <xsl:param name="RECORDSET"/>
+        <xsl:param name="LEVEL" select="0"/>
+        <xsl:for-each select="$RECORDSET/record">
+            <xsl:choose>
+                <xsl:when test="field[@name='isLabel']=1">
+                    <optgroup label="{field[@name='name']}"></optgroup>
+                </xsl:when>
+                <xsl:otherwise>
+                    <option value="{field[@name='id']}">
+                        <xsl:call-template name="REPEATABLE">
+                            <xsl:with-param name="STR"><xsl:text disable-output-escaping="yes">&amp;nbsp;</xsl:text></xsl:with-param>
+                            <xsl:with-param name="COUNT" select="$LEVEL"/>
+                        </xsl:call-template>
+                        <xsl:value-of select="field[@name='name']"/>
+                        </option>
+
+                </xsl:otherwise>
+            </xsl:choose>
+            <xsl:call-template name="PRODUCTS_SMAP_SELECTOR">
+                <xsl:with-param name="RECORDSET" select="recordset"/>
+                <xsl:with-param name="LEVEL"><xsl:value-of select="$LEVEL+2"/></xsl:with-param>
+            </xsl:call-template>
+        </xsl:for-each>
+    </xsl:template>
+
+    <xsl:template name="REPEATABLE">
+        <xsl:param name="STR"/>
+        <xsl:param name="COUNT"/>
+        <xsl:param name="CURRENT" select="0"/>
+        <xsl:if test="$CURRENT&lt;$COUNT">
+            <xsl:value-of select="$STR" disable-output-escaping="yes"/>
+            <xsl:call-template name="REPEATABLE">
+                <xsl:with-param name="COUNT" select="$COUNT"/>
+                <xsl:with-param name="STR" select="$STR"/>
+                <xsl:with-param name="CURRENT"><xsl:value-of select="$CURRENT+1"/></xsl:with-param>
+            </xsl:call-template>
+        </xsl:if>
+    </xsl:template>
 
 </xsl:stylesheet>
