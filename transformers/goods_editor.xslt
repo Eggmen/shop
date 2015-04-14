@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <xsl:stylesheet
 		xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-        xmlns:str="http://exslt.org/strings"
-        extension-element-prefixes="str"
+        xmlns:set="http://exslt.org/sets"
+        extension-element-prefixes="set"
 		version="1.0">
 
 	<!-- доп атрибуты вкладки цен -->
@@ -70,13 +70,45 @@
 	</xsl:template>
 
     <xsl:template match="field[@name='smap_id' and ancestor::component[@class='GoodsEditor']]" mode="field_input">
-        <select>
+        <select id="{@name}">
+            <xsl:attribute name="name"><xsl:choose>
+                <xsl:when test="@tableName"><xsl:value-of select="@tableName"/><xsl:if test="@language">[<xsl:value-of select="@language"/>]</xsl:if>[<xsl:value-of select="@name"/>]</xsl:when>
+                <xsl:otherwise><xsl:value-of select="@name"/></xsl:otherwise>
+            </xsl:choose></xsl:attribute>
             <xsl:call-template name="PRODUCTS_SMAP_SELECTOR">
                 <xsl:with-param name="RECORDSET" select="recordset"/>
             </xsl:call-template>
         </select>
     </xsl:template>
-    
+
+
+
+    <xsl:template match="field[(@name='smap_features_multi') and (@type='multi') and (ancestor::component[@class='DivisionEditor'])]" mode="field_input">
+        <xsl:variable name="DATA" select="options/option"/>
+        <xsl:variable name="NAME"><xsl:choose>
+            <xsl:when test="@tableName"><xsl:value-of select="@tableName"/><xsl:if test="@language">[<xsl:value-of select="@language"/>]</xsl:if>[<xsl:value-of select="@name"/>]</xsl:when>
+            <xsl:otherwise><xsl:value-of select="@name"/></xsl:otherwise>
+        </xsl:choose>[]</xsl:variable>
+                <div class="checkbox_set">
+                    <xsl:for-each select="set:distinct($DATA/@group_id)">
+                        <xsl:variable name="GROUP_ID" select="."/>
+                        <section>
+                            <h4><xsl:value-of select="$DATA[@group_id =$GROUP_ID][1]/@group_name"/></h4>
+                            <xsl:for-each select="$DATA[@group_id =$GROUP_ID]">
+                                <div>
+                                    <input type="checkbox" id="{generate-id(.)}" name="{$NAME}" value="{@id}" class="checkbox">
+                                        <xsl:if test="@selected">
+                                            <xsl:attribute name="checked">checked</xsl:attribute>
+                                        </xsl:if>
+                                    </input>
+                                    <label for="{generate-id(.)}"><xsl:value-of select="."/></label>
+                                </div>
+                            </xsl:for-each>
+                        </section>
+                    </xsl:for-each>
+                </div>
+    </xsl:template>
+
     <xsl:template name="PRODUCTS_SMAP_SELECTOR">
         <xsl:param name="RECORDSET"/>
         <xsl:param name="LEVEL" select="0"/>
@@ -87,6 +119,9 @@
                 </xsl:when>
                 <xsl:otherwise>
                     <option value="{field[@name='id']}">
+                        <xsl:if test="field[@name='selected']=1">
+                            <xsl:attribute name="selected">selected</xsl:attribute>
+                        </xsl:if>
                         <xsl:call-template name="REPEATABLE">
                             <xsl:with-param name="STR"><xsl:text disable-output-escaping="yes">&amp;nbsp;</xsl:text></xsl:with-param>
                             <xsl:with-param name="COUNT" select="$LEVEL"/>

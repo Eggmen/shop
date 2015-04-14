@@ -59,6 +59,14 @@ class GoodsEditor extends Grid {
     public function __construct($name, array $params = NULL) {
         parent::__construct($name, $params);
         $this->setTableName('shop_goods');
+        //показываем  только те товары которые принадлежат к магазинам на которые есть права
+        if ($this->document->getRights() < ACCESS_FULL) {
+            $siteIDs = $this->document->getUser()->getSites();
+            if(empty($siteIDs)){
+                $siteIDs = [0];
+            }
+            $this->addFilterCondition('smap_id IN (SELECT smap_id FROM share_sitemap WHERE site_id IN ('.implode(',', $siteIDs).'))');
+        }
     }
 
     /**
@@ -115,6 +123,21 @@ class GoodsEditor extends Grid {
         }
     }
 
+    protected function getFKData($fkTableName, $fkKey) {
+        $result = false;
+        if (($fkKey != 'producer_id') || ($this->document->getRights() == ACCESS_FULL)) {
+            $result = parent::getFKData($fkTableName, $fkKey);
+        } else {
+            if ($this->getState() !== self::DEFAULT_STATE_NAME) {
+                $result =
+                    $this->dbh->getForeignKeyData($fkTableName, $fkKey, $this->document->getLang(), [$fkTableName . '.producer_id' => $this->dbh->getColumn('shop_producers2sites', 'producer_id', ['site_id' => $this->document->getUser()->getSites()])]);
+            }
+        }
+
+
+        return $result;
+    }
+
     /**
      * Removed key from smap_id field
      *
@@ -129,25 +152,15 @@ class GoodsEditor extends Grid {
         return $result;
     }
 
-    /**
-     * @copydoc Grid::createDataDescription
-     */
-    protected function createDataDescription() {
-
-        $result = parent::createDataDescription();
-
-        if (in_array($this->getState(), ['add', 'edit'])) {
-            // smap_id - as drop-down with only shop categories (to simplify)
-            $fd = $result->getFieldDescriptionByName('smap_id');
-            $fd->setType(FieldDescription::FIELD_TYPE_CUSTOM);
-        }
-        return $result;
-    }
-
-    protected function createData(){
+    protected function createData() {
         $result = parent::createData();
 
-        if(in_array($this->getState(), ['add', 'edit'])){
+        if (in_array($this->getState(), ['add', 'edit'])) {
+            $currentSmapID = NULL;
+            if ($this->getState() == 'edit') {
+                $currentSmapID = $result->getFieldByName('smap_id')->getRowData(0);
+            }
+            $this->getDataDescription()->getFieldDescriptionByName('smap_id')->setType(FieldDescription::FIELD_TYPE_CUSTOM);
             $site_id = E()->getSiteManager()->getSitesByTag('shop', true);
 
             if ($this->document->getRights() < ACCESS_FULL) {
@@ -155,20 +168,29 @@ class GoodsEditor extends Grid {
             }
             $root = new TreeNodeList();
             $da = [];
+
             foreach ($site_id as $siteID) {
                 $map = E()->getMap($siteID);
                 $siteRoot = $root->add(new TreeNode($siteID . '-0'));
                 array_push($da, [
                     'id' => $siteID . '-0',
-                    'name' =>E()->getSiteManager()->getSiteByID($siteID)->name,
+                    'name' => E()->getSiteManager()->getSiteByID($siteID)->name,
                     'isLabel' => true,
+                    'selected' => false
                 ]);
-                foreach($map->getInfo() as $id=>$nodeData){
-                    array_push($da, [
+                foreach ($map->getInfo() as $id => $nodeData) {
+                    $tmp = [
                         'id' => $id,
                         'name' => $nodeData['Name'],
                         'isLabel' => false,
-                    ]);
+                        'selected' => false
+                    ];
+
+                    if ($currentSmapID == $id) {
+                        $tmp['selected'] = true;
+                    }
+                    array_push($da, $tmp);
+
                 }
                 $ids = $map->getPagesByTag('catalogue');
                 foreach ($ids as $id) {
@@ -196,6 +218,9 @@ class GoodsEditor extends Grid {
                     'isLabel' => [
                         'type' => FieldDescription::FIELD_TYPE_BOOL,
                     ],
+                    'selected' => [
+                        'type' => FieldDescription::FIELD_TYPE_BOOL,
+                    ]
 
                 ]
             );
@@ -211,41 +236,6 @@ class GoodsEditor extends Grid {
         }
 
         return $result;
-    }
-
-    /**
-     * @copydoc Grid::add
-     */
-    protected function add() {
-        parent::add();
-        $this->getData()->getFieldByName('goods_is_active')->setData(1, true);
-    }
-
-    /**
-     * Build smap_name as extended info (with parent names)
-     *
-     * @throws \Energine\share\gears\SystemException
-     */
-    protected function edit() {
-        parent::edit();
-
-        $smapField = $this->getData()->getFieldByName('smap_id');
-        for ($i = 0; $i < sizeof(E()->getLanguage()->getLanguages()); $i++) {
-            //remove for 2.11.10
-            $smapField->setRowProperty($i, 'smap_name', $this->dbh->getScalar(
-                'SELECT CONCAT(site_name, ":", smap_name) as smap_name FROM share_sitemap sm LEFT JOIN share_sitemap_translation smt USING(smap_id) LEFT JOIN share_sites_translation s ON (s.site_id = sm.site_id) AND (s.lang_id = %s) WHERE sm.smap_id = %s AND smt.lang_id= %1$s', $this->document->getLang(), $smapField->getRowData(0)
-            ));
-        }
-    }
-
-    /**
-     * Show division tree for form of adding/editing.
-     */
-    protected function showSmapSelector() {
-        $this->request->shiftPath(1);
-        $this->divisionEditor = ComponentManager::createBlockFromDescription(
-            ComponentManager::getDescriptionFromFile('../core/modules/shop/templates/content/site_div_selector.container.xml'));
-        $this->divisionEditor->run();
     }
 
     /**

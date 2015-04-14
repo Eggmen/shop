@@ -61,14 +61,6 @@ class FeatureEditor extends Grid {
     }
 
     /**
-     * @copydoc Grid::add
-     */
-    protected function add() {
-        parent::add();
-        $this->getData()->getFieldByName('feature_is_active')->setData(1, true);
-    }
-
-    /**
      * Create component for editing options to the feature (type = OPTION / VARIANT).
      */
     protected function optionEditor() {

@@ -35,11 +35,6 @@ class PromotionEditor extends Grid {
 		}
 	}
 
-	protected function add() {
-		parent::add();
-		$this->getData()->getFieldByName('promotion_is_active')->setData(1, true);
-	}
-
 	protected function goodsEditor() {
 		$sp = $this->getStateParams(true);
 		$params = array('config' => 'core/modules/shop/config/PromotionGoodsEditor.component.xml');
