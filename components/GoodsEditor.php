@@ -62,10 +62,10 @@ class GoodsEditor extends Grid {
         //показываем  только те товары которые принадлежат к магазинам на которые есть права
         if ($this->document->getRights() < ACCESS_FULL) {
             $siteIDs = $this->document->getUser()->getSites();
-            if(empty($siteIDs)){
+            if (empty($siteIDs)) {
                 $siteIDs = [0];
             }
-            $this->addFilterCondition('smap_id IN (SELECT smap_id FROM share_sitemap WHERE site_id IN ('.implode(',', $siteIDs).'))');
+            $this->addFilterCondition('smap_id IN (SELECT smap_id FROM share_sitemap WHERE site_id IN (' . implode(',', $siteIDs) . '))');
         }
     }
 
@@ -170,19 +170,27 @@ class GoodsEditor extends Grid {
             $da = [];
 
             foreach ($site_id as $siteID) {
+
                 $map = E()->getMap($siteID);
-                $siteRoot = $root->add(new TreeNode($siteID . '-0'));
-                array_push($da, [
-                    'id' => $siteID . '-0',
-                    'name' => E()->getSiteManager()->getSiteByID($siteID)->name,
-                    'isLabel' => true,
-                    'selected' => false
-                ]);
+                if (sizeof($site_id) > 1) {
+                    $siteRoot = $root->add(new TreeNode($siteID . '-0'));
+                    array_push($da, [
+                        'id' => $siteID . '-0',
+                        'name' => E()->getSiteManager()->getSiteByID($siteID)->name,
+                        'isLabel' => true,
+                        'selected' => false
+                    ]);
+                }
+                else {
+                    $siteRoot = $root;
+                }
+
+                $ids = $map->getPagesByTag('catalogue');
                 foreach ($map->getInfo() as $id => $nodeData) {
                     $tmp = [
                         'id' => $id,
                         'name' => $nodeData['Name'],
-                        'isLabel' => false,
+                        'isLabel' => (in_array($id, $ids)) ? true : false,
                         'selected' => false
                     ];
 
@@ -192,9 +200,9 @@ class GoodsEditor extends Grid {
                     array_push($da, $tmp);
 
                 }
-                $ids = $map->getPagesByTag('catalogue');
+
                 foreach ($ids as $id) {
-                    $siteRoot->addChild($map->getTree()->getNodeById($id));
+                    $siteRoot->add($map->getTree()->getNodeById($id));
                 }
 
             }
