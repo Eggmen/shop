@@ -23,7 +23,8 @@ class GoodsFilter extends DataSet
 			parent::defineParams(),
 			array(
 				'bind' => false,
-				'tableName' => 'shop_goods'
+				'tableName' => 'shop_goods',
+                'active' => false
 			)
 		);
 	}
