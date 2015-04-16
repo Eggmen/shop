@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <content>
-	<container name="categoryDivEditorContainer" block="alfa" widget="static">
-		<component name="categoryDivEditor" class="Energine\shop\components\CategoryEditor">
-			<params>
-				<param name="rights">3</param>
-				<param name="state">main</param>
-			</params>
-		</component>
-	</container>
+    <container name="smapSelector" block="alfa" widget="static">
+        <component name="siteList" class="Energine\share\components\SiteList">
+            <params>
+                <param name="rights">3</param>
+                <param name="tags">shop</param>
+            </params>
+        </component>
+        <component name="categoryDivEditor" class="Energine\shop\components\CategoryEditor">
+            <params>
+                <param name="rights">3</param>
+                <param name="state">main</param>
+            </params>
+        </component>
+    </container>
 </content>

@@ -10,13 +10,17 @@ class CategoryEditor extends DivisionEditor {
 
     public function __construct($name, array $params = NULL) {
         parent::__construct($name, $params);
-        $shopIDs = E()->getSiteManager()->getSitesByTag('shop', true);
-        if (empty($shopIDs)) {
-            throw new SystemException('ERR_NO_SHOP', SystemException::ERR_CRITICAL);
+        $sp = $this->getStateParams(true);
+        if (!isset($sp['site_id'])) {
+            $shopIDs = E()->getSiteManager()->getSitesByTag('shop', true);
+            if (empty($shopIDs)) {
+                throw new SystemException('ERR_NO_SHOP', SystemException::ERR_CRITICAL);
+            }
+            list($shopID) = $shopIDs;
+            $this->setStateParam('site_id', $shopID);
         }
-        list($shopID) = $shopIDs;
-        $this->setStateParam('site_id', $shopID);
     }
+
 
     protected function isSmapIsCategory($smap_id) {
         $catalog_site_id = $this->getStateParams();

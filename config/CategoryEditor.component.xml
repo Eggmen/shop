@@ -2,8 +2,8 @@
 <configuration>
 	<state name="main" rights="3">
 		<uri_patterns>
-			<pattern>/show/</pattern>
-			<pattern>/show/[site_id]/</pattern>
+			<pattern>/show-shop/</pattern>
+			<pattern>/show-shop/[site_id]/</pattern>
 		</uri_patterns>
 		<javascript>
 			<behavior name="DivManager"/>
