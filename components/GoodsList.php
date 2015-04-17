@@ -483,6 +483,8 @@ class GoodsList extends DBDataSet {
 					'feature_sysname' => $feature -> getSysName(),
 					'feature_type' => $feature->getType(),
 					'feature_value' => (string) $feature,
+					'group_id' => $feature -> getGroupId(),
+					'group_title' => $feature -> getGroupName(),
 					'feature_images' => $images
 				);
 			}
@@ -497,6 +499,14 @@ class GoodsList extends DBDataSet {
 
 			$ffd = new FieldDescription('feature_title');
 			$ffd->setType(FieldDescription::FIELD_TYPE_STRING);
+			$dataDescription->addFieldDescription($ffd);
+
+			$ffd = new FieldDescription('group_title');
+			$ffd->setType(FieldDescription::FIELD_TYPE_STRING);
+			$dataDescription->addFieldDescription($ffd);
+
+			$ffd = new FieldDescription('group_id');
+			$ffd->setType(FieldDescription::FIELD_TYPE_INT);
 			$dataDescription->addFieldDescription($ffd);
 
 			$ffd = new FieldDescription('feature_sysname');

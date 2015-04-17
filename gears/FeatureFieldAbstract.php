@@ -75,7 +75,15 @@ class FeatureFieldAbstract extends Object {
         return (isset($this->data['feature_sysname'])) ? $this->data['feature_sysname'] : '';
     }
 
-    public function getUnit() {
+	public function getGroupId() {
+		return (isset($this->data['group_id'])) ? $this->data['group_id'] : '';
+	}
+
+	public function getGroupName() {
+		return (isset($this->data['group_name'])) ? $this->data['group_name'] : '';
+	}
+
+	public function getUnit() {
         return (isset($this->data['feature_unit'])) ? $this->data['feature_unit'] : '';
     }
 
