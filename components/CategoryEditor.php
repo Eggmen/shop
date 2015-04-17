@@ -47,7 +47,6 @@ class CategoryEditor extends DivisionEditor {
 
     protected function loadData() {
         $result = parent::loadData();
-
         if ($result && $this->getState() == 'getRawData') {
             foreach ($result as $key => $row) {
                 if (!($smap = $this->isSmapIsCategory($row['smap_id']))) {

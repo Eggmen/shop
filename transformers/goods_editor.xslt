@@ -19,7 +19,7 @@
 
 
 
-    <xsl:template match="field[(@name='smap_features_multi') and (@type='multi') and (ancestor::component[@class='DivisionEditor'])]" mode="field_input">
+    <xsl:template match="field[(@name='smap_features_multi') and (@type='multi') and (ancestor::component[@sample='DivisionEditor'])]" mode="field_input">
         <xsl:variable name="DATA" select="options/option"/>
         <xsl:variable name="NAME"><xsl:choose>
             <xsl:when test="@tableName"><xsl:value-of select="@tableName"/><xsl:if test="@language">[<xsl:value-of select="@language"/>]</xsl:if>[<xsl:value-of select="@name"/>]</xsl:when>

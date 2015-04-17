@@ -1,15 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <content>
     <container name="smapSelector" block="alfa" widget="static">
-        <component name="siteList" class="Energine\share\components\SiteList">
+        <component name="siteList" class="Energine\shop\components\SiteList">
             <params>
-                <param name="rights">3</param>
-                <param name="tags">shop</param>
+                <param name="rights">2</param>
+                <param name="config">
+                    <configuration>
+                        <state name="main">
+                            <fields>
+                                <field name="site_id" type="int"></field>
+                                <field name="site_name" type="string"></field>
+                                <field name="site_host" type="string"></field>
+                            </fields>
+                        </state>
+                    </configuration>
+                </param>
             </params>
         </component>
         <component name="categoryDivEditor" class="Energine\shop\components\CategoryEditor">
             <params>
-                <param name="rights">3</param>
+                <param name="rights">2</param>
                 <param name="state">main</param>
             </params>
         </component>
