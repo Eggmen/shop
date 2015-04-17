@@ -29,7 +29,7 @@ class FeatureEditor extends Grid {
      * Options editor.
      * @var FeatureOptionEditor $oEditor
      */
-    private $oEditor;
+    protected $oEditor;
 
     /**
      * @copydoc Grid::__construct

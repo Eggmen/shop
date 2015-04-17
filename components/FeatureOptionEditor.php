@@ -6,7 +6,7 @@
  * It contains the definition to:
  * @code
 class FeatureOptionEditor;
-@endcode
+ * @endcode
  *
  * @author andy.karpov
  * @copyright Energine 2015
@@ -14,6 +14,7 @@ class FeatureOptionEditor;
  * @version 1.0.0
  */
 namespace Energine\shop\components;
+
 use Energine\share\components\Grid;
 use Energine\share\gears\FieldDescription;
 use Energine\share\gears\QAL;
@@ -23,87 +24,77 @@ use Energine\share\gears\QAL;
  *
  * @code
 class FeatureOptionEditor;
-@endcode
+ * @endcode
  */
-class FeatureOptionEditor extends Grid
-{
-	/**
-	 * @copydoc Grid::__construct
-	 */
-	// На вход параметром получаем ID характеристики, к которой следует привязать вариант множественного выбора.
-	public function __construct($name,  array $params = null)
-	{
-		parent::__construct($name, $params);
-		$this->setTableName('shop_feature_options');
+class FeatureOptionEditor extends Grid {
+    /**
+     * @copydoc Grid::__construct
+     */
+    // На вход параметром получаем ID характеристики, к которой следует привязать вариант множественного выбора.
+    public function __construct($name, array $params = NULL) {
+        parent::__construct($name, $params);
+        $this->setTableName('shop_feature_options');
 
-		if (is_numeric($this->getParam('featureID'))) {
-			$filter = sprintf(' (feature_id = %s) ', $this->getParam('featureID'));
-		} else {
-			$filter = sprintf(' (feature_id IS NULL and session_id="%s") ', session_id());
-		}
+        if (is_numeric($this->getParam('featureID'))) {
+            $filter = sprintf(' (feature_id = %s) ', $this->getParam('featureID'));
+        } else {
+            $filter = sprintf(' (feature_id IS NULL and session_id="%s") ', session_id());
+        }
 
-		$this->setFilter($filter);
+        $this->setFilter($filter);
 
-	}
+    }
 
-	protected function applyUserSort() {
-		$this->setOrder(array('option_value' => QAL::ASC));
-	}
+    protected function applyUserSort() {
+        $this->setOrder(['option_value' => QAL::ASC]);
+    }
 
-	/**
-	 * @copydoc Grid::defineParams
-	 */
-	// добавлен параметр featureID - ид характеристики
-	protected function defineParams()
-	{
-		return array_merge(
-			parent::defineParams(),
-			array(
-				'featureID' => false,
-			)
-		);
-	}
+    /**
+     * @copydoc Grid::defineParams
+     */
+    // добавлен параметр featureID - ид характеристики
+    protected function defineParams() {
+        return array_merge(
+            parent::defineParams(),
+            [
+                'featureID' => false,
+            ]
+        );
+    }
 
-	public function add()
-	{
-		parent::add();
-		$data = $this->getData();
-		if ($feature_id = $this->getParam('featureID')) {
-			$f = $data->getFieldByName('feature_id');
-			$f->setRowData(0, $feature_id);
-		}
-		$f = $data->getFieldByName('session_id');
-		$f->setRowData(0, session_id());
-	}
+    public function add() {
+        parent::add();
+        $data = $this->getData();
+        if ($feature_id = $this->getParam('featureID')) {
+            $f = $data->getFieldByName('feature_id');
+            $f->setRowData(0, $feature_id);
+        }
+        $f = $data->getFieldByName('session_id');
+        $f->setRowData(0, session_id());
+    }
 
-	public function edit()
-	{
-		parent::edit();
-		$data = $this->getData();
-		if ($feature_id = $this->getParam('featureID')) {
-			$f = $data->getFieldByName('feature_id');
-			$f->setRowData(0, $feature_id);
-		}
-	}
+    public function edit() {
+        parent::edit();
+        $data = $this->getData();
+        if ($feature_id = $this->getParam('featureID')) {
+            $f = $data->getFieldByName('feature_id');
+            $f->setRowData(0, $feature_id);
+        }
+    }
 
-	protected function createDataDescription()
-	{
-		$result = parent::createDataDescription();
+    protected function createDataDescription() {
+        $result = parent::createDataDescription();
 
-		if (in_array($this->getState(), array('add', 'edit'))) {
+        if (in_array($this->getState(), ['add', 'edit'])) {
 
-			$fd = $result->getFieldDescriptionByName('feature_id');
-			$fd->setType(FieldDescription::FIELD_TYPE_HIDDEN);
+            $fd = $result->getFieldDescriptionByName('feature_id');
+            $fd->setType(FieldDescription::FIELD_TYPE_HIDDEN);
 
-			$fd = $result->getFieldDescriptionByName('session_id');
-			$fd->setType(FieldDescription::FIELD_TYPE_HIDDEN);
+            $fd = $result->getFieldDescriptionByName('session_id');
+            $fd->setType(FieldDescription::FIELD_TYPE_HIDDEN);
+        }
 
-			$fd = $result->getFieldDescriptionByName('multiprice_type_id');
-			$fd->setType(FieldDescription::FIELD_TYPE_HIDDEN);
-
-		}
-
-		return $result;
-	}
+        return $result;
+    }
 
 }
