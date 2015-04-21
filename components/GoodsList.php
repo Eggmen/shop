@@ -413,6 +413,10 @@ class GoodsList extends DBDataSet {
 			throw new SystemException('ERR_404', SystemException::ERR_404);
 		}
 
+		// костыль: перезаписываем id вместо goodsSegment,
+		// чтобы модуль комментариев мог с первым параметром стейта работать...
+		$this -> setStateParam('goodsSegment', $id);
+
 		$this->addFilterCondition([$this->getTableName() . '.' . $this->getPK() => $id]);
 
 		//$this->document->componentManager->getBlockByName('breadCrumbs')->addCrumb('0001', '111', '222');
