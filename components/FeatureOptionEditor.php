@@ -70,7 +70,7 @@ class FeatureOptionEditor extends Grid {
             $f->setRowData(0, $feature_id);
         }
         $f = $data->getFieldByName('session_id');
-        $f->setRowData(0, session_id());
+        $f->setData(session_id(), true);
     }
 
     public function edit() {

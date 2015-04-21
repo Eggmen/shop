@@ -5,7 +5,7 @@
         extension-element-prefixes="set"
 		version="1.0">
 
-    <xsl:template match="field[@name='smap_id' and ancestor::component[@class='GoodsEditor']]" mode="field_input">
+    <xsl:template match="field[@name='smap_id' and ancestor::component[@sample='GoodsEditor']]" mode="field_input">
         <select id="{@name}">
             <xsl:attribute name="name"><xsl:choose>
                 <xsl:when test="@tableName"><xsl:value-of select="@tableName"/><xsl:if test="@language">[<xsl:value-of select="@language"/>]</xsl:if>[<xsl:value-of select="@name"/>]</xsl:when>
@@ -99,4 +99,18 @@
                 </xsl:for-each>
             </select>
         </xsl:template>
+
+    <xsl:template match="field[@name='currency_id' and ancestor::component[@sample='GoodsEditor']]" />
+
+    <xsl:template match="field[@name='goods_price' and ancestor::component[@sample='GoodsEditor']]" mode="field_content">
+        <div class="control" id="control_{@language}_{@name}">
+            <xsl:if test="../field[@name='currency_id']/options/option[@selected]/@currency_shortname_order ='before'">
+                <span class="currency_before"><xsl:value-of select="../field[@name='currency_id']/options/option[@selected]/@currency_shortname" /></span>
+            </xsl:if>
+            <xsl:apply-templates select="." mode="field_input"/>
+            <xsl:if test="../field[@name='currency_id']/options/option[@selected]/@currency_shortname_order ='after'">
+                <span class="currency_after"><xsl:value-of select="../field[@name='currency_id']/options/option[@selected]/@currency_shortname" /></span>
+            </xsl:if>
+        </div>
+    </xsl:template>
 </xsl:stylesheet>

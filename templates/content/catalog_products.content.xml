@@ -1,42 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<content>
+<content layout="main/default.layout.xml">
+    <container name="goodsListContainerWrapper">
+        <!-- фильтры -->
+        <component name="goodsFilter" class="Energine\shop\components\GoodsFilter">
+            <params>
+                <!--<param name="config">site/modules/main/config/DivanGoodsFilter.component.xml</param>-->
+                <param name="bind">goodsList</param>
+                <param name="tableName">shop_goods_view</param>
+            </params>
+        </component>
 
-	<container name="goodsListContainerWrapper">
-
-		<!-- фильтры -->
-		<component name="goodsFilter"  class="Energine\shop\components\GoodsFilter">
-			<params>
-				<!--<param name="config">site/modules/main/config/DivanGoodsFilter.component.xml</param>-->
-				<param name="bind">goodsList</param>
-				<param name="tableName">shop_goods_view</param>
-			</params>
-		</component>
-
-		<!-- меню с большими кнопками "новинки", "хиты", "распродажа" (позразделы раздела "спецпредложения") -->
-		<!-- goodsTagsMenu -->
+        <!-- меню с большими кнопками "новинки", "хиты", "распродажа" (позразделы раздела "спецпредложения") -->
+        <!-- goodsTagsMenu -->
 
 
-		<!-- сортировка -->
-		<component name="goodsSort"  class="Energine\shop\components\GoodsSort">
-			<params>
-				<param name="active">0</param>
-				<!--<param name="config">site/modules/main/config/DivanGoodsSort.component.xml</param>-->
-				<param name="bind">goodsList</param>
-			</params>
-		</component>
+        <!-- сортировка -->
+        <component name="goodsSort" class="Energine\shop\components\GoodsSort">
+            <params>
+                <param name="active">0</param>
+                <!--<param name="config">site/modules/main/config/DivanGoodsSort.component.xml</param>-->
+                <param name="bind">goodsList</param>
+            </params>
+        </component>
 
-		<!-- список всех разделов магазина с большими иконками и цветами -->
-		<component name="goodsList"  class="Energine\shop\components\GoodsList">
-			<params>
-				<param name="active">1</param>
-				<param name="tableName">shop_goods_view</param>
-				<!--<param name="config">site/modules/main/config/DivanGoodsList.component.xml</param>-->
-			</params>
-		</component>
+        <!-- список всех разделов магазина с большими иконками и цветами -->
+        <component name="goodsList" class="Energine\shop\components\GoodsList">
+            <params>
+                <param name="active">1</param>
+                <param name="tableName">shop_goods_view</param>
+                <!--<param name="config">site/modules/main/config/DivanGoodsList.component.xml</param>-->
+            </params>
+        </component>
 
-		<!-- листалка -->
-		<!-- листалка является частью goodsList -->
+        <!-- листалка -->
+        <!-- листалка является частью goodsList -->
 
-	</container>
+    </container>
 
 </content>

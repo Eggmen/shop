@@ -3,7 +3,7 @@
     <container name="featureContainer" block="alfa" widget="static">
         <component name="featureEditor" class="Energine\shop\components\FeatureEditor">
             <params>
-                <param name="rights">3</param>
+                <param name="rights">2</param>
             </params>
         </component>
     </container>
