@@ -27,6 +27,7 @@ var GoodsForm = new Class(/** @lends GoodsForm# */{
 
 	// constructor
 	initialize: function (element) {
+        Asset.css('goods_editor.css');
 		this.parent(element);
 	},
 

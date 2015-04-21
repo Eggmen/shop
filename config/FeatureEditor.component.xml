@@ -8,7 +8,6 @@
 			<field name="group_id"/>
 			<field name="feature_name"/>
 			<field name="feature_title"/>
-            <field name="feature_unit"/>
 			<field name="feature_type"/>
         </fields>
         <javascript>

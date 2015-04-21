@@ -58,7 +58,7 @@ class FeatureEditor extends Grid {
      * @return array
      */
     protected function getFKData($fkTableName, $fkKeyName) {
-        $filter = $order = $result = [];
+        $filter = $result = [];
         if ($fkKeyName == 'site_id') {
             //оставляем только те сайты где есть магазины
             if ($sites = E()->getSiteManager()->getSitesByTag('shop')) {
@@ -66,12 +66,12 @@ class FeatureEditor extends Grid {
                     return (string)$site;
                 }, $sites);
                 $filter['share_sites.site_id'] = $filter;
-                $order['share_sites_translation.site_name'] = QAL::ASC;
+                //$order['share_sites_translation.site_name'] = QAL::ASC;
             }
         }
 
         if ($this->getState() !== self::DEFAULT_STATE_NAME) {
-            $result = $this->dbh->getForeignKeyData($fkTableName, $fkKeyName, $this->document->getLang(), $filter, $order);
+            $result = $this->dbh->getForeignKeyData($fkTableName, $fkKeyName, $this->document->getLang(), $filter);
         }
 
         return $result;

@@ -13,6 +13,8 @@ class ProducerEditor extends Grid {
     public function __construct($name, array $params = NULL) {
         parent::__construct($name, $params);
         $this->setTableName('shop_producers');
+
+
     }
 
     protected function createDataDescription() {
@@ -31,7 +33,7 @@ class ProducerEditor extends Grid {
      * @return array
      */
     protected function getFKData($fkTableName, $fkKeyName) {
-        $filter = $order = [];
+        $filter = $order = null;
         if ($fkKeyName == 'site_id') {
             //оставляем только те сайты где есть магазины
             if ($sites = E()->getSiteManager()->getSitesByTag('shop')) {
@@ -39,7 +41,7 @@ class ProducerEditor extends Grid {
                     return (string)$site;
                 }, $sites);
                 $filter['share_sites.site_id'] = $filter;
-                $order['share_sites_translation.site_name'] = QAL::ASC;
+                //$order['share_sites_translation.site_name'] = QAL::ASC;
             }
         }
 

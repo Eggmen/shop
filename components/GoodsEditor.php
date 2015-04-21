@@ -33,7 +33,7 @@ use Energine\share\gears\TreeNodeList;
  * class GoodsEditor;
  * @endcode
  */
-class GoodsEditor extends Grid {
+class GoodsEditor extends Grid implements SampleGoodsEditor {
 
     /**
      * Division editor.
@@ -119,7 +119,6 @@ class GoodsEditor extends Grid {
 
             $field->setData($tab_url, true);
             $this->getData()->addField($field);
-
         }
     }
 
@@ -152,6 +151,34 @@ class GoodsEditor extends Grid {
         return $result;
     }
 
+    protected function setDataDescription(DataDescription $dd) {
+        if ($this->getState() == 'save') {
+            if (!$dd->getFieldDescriptionByName('currency_id')) {
+                $fd = new FieldDescription('currency_id');
+                $fd->setProperty('tableName', $this->getTableName());
+                $dd->addFieldDescription($fd);
+            }
+        }
+        parent::setDataDescription($dd);
+    }
+
+    protected function createDataDescription() {
+        $result = parent::createDataDescription();
+        if (in_array($this->getState(), ['add', 'edit'])) {
+            if (!$fd = $result->getFieldDescriptionByName('currency_id')) {
+                $fd = new FieldDescription('currency_id');
+                $fd->setType(FieldDescription::FIELD_TYPE_SELECT);
+                $this->setProperty('tableName', $this->getTableName());
+                $fd->setMode(FieldDescription::FIELD_MODE_READ);
+                $fd->loadAvailableValues($this->dbh->select('SELECT c.currency_id, ct.currency_name, currency_shortname, currency_shortname_order  FROM shop_currencies c LEFT JOIN shop_currencies_translation ct ON (c.currency_id = ct.currency_id) AND (lang_id=%s) WHERE currency_is_active', $this->document->getLang()), 'currency_id', 'currency_name');
+                $result->addFieldDescription($fd);
+
+            }
+        }
+        return $result;
+    }
+
+
     protected function createData() {
         $result = parent::createData();
 
@@ -180,8 +207,7 @@ class GoodsEditor extends Grid {
                         'isLabel' => true,
                         'selected' => false
                     ]);
-                }
-                else {
+                } else {
                     $siteRoot = $root;
                 }
 
@@ -241,6 +267,13 @@ class GoodsEditor extends Grid {
             $b->setData($d);
             $b->build();
             $f = $result->getFieldByName('smap_id')->setData($b->getResult(), true);
+
+
+            if (!$f = $result->getFieldByName('currency_id')) {
+                $f = new Field('currency_id');
+                $f->setData($this->dbh->getScalar('shop_currencies', 'currency_id', ['currency_is_default' => true]), true);
+                $result->addField($f);
+            }
         }
 
         return $result;
@@ -306,6 +339,9 @@ class GoodsEditor extends Grid {
             $_POST[$this->getTableName()]['goods_segment'] = Translit::asURLSegment($_POST[$this->getTranslationTableName()][E()->getLanguage()->getDefault()]['goods_name']);
         }
 
+        if (empty($_POST[$this->getTableName()]['currency_id'])) {
+            $_POST[$this->getTableName()]['currency_id'] = $this->dbh->getScalar('shop_currencies', 'currency_id', ['currency_is_default' => true]);
+        }
         $goodsID = parent::saveData();
         $this->saveRelations($goodsID);
         $this->saveFeatureValues($goodsID);
@@ -350,4 +386,8 @@ class GoodsEditor extends Grid {
             $goodsID, $smapID
         );
     }
+}
+
+interface SampleGoodsEditor {
+
 }
