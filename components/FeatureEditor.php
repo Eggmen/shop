@@ -44,8 +44,11 @@ class FeatureEditor extends Grid {
 
     protected function createDataDescription() {
         $r = parent::createDataDescription();
-        if (($this->document->getRights() < ACCESS_FULL) && ($fd = $r->getFieldDescriptionByName('feature_site_multi'))) {
-            $fd->setType(FieldDescription::FIELD_TYPE_HIDDEN);
+        if (in_array($this->getState(), ['add', 'edit'])) {
+            $r->getFieldDescriptionByName('feature_smap_multi')->setProperty('tabName', $this->translate('TXT_CATEGORIES'));
+            if (($this->document->getRights() < ACCESS_FULL) && ($fd = $r->getFieldDescriptionByName('feature_site_multi'))) {
+                $fd->setType(FieldDescription::FIELD_TYPE_HIDDEN);
+            }
         }
         return $r;
     }
@@ -62,11 +65,17 @@ class FeatureEditor extends Grid {
         if ($fkKeyName == 'site_id') {
             //оставляем только те сайты где есть магазины
             if ($sites = E()->getSiteManager()->getSitesByTag('shop')) {
-                $filter = array_map(function ($site) {
+                $filter['share_sites.site_id'] = array_map(function ($site) {
                     return (string)$site;
                 }, $sites);
-                $filter['share_sites.site_id'] = $filter;
-                //$order['share_sites_translation.site_name'] = QAL::ASC;
+            }
+        }
+        if ($fkKeyName == 'smap_id') {
+            //оставляем только те сайты где есть магазины
+            if ($sites = E()->getSiteManager()->getSitesByTag('shop')) {
+                $filter['share_sitemap.site_id'] = array_map(function ($site) {
+                    return (string)$site;
+                }, $sites);
             }
         }
 
@@ -74,6 +83,20 @@ class FeatureEditor extends Grid {
             $result = $this->dbh->getForeignKeyData($fkTableName, $fkKeyName, $this->document->getLang(), $filter);
         }
 
+        if(isset($result[0]) && ($fkKeyName == 'smap_id')) {
+            $pages = [];
+            foreach($filter['share_sitemap.site_id'] as $siteID){
+                $map = E()->getMap($siteID);
+                foreach($map->getPagesByTag('catalogue') as $pageID){
+                    $pages[] = $pageID;
+                    $pages = array_merge($pages, array_keys($map->getChilds($pageID)));
+                }
+            }
+
+            $result[0] = array_filter($result[0], function($row) use($pages){
+               return in_array($row['smap_id'], $pages);
+            });
+        }
         return $result;
     }
 
