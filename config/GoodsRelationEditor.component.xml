@@ -7,7 +7,7 @@
         <fields>
             <field name="relation_id"/>
             <field name="goods_to_id"/>
-            <field name="relation_type_id"/>
+            <field name="relation_type"/>
         </fields>
         <toolbar>
             <control id="add" title="BTN_ADD" type="button" onclick="add"/>
@@ -27,7 +27,7 @@
 			<field name="goods_from_id"/>
 			<field name="goods_to_id" type="lookup" editor="Energine\shop\components\GoodsLookup"/>
 			<field name="session_id"/>
-			<field name="relation_type_id"/>
+			<field name="relation_type"/>
 		</fields>
 		<toolbar>
             <control id="save" title="BTN_SAVE" type="button" onclick="save"/>
@@ -56,7 +56,7 @@
 			<field name="goods_from_id"/>
 			<field name="goods_to_id" type="lookup" editor="Energine\shop\components\GoodsLookup"/>
 			<field name="session_id"/>
-			<field name="relation_type_id"/>
+			<field name="relation_type"/>
 		</fields>
 		<toolbar>
             <control id="save" title="BTN_SAVE" type="button" onclick="save"/>
