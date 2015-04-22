@@ -34,8 +34,7 @@ class DivisionEditor extends \Energine\share\components\DivisionEditor {
             // Для main убираем список значений в селекте, ни к чему он там
             if ($this->getState() !== self::DEFAULT_STATE_NAME) {
                 $params = $this->getStateParams(true);
-
-                if ($params) {
+                if (isset($params['site_id'])) {
                     $siteID = $params['site_id'];
                 } else {
                     $siteID = E()->getSiteManager()->getCurrentSite()->id;
