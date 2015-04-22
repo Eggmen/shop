@@ -7,3 +7,6 @@ span.currency_after {
 span.currency_before {
     padding-right: 5px;
 }
+.smap_features ul{
+    list-style: none;
+}

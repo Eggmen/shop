@@ -84,18 +84,23 @@ class FeatureEditor extends Grid {
         }
 
         if(isset($result[0]) && ($fkKeyName == 'smap_id')) {
-            $pages = [];
+            $pages = $rootPages = [];
             foreach($filter['share_sitemap.site_id'] as $siteID){
                 $map = E()->getMap($siteID);
                 foreach($map->getPagesByTag('catalogue') as $pageID){
                     $pages[] = $pageID;
                     $pages = array_merge($pages, array_keys($map->getChilds($pageID)));
+                    $rootPages[] = $pageID;
                 }
             }
 
             $result[0] = array_filter($result[0], function($row) use($pages){
                return in_array($row['smap_id'], $pages);
             });
+            $result[0] = array_map(function($row) use ($rootPages){
+                if(in_array($row['smap_id'], $rootPages)) $row['root'] = E()->getSiteManager()->getSiteByID($row['site_id'])->name;
+                return $row;
+            }, $result[0]);
         }
         return $result;
     }

@@ -113,4 +113,38 @@
             </xsl:if>
         </div>
     </xsl:template>
+
+    <xsl:template match="field[@name='feature_smap_multi' and ancestor::component[@class='FeatureEditor']]" mode="field_content">
+        <div class="control smap_features" id="control_{@language}_{@name}">
+            <xsl:variable name="OPTIONS" select="options/option"/>
+            <xsl:for-each select="$OPTIONS[@root]">
+                <xsl:sort select="@site_id"/>
+                <xsl:sort select="@smap_order_num" order="descending"/>
+                <xsl:if test="preceding::option/@root != @root">
+                    <h4><xsl:value-of select="@root"/></h4>
+                </xsl:if>
+                <h5><xsl:value-of select="."/></h5>
+                <xsl:call-template name="SMAP_FEATURE_TREE">
+                    <xsl:with-param name="NODES" select="$OPTIONS"/>
+                    <xsl:with-param name="CURRENT" select="."/>
+                </xsl:call-template>
+            </xsl:for-each>
+        </div>
+    </xsl:template>
+    smap_features
+    <xsl:template name="SMAP_FEATURE_TREE">
+        <xsl:param name="NODES"/>
+        <xsl:param name="CURRENT"/>
+        <ul>
+        <xsl:for-each select="$NODES[@smap_pid = $CURRENT/@id]">
+            <li>
+                <input id="{generate-id(.)}" type="checkbox" name="shop_features[feature_smap_multi][]" value="{@id}" class="checkbox">
+                    <xsl:if test="@selected"><xsl:attribute name="checked">checked</xsl:attribute></xsl:if>
+                </input>
+                <label for="{generate-id(.)}"><xsl:value-of select="."/></label>
+            </li>
+        </xsl:for-each>
+        </ul>
+    </xsl:template>
+
 </xsl:stylesheet>
