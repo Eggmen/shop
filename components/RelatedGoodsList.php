@@ -29,6 +29,7 @@ class RelatedGoodsList extends DBDataSet {
 		$this->bindComponent =
 			$this->document->componentManager->getBlockByName($this->getParam('bind'));
 		$this->setParam('recordsPerPage', false);
+		$this->setParam('active', false);
 	}
 
 	protected function defineParams() {
