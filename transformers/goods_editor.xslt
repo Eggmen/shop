@@ -131,7 +131,7 @@
             </xsl:for-each>
         </div>
     </xsl:template>
-    smap_features
+
     <xsl:template name="SMAP_FEATURE_TREE">
         <xsl:param name="NODES"/>
         <xsl:param name="CURRENT"/>
