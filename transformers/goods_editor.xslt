@@ -135,6 +135,8 @@
     <xsl:template name="SMAP_FEATURE_TREE">
         <xsl:param name="NODES"/>
         <xsl:param name="CURRENT"/>
+        
+        <xsl:if test="count($NODES[@smap_pid = $CURRENT/@id]) &gt; 0">
         <ul>
         <xsl:for-each select="$NODES[@smap_pid = $CURRENT/@id]">
             <li>
@@ -142,9 +144,14 @@
                     <xsl:if test="@selected"><xsl:attribute name="checked">checked</xsl:attribute></xsl:if>
                 </input>
                 <label for="{generate-id(.)}"><xsl:value-of select="."/></label>
+                <xsl:call-template name="SMAP_FEATURE_TREE">
+                    <xsl:with-param name="NODES" select="$NODES"/>
+                    <xsl:with-param name="CURRENT" select="."/>
+                </xsl:call-template>
             </li>
         </xsl:for-each>
         </ul>
+        </xsl:if>
     </xsl:template>
 
 </xsl:stylesheet>

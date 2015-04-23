@@ -89,7 +89,7 @@ class FeatureEditor extends Grid {
                 $map = E()->getMap($siteID);
                 foreach($map->getPagesByTag('catalogue') as $pageID){
                     $pages[] = $pageID;
-                    $pages = array_merge($pages, array_keys($map->getChilds($pageID)));
+                    $pages = array_merge($pages, array_keys($map->getTree()->getNodeById($pageID)->asList()));
                     $rootPages[] = $pageID;
                 }
             }
