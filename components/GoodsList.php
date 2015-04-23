@@ -49,6 +49,7 @@ class GoodsList extends DBDataSet {
         parent::__construct($name, $params);
 
         $this->setTableName('shop_goods');
+        $this->setParam('onlyCurrentLang', true);
         $this->setOrder(['goods_price' => QAL::ASC]);
         $this->div_feature_ids = $this->getDivisionFeatureIds();
 
@@ -62,8 +63,18 @@ class GoodsList extends DBDataSet {
 
     }
 
-    protected function createBuilder(){
+    protected function createBuilder() {
         return new SimpleBuilder();
+    }
+
+    protected function defineParams() {
+        return array_merge(
+            parent::defineParams(),
+            [
+                'recursive' => false,
+                'active' => true
+            ]
+        );
     }
 
     /**
@@ -227,10 +238,14 @@ class GoodsList extends DBDataSet {
      * @return string
      */
     protected function getFilterWhereConditions() {
+        if (!$this->getParam('recursive')) {
+            $result = ['smap_id' => sprintf('(smap_id=%d)', $this->document->getId())];
+        } else {
+            $result = [
+                'smap_id' => sprintf('(smap_id IN(%s))', implode(',', array_merge([$id = $this->document->getID()], array_keys(E()->getMap()->getDescendants($id)))))
+            ];
+        }
 
-        $result = [
-            'smap_id' => sprintf('(smap_id=%d)', $this->document->getId())
-        ];
 
         $filter_data = $this->filter_data;
         if ($filter_data) {

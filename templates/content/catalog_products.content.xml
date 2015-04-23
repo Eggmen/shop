@@ -17,7 +17,6 @@
         <!-- сортировка -->
         <component name="goodsSort" class="Energine\shop\components\GoodsSort">
             <params>
-                <param name="active">0</param>
                 <!--<param name="config">site/modules/main/config/DivanGoodsSort.component.xml</param>-->
                 <param name="bind">goodsList</param>
             </params>
@@ -26,7 +25,6 @@
         <!-- список всех разделов магазина с большими иконками и цветами -->
         <component name="goodsList" class="Energine\shop\components\GoodsList">
             <params>
-                <param name="active">1</param>
                 <param name="tableName">shop_goods_view</param>
                 <!--<param name="config">site/modules/main/config/DivanGoodsList.component.xml</param>-->
             </params>
