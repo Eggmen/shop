@@ -32,7 +32,7 @@ class GoodsFilter extends DataSet {
         if ($fd = $this->getDataDescription()->getFieldDescriptionByName('price')) {
 
             $fd->setType(FieldDescription::FIELD_TYPE_CUSTOM);
-            $fd->setProperty('title', $this->translate('TXT_PRICE'));
+            $fd->setProperty('title', $this->translate('FILTER_PRICE'));
             $fd->setProperty('subtype', FeatureFieldAbstract::FEATURE_FILTER_TYPE_RANGE);
 
             /*$min = ceil( $this -> dbh -> getScalar(
@@ -85,7 +85,9 @@ class GoodsFilter extends DataSet {
             if ($div_feature_ids) {
                 foreach ($div_feature_ids as $feature_id) {
                     $feature = FeatureFieldFactory::getField($feature_id);
+
                     if ($feature->isActive() and $feature->isFilter()) {
+
                         $filter_data = isset($this->filter_data['features'][$feature->getFilterFieldName()]) ? $this->filter_data['features'][$feature->getFilterFieldName()] : false;
                         $this->getDataDescription()->addFieldDescription($feature->getFilterFieldDescription($filter_data));
                         $this->getData()->addField($feature->getFilterField($filter_data));
@@ -119,6 +121,7 @@ class GoodsFilter extends DataSet {
     protected function buildProducersFilter() {
         if ($fd = $this->getDataDescription()->getFieldDescriptionByName('producers')) {
             $fd->setType(FieldDescription::FIELD_TYPE_MULTI);
+            $fd->setProperty('title', 'FILTER_PRODUCERS');
             $fd->loadAvailableValues($this->dbh->select('SELECT p.producer_id, producer_name FROM shop_producers p LEFT JOIN shop_producers_translation pt ON(p.producer_id=pt.producer_id) AND (lang_id=%s) WHERE p.producer_id IN (SELECT producer_id FROM shop_producers2sites WHERE site_id=%s)', $this->document->getLang(), E()->getSiteManager()->getCurrentSite()->id), 'producer_id', 'producer_name');
         }
     }

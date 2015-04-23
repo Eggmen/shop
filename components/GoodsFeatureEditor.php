@@ -17,6 +17,7 @@ namespace Energine\shop\components;
 
 use Energine\share\components\Grid, Energine\share\gears\QAL;
 use Energine\share\gears\DataDescription;
+use Energine\share\gears\Field;
 use Energine\share\gears\FieldDescription;
 use Energine\shop\gears\FeatureFieldAbstract;
 use Energine\shop\gears\FeatureFieldFactory;
@@ -193,6 +194,7 @@ class GoodsFeatureEditor extends Grid {
     protected function edit() {
         parent::edit();
 
+
         $data = $this->getData();
         $dd = $this->getDataDescription();
         $fd = $dd->getFieldDescriptionByName('fpv_data');
@@ -201,11 +203,21 @@ class GoodsFeatureEditor extends Grid {
         $fpv_data = $data->getFieldByName('fpv_data')->getRowData(0);
 
         $feature = FeatureFieldFactory::getField($feature_id, $fpv_data);
-
         if ($feature) {
             $feature->modifyFormFieldDescription($dd, $fd);
             $field = $data->getFieldByName('fpv_data');
             $feature->modifyFormField($field);
+
+            $fd = new FieldDescription('feature_name');
+            $fd->setType(FieldDescription::FIELD_TYPE_STRING);
+            $fd->setMode(FieldDescription::FIELD_MODE_READ);
+            $fd->setProperty('tabName', E()->getLanguage()->getNameByID(E()->getLanguage()->getCurrent()));
+            $dd->addFieldDescription($fd, DataDescription::FIELD_POSITION_AFTER, 'feature_id');
+
+            $f= new Field('feature_name');
+            $f->setData(($feature->getTitle())?$feature->getTitle():$feature->getName(), true);
+            $data->addField($f);
+
         } else {
             // unknown feature type
             $fd->setType(FieldDescription::FIELD_TYPE_HIDDEN);

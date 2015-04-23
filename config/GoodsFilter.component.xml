@@ -7,7 +7,7 @@
 		<fields>
 			<field name="price"/>
 			<field name="features"/>
-			<field name="producers" title="FILTER_PRODUCERS"/>
+			<field name="producers"/>
 		</fields>
 		<toolbar>
 			<control id="filter" title="BTN_FILTER" type="button" onclick="filter"/>

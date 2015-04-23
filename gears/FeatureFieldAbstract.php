@@ -224,7 +224,9 @@ class FeatureFieldAbstract extends Object {
 
     public function getFilterFieldDescription($filter_data = false) {
         $fd = new FieldDescription($this->getFilterFieldName());
-        $fd->setProperty('title', $this->data['feature_title']);
+
+        $fd->setProperty('title', ($this->data['feature_title'])?$this->data['feature_title']:$this->data['feature_name']);
+
         $fd->setProperty('group_id', $this->data['group_id']);
         $fd->setProperty('group_title', $this->data['group_name']);
         $fd->setProperty('feature_id', $this->getFeatureId());
