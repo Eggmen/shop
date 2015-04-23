@@ -22,12 +22,22 @@ var FeatureForm = new Class({
         }
 
 		if (feature_type = this.componentElement.getElementById('feature_type')) {
-			if (['OPTION','MULTIOPTION','VARIANT'].indexOf(feature_type.get('value')) >= 0) {
+
+			// поиск индекса вкладки с перечисляемыми значениями
+			var tabs = this.tabPane.getTabs();
+			var tabIndex = null;
+			tabs.each(function(t, idx) {
+				if (t.hasAttribute('data-src') && t.getAttribute('data-src').indexOf('feature') != -1) {
+					tabIndex = idx;
+				}
+			});
+
+			if (tabIndex != null && ['OPTION','MULTIOPTION','VARIANT'].indexOf(feature_type.get('value')) >= 0) {
 				// показываем вкладку Перечисляемые значения
-				//console.log('show options for ' + feature_type.get('value'));
+				this.tabPane.enableTab(tabIndex);
 			} else {
 				// прячем вкладку Перечисляемые значения
-				//console.log('hide options for ' + feature_type.get('value'));
+				this.tabPane.disableTab(tabIndex);
 			}
 		}
     }
