@@ -470,13 +470,16 @@ class GoodsList extends DBDataSet {
 				$feature = FeatureFieldFactory::getField($feature_id, $fpv_data);
 
 				$images = array();
-				if ($feature->getType() == FeatureFieldAbstract::FEATURE_TYPE_MULTIOPTION) {
+				$view_values = array();
+				if ($feature->getType() == FeatureFieldAbstract::FEATURE_TYPE_MULTIOPTION or
+					$feature->getType() == FeatureFieldAbstract::FEATURE_TYPE_VARIANT) {
 					$options = $feature->getOptions();
 					$values = $feature->getValue();
 					foreach ($values as $value) {
 						if (!empty($options[$value]['path'])) {
 							$images[$value] = $options[$value]['path'];
 						}
+						$view_values[$value] = $options[$value]['value'];
 					}
 				}
 
@@ -489,6 +492,7 @@ class GoodsList extends DBDataSet {
 					'feature_value' => (string) $feature,
 					'group_id' => $feature -> getGroupId(),
 					'group_title' => $feature -> getGroupName(),
+					'feature_values' => $view_values,
 					'feature_images' => $images
 				);
 			}
@@ -526,6 +530,10 @@ class GoodsList extends DBDataSet {
 			$dataDescription->addFieldDescription($ffd);
 
 			$ffd = new FieldDescription('feature_images');
+			$ffd->setType(FieldDescription::FIELD_TYPE_TEXTBOX_LIST);
+			$dataDescription->addFieldDescription($ffd);
+
+			$ffd = new FieldDescription('feature_values');
 			$ffd->setType(FieldDescription::FIELD_TYPE_TEXTBOX_LIST);
 			$dataDescription->addFieldDescription($ffd);
 
