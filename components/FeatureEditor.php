@@ -45,7 +45,7 @@ class FeatureEditor extends Grid {
     protected function createDataDescription() {
         $r = parent::createDataDescription();
         if (in_array($this->getState(), ['add', 'edit'])) {
-            $r->getFieldDescriptionByName('feature_smap_multi')->setProperty('tabName', $this->translate('TXT_CATEGORIES'));
+            $r->getFieldDescriptionByName('feature_smap_multi')->setProperty('tabName', 'TXT_CATEGORIES');
             if (($this->document->getRights() < ACCESS_FULL) && ($fd = $r->getFieldDescriptionByName('feature_site_multi'))) {
                 $fd->setType(FieldDescription::FIELD_TYPE_HIDDEN);
             }

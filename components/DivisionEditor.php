@@ -54,6 +54,7 @@ class DivisionEditor extends \Energine\share\components\DivisionEditor {
         if (in_array($this->getState(), ['add', 'edit'])) {
             if ($fd = $result->getFieldDescriptionByName('smap_features_multi')) {
                 $groupsData = E()->Utils->reindex($this->dbh->select('SELECT g.group_id, group_name FROM shop_feature_groups g LEFT JOIN shop_feature_groups_translation USING (group_id) WHERE group_is_active and lang_id = %s', $this->document->getLang()), 'group_id', true);
+                var_dump($fd->getAvailableValues());
                 foreach ($fd->getAvailableValues() as &$data) {
                     $data['attributes']['group_name'] = $groupsData[$data['attributes']['group_id']]['group_name'];
                 }
