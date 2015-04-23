@@ -103,7 +103,8 @@ class GoodsFeatureEditor extends Grid {
 
         if ($data and is_array($data) and $this->getState() == 'save') {
             $feature = FeatureFieldFactory::getField($data[0]['feature_id']);
-            if ($feature and $feature->getType() == FeatureFieldAbstract::FEATURE_TYPE_MULTIOPTION) {
+            if ($feature and $feature->getType() == FeatureFieldAbstract::FEATURE_TYPE_MULTIOPTION or
+				$feature and $feature->getType() == FeatureFieldAbstract::FEATURE_TYPE_VARIANT) {
                 foreach ($data as $idx => $row) {
                     if (isset($row['fpv_data']) and is_array($row['fpv_data'])) {
                         $data[$idx]['fpv_data'] = implode(',', $data[$idx]['fpv_data']);
