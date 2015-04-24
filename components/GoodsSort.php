@@ -5,12 +5,14 @@ namespace Energine\shop\components;
 use Energine\share\components\DataSet;
 
 class GoodsSort extends DataSet {
+
     protected $sort_data = [];
 
     public function __construct($name, array $params = NULL) {
         $params['active'] = false;
         parent::__construct($name, $params);
-        $this->setParam('active', false);
+
+
         $this->setTitle($this->translate('TXT_SORT'));
     }
 
@@ -29,6 +31,8 @@ class GoodsSort extends DataSet {
 
     public function main() {
         $goodsList = E()->getDocument()->componentManager->getBlockByName($this->getParam('bind'));
+        if($goodsList->getState() == 'view') $this->disable();
+
         $this->sort_data = $goodsList->getSortData();
         $this->prepare();
         $this->setType(self::COMPONENT_TYPE_FORM);

@@ -6,14 +6,17 @@
 	<xsl:template match="component[@name='goodsList']">
 		<div class="goods_list clearfix">
 			<xsl:for-each select="recordset/record">
+                <xsl:variable name="URL" ><xsl:value-of select="$BASE"/><xsl:value-of select="$LANG_ABBR"/><xsl:value-of
+                        select="field[@name='smap_id']"/>view/<xsl:value-of
+                        select="field[@name='goods_segment']"/>/</xsl:variable>
 				<div class="goods_block">
 					<div class="goods_image">
-						<a href="{field[@name='goods_segment']}">
+						<a href="{$URL}">
 							<img src="{$BASE}{field[@name='attachments']/recordset/record[1]/field[@name='file']}" alt="{field[@name='attachments']/recordset/record[1]/field[@name='title']}" />
 						</a>
 					</div>
 					<div class="goods_name">
-						<a href="{field[@name='goods_segment']}"><xsl:value-of select="field[@name='goods_name']" /></a>
+						<a href="{$URL}"><xsl:value-of select="field[@name='goods_name']" /></a>
 					</div>
 					<div class="goods_status available">
 						<xsl:value-of select="field[@name='sell_status_id']/options/option[@selected]" />

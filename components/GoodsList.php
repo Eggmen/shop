@@ -19,33 +19,28 @@ class GoodsList extends DBDataSet {
 
     /**
      * Массив feature_id текущего раздела
-     *
      * @var array
      */
     protected $div_feature_ids = [];
 
     /**
      * Массив с данными фильтров
-     *
      * @var array
      */
     protected $filter_data = [];
 
     /**
      * Массив с данными для сортировки
-     *
      * @var array
      */
     protected $sort_data = [];
 
     /**
      * Конструктор
-     *
      * @param string $name
      * @param array $params
      */
-    public function __construct($name, array $params = NULL) {
-
+    public function __construct($name, array $params = null) {
         parent::__construct($name, $params);
 
         $this->setTableName('shop_goods');
@@ -72,14 +67,13 @@ class GoodsList extends DBDataSet {
             parent::defineParams(),
             [
                 'recursive' => false,
-                'active' => true
+                'active'    => true
             ]
         );
     }
 
     /**
      * Возвращает массив идентификаторов характеристик для данного раздела
-     *
      * @return array
      */
     protected function getDivisionFeatureIds() {
@@ -95,33 +89,60 @@ class GoodsList extends DBDataSet {
     /**
      * Парсит и подготавливает поле и направление сортировки из request'а
      * Сохраняет значения сортировки в сессии
-     *
      * @return array
      */
     public function getSortData() {
         if (isset($_REQUEST['sort'])) {
             $field = isset($_REQUEST['sort']['field']) ? $_REQUEST['sort']['field'] : 'price';
-            if (!in_array($field, ['price', 'name'])) $field = 'price';
+            if (!in_array($field, ['price', 'name'])) {
+                $field = 'price';
+            }
             $dir = isset($_REQUEST['sort']['dir']) ? $_REQUEST['sort']['dir'] : 'asc';
-            if (!in_array($dir, ['asc', 'desc'])) $dir = 'asc';
+            if (!in_array($dir, ['asc', 'desc'])) {
+                $dir = 'asc';
+            }
             $_SESSION['goods_sort'] = [
                 'field' => $field,
-                'dir' => $dir
+                'dir'   => $dir
             ];
+
             return $_SESSION['goods_sort'];
         } elseif (isset($_SESSION['goods_sort'])) {
             return $_SESSION['goods_sort'];
         } else {
             return [
                 'field' => 'price',
-                'dir' => 'asc'
+                'dir'   => 'asc'
             ];
         }
     }
 
+    protected function loadDataDescription() {
+        $result = parent::loadDataDescription();
+        if (isset($result['smap_id'])) {
+            $result['smap_id']['key'] = false;
+        }
+
+        return $result;
+    }
+
+    protected function loadData() {
+        $result = parent::loadData();
+        $map = E()->getMap();
+        $result = array_map(function ($row) use ($map){
+            if (isset($row['smap_id'])) {
+                $row['smap_id'] = $map->getURLByID($row['smap_id']);
+            }
+            return $row;
+        }, $result);
+
+
+        return $result;
+    }
+
+
     /**
      * Подготавливает условие сортировки датасета на основании внешних данных sort_data
-     *
      * @return array
      */
     protected function getSortConditions() {
@@ -155,7 +176,6 @@ class GoodsList extends DBDataSet {
      * Получает из request'а данные фильтра, сохраняет их в сессии
      * для дальнейшего использования
      * Возвращает массив фильтров (ключи price, features)
-     *
      * @return array
      */
     public function getFilterData() {
@@ -182,7 +202,7 @@ class GoodsList extends DBDataSet {
                 if ($price_begin || $price_end) {
                     $result['price'] = [
                         'begin' => $price_begin,
-                        'end' => $price_end
+                        'end'   => $price_end
                     ];
                 }
 
@@ -205,8 +225,8 @@ class GoodsList extends DBDataSet {
                             $end = (!empty($filter[$feature_name]['end'])) ? (float)$filter[$feature_name]['end'] : 0;
                             $result['features'][$feature_name] = [
                                 'feature' => $feature,
-                                'begin' => $begin,
-                                'end' => $end
+                                'begin'   => $begin,
+                                'end'     => $end
                             ];
                             break;
                         // checkbox group (multiple values)
@@ -215,7 +235,7 @@ class GoodsList extends DBDataSet {
                             if (!empty($selected_ids)) {
                                 $result['features'][$feature_name] = [
                                     'feature' => $feature,
-                                    'values' => $selected_ids
+                                    'values'  => $selected_ids
                                 ];
                             }
                             break;
@@ -226,7 +246,7 @@ class GoodsList extends DBDataSet {
                             if (!empty($selected_id)) {
                                 $result['features'][$feature_name] = [
                                     'feature' => $feature,
-                                    'value' => $selected_id
+                                    'value'   => $selected_id
                                 ];
                             }
                             break;
@@ -235,12 +255,12 @@ class GoodsList extends DBDataSet {
                 }
             }
         }
+
         return $result;
     }
 
     /**
      * Получение значения WHERE для фильтра (внешняя фильтрация по цене / характеристикам)
-     *
      * @return string
      */
     protected function getFilterWhereConditions() {
@@ -249,14 +269,16 @@ class GoodsList extends DBDataSet {
             $documentIDs = $this->document->getId();
 
         } else {
-            $documentIDs = array_merge([$id = $this->document->getID()], array_keys(E()->getMap()->getDescendants($id)));
+            $documentIDs = array_merge([$id = $this->document->getID()],
+                array_keys(E()->getMap()->getDescendants($id)));
         }
         $result = ['smap_id' => sprintf('(smap_id IN (%s))', implode(',', $documentIDs))];
 
         $filter_data = $this->filter_data;
         if ($filter_data) {
             if (isset($filter_data['price'])) {
-                $result['price'] = sprintf("(goods_price between %d and %d)", $filter_data['price']['begin'], $filter_data['price']['end']);
+                $result['price'] = sprintf("(goods_price between %d and %d)", $filter_data['price']['begin'],
+                    $filter_data['price']['end']);
             }
             if (isset($filter_data['producers']) && !empty($filter_data['producers'])) {
 
@@ -275,7 +297,9 @@ class GoodsList extends DBDataSet {
                         case FeatureFieldAbstract::FEATURE_FILTER_TYPE_RANGE:
                             $option_ids = [];
                             $options = $feature->getOptions();
-                            if (empty($options)) continue;
+                            if (empty($options)) {
+                                continue;
+                            }
 
                             foreach ($options as $option_id => $option_data) {
                                 if ((float)$option_data['value'] >= $filter_feature['begin']
@@ -310,7 +334,9 @@ class GoodsList extends DBDataSet {
                         case FeatureFieldAbstract::FEATURE_FILTER_TYPE_CHECKBOXGROUP:
                             $option_ids = [];
                             $options = $feature->getOptions();
-                            if (empty($options)) continue;
+                            if (empty($options)) {
+                                continue;
+                            }
                             foreach ($feature->getOptions() as $option_id => $option_data) {
                                 if (in_array($option_id, $filter_feature['values'])) {
                                     $option_ids[] = $option_id;
@@ -381,29 +407,25 @@ class GoodsList extends DBDataSet {
                 }
             }
         }
+
         return ($result) ? implode(' AND ', $result) : '';
     }
 
     /**
      * Переопределенный метод вывода списка
      * Выводит также аттачменты и теги для товаров
-     *
      * @throws SystemException
      */
     protected function main() {
-
         parent::main();
-
         // attachments in list
         $this->buildAttachments();
-
         // tags in list
         $this->buildTags();
     }
 
     /**
      * Прикрепляет аттачменты к record'ам (если есть фейковое поле attachments в конфиге)
-     *
      * @throws SystemException
      */
     protected function buildAttachments() {
@@ -414,14 +436,14 @@ class GoodsList extends DBDataSet {
                 $this->getTableName()
             );
             $am->createFieldDescription();
-            if ($f = $this->getData()->getFieldByName('goods_id'))
+            if ($f = $this->getData()->getFieldByName('goods_id')) {
                 $am->createField('goods_id', true, $f->getData());
+            }
         }
     }
 
     /**
      * Прикрепляет теги к record'ам (если есть фейковое поле tags в конфиге)
-     *
      * @throws SystemException
      */
     protected function buildTags() {
@@ -434,11 +456,9 @@ class GoodsList extends DBDataSet {
 
     /**
      * Переопределенный метод просмотра товара
-     *
      * @throws SystemException
      */
     protected function view() {
-
         $this->setType(self::COMPONENT_TYPE_FORM);
 
         $params = $this->getStateParams(true);
@@ -492,10 +512,11 @@ class GoodsList extends DBDataSet {
                 $id
             );
 
-            if ($fpv)
+            if ($fpv) {
                 foreach ($fpv as $row) {
                     $fpv_indexed[$row['goods_id']][$row['feature_id']] = $row;
                 }
+            }
 
             $feature_data = [];
 
@@ -520,16 +541,16 @@ class GoodsList extends DBDataSet {
                 }
 
                 $feature_data[] = [
-                    'feature_id' => $feature->getFeatureId(),
-                    'feature_name' => $feature->getName(),
-                    'feature_title' => $feature->getTitle(),
+                    'feature_id'      => $feature->getFeatureId(),
+                    'feature_name'    => $feature->getName(),
+                    'feature_title'   => $feature->getTitle(),
                     'feature_sysname' => $feature->getSysName(),
-                    'feature_type' => $feature->getType(),
-                    'feature_value' => (string)$feature,
-                    'group_id' => $feature->getGroupId(),
-                    'group_title' => $feature->getGroupName(),
-                    'feature_values' => $view_values,
-                    'feature_images' => $images
+                    'feature_type'    => $feature->getType(),
+                    'feature_value'   => (string)$feature,
+                    'group_id'        => $feature->getGroupId(),
+                    'group_title'     => $feature->getGroupName(),
+                    'feature_values'  => $view_values,
+                    'feature_images'  => $images
                 ];
             }
 
@@ -607,7 +628,9 @@ class GoodsList extends DBDataSet {
                 $id,
                 $this->document->getLang()
             );
-            if (!is_array($promotions_data)) $promotions_data = [];
+            if (!is_array($promotions_data)) {
+                $promotions_data = [];
+            }
 
             $localData->load($promotions_data);
 
@@ -645,7 +668,6 @@ class GoodsList extends DBDataSet {
 
     /**
      * Переопределенный метод поиска записи товара по id или сегменту
-     *
      * @param string $id идентификатор или сегмент товара
      * @param string|bool $fieldName имя поля (по-умолчанию - PK)
      * @return int|bool вовзращает id найденной записи или false
@@ -654,12 +676,18 @@ class GoodsList extends DBDataSet {
     protected function recordExists($id, $fieldName = false) {
 
         // если не задан ID - в лес
-        if (empty($id)) return false;
+        if (empty($id)) {
+            return false;
+        }
 
         // попытка получить запись по ID
-        if (!$fieldName) $fieldName = $this->getPK();
+        if (!$fieldName) {
+            $fieldName = $this->getPK();
+        }
         $res = $this->dbh->select($this->getTableName(), [$this->getPK()], [$fieldName => $id]);
-        if ($res) return $res[0][$this->getPK()];
+        if ($res) {
+            return $res[0][$this->getPK()];
+        }
 
         if (empty($res)) {
             // попытка получить запись по сегменту

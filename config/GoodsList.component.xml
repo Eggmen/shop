@@ -7,13 +7,12 @@
 		</uri_patterns>
 		<fields>
 			<field name="goods_id"/>
+			<field name="smap_id"/>
 			<field name="goods_name"/>
 			<field name="goods_code"/>
 			<field name="goods_segment"/>
-			<field name="goods_type"/>
 			<field name="goods_price"/>
-			<field name="goods_price_old"/>
-			<field name="sell_status_id"/>
+			<field name="sell_status_id" type="lookup"/>
 			<field name="attachments"/>
 			<field name="tags"/>
 		</fields>
@@ -25,12 +24,10 @@
 		<fields>
 			<field name="goods_id"/>
 			<field name="goods_name"/>
+			<field name="goods_description_rtf"/>
 			<field name="goods_code"/>
-			<field name="goods_segment"/>
-			<field name="goods_type"/>
+            <field name="sell_status_id" type="lookup"/>
 			<field name="goods_price"/>
-			<field name="goods_price_old"/>
-			<field name="sell_status_id"/>
 			<field name="attachments"/>
 			<field name="features"/>
 			<field name="tags"/>
