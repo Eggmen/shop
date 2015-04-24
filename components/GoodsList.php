@@ -179,10 +179,16 @@ class GoodsList extends DBDataSet {
             if (isset($filter['price'])) {
                 $price_begin = (!empty($filter['price']['begin'])) ? (float)$filter['price']['begin'] : 0;
                 $price_end = (!empty($filter['price']['end'])) ? (float)$filter['price']['end'] : 0;
-                $result['price'] = [
-                    'begin' => $price_begin,
-                    'end' => $price_end
-                ];
+                if ($price_begin || $price_end) {
+                    $result['price'] = [
+                        'begin' => $price_begin,
+                        'end' => $price_end
+                    ];
+                }
+
+            }
+            if (isset($filter['producers']) && !empty($filter['producers'])) {
+                $result['producers'] = $filter['producers'];
             }
 
             // features filter
@@ -238,20 +244,25 @@ class GoodsList extends DBDataSet {
      * @return string
      */
     protected function getFilterWhereConditions() {
-        if (!$this->getParam('recursive')) {
-            $result = ['smap_id' => sprintf('(smap_id=%d)', $this->document->getId())];
-        } else {
-            $result = [
-                'smap_id' => sprintf('(smap_id IN(%s))', implode(',', array_merge([$id = $this->document->getID()], array_keys(E()->getMap()->getDescendants($id)))))
-            ];
-        }
 
+        if (!$this->getParam('recursive')) {
+            $documentIDs = $this->document->getId();
+
+        } else {
+            $documentIDs = array_merge([$id = $this->document->getID()], array_keys(E()->getMap()->getDescendants($id)));
+        }
+        $result = ['smap_id' => sprintf('(smap_id IN (%s))', implode(',', $documentIDs))];
 
         $filter_data = $this->filter_data;
         if ($filter_data) {
             if (isset($filter_data['price'])) {
                 $result['price'] = sprintf("(goods_price between %d and %d)", $filter_data['price']['begin'], $filter_data['price']['end']);
             }
+            if (isset($filter_data['producers']) && !empty($filter_data['producers'])) {
+
+                $result['producers'] = sprintf('(producer_id IN (%s))', implode(',', $filter_data['producers']));
+            }
+
             if (isset($filter_data['features'])) {
                 foreach ($filter_data['features'] as $filter_feature) {
 
@@ -263,7 +274,10 @@ class GoodsList extends DBDataSet {
                         // попадает в выбранный диапазон float значений
                         case FeatureFieldAbstract::FEATURE_FILTER_TYPE_RANGE:
                             $option_ids = [];
-                            foreach ($feature->getOptions() as $option_id => $option_data) {
+                            $options = $feature->getOptions();
+                            if (empty($options)) continue;
+
+                            foreach ($options as $option_id => $option_data) {
                                 if ((float)$option_data['value'] >= $filter_feature['begin']
                                     and (float)$option_data['value'] <= $filter_feature['end']
                                 ) {
@@ -275,10 +289,10 @@ class GoodsList extends DBDataSet {
 								from shop_goods g
 								join shop_feature2good_values fv on g.goods_id = fv.goods_id and fv.feature_id = %s
 								join shop_feature2good_values_translation fvt on fvt.fpv_id = fv.fpv_id and fvt.lang_id = %s
-								where g.smap_id = %s and fvt.fpv_data in (%s)',
+								where g.smap_id in( %s) and fvt.fpv_data in (%s)',
                                 $feature->getFeatureId(),
                                 $this->document->getLang(),
-                                $this->document->getId(),
+                                $documentIDs,
                                 $option_ids
                             );
 
@@ -287,7 +301,7 @@ class GoodsList extends DBDataSet {
                             }
 
                             $result[$feature->getFilterFieldName()] =
-                                sprintf("(goods_id in (%s))", implode(',', $goods_ids));
+                                sprintf("(shop_goods.goods_id in (%s))", implode(',', $goods_ids));
                             break;
 
                         // множественный выбор (check box group)
@@ -295,6 +309,8 @@ class GoodsList extends DBDataSet {
                         // на выходе получаем фильтр по goods_id
                         case FeatureFieldAbstract::FEATURE_FILTER_TYPE_CHECKBOXGROUP:
                             $option_ids = [];
+                            $options = $feature->getOptions();
+                            if (empty($options)) continue;
                             foreach ($feature->getOptions() as $option_id => $option_data) {
                                 if (in_array($option_id, $filter_feature['values'])) {
                                     $option_ids[] = $option_id;
@@ -314,10 +330,10 @@ class GoodsList extends DBDataSet {
 									from shop_goods g
 									join shop_feature2good_values fv on g.goods_id = fv.goods_id and fv.feature_id = %s
 									join shop_feature2good_values_translation fvt on fvt.fpv_id = fv.fpv_id and fvt.lang_id = %s
-									where g.smap_id = %s ' . $where,
+									where g.smap_id IN (%s) ' . $where,
                                     $feature->getFeatureId(),
                                     $this->document->getLang(),
-                                    $this->document->getId()
+                                    $documentIDs
                                 );
 
                                 if (empty($goods_ids)) {
@@ -325,7 +341,7 @@ class GoodsList extends DBDataSet {
                                 }
 
                                 $result[$feature->getFilterFieldName()] =
-                                    sprintf("(goods_id in (%s))", implode(',', $goods_ids));
+                                    sprintf("(shop_goods.goods_id in (%s))", implode(',', $goods_ids));
                             }
                             break;
 
@@ -338,16 +354,17 @@ class GoodsList extends DBDataSet {
                                     $option_ids[] = $option_id;
                                 }
                             }
+
                             if ($option_ids) {
                                 $goods_ids = $this->dbh->getColumn(
                                     'select distinct g.goods_id
 									from shop_goods g
 									join shop_feature2good_values fv on g.goods_id = fv.goods_id and fv.feature_id = %s
 									join shop_feature2good_values_translation fvt on fvt.fpv_id = fv.fpv_id and fvt.lang_id = %s
-									where g.smap_id = %s and fvt.fpv_data in (%s)',
+									where g.smap_id IN (%s) and fvt.fpv_data in (%s)',
                                     $feature->getFeatureId(),
                                     $this->document->getLang(),
-                                    $this->document->getId(),
+                                    $documentIDs,
                                     $option_ids
                                 );
 
@@ -356,7 +373,7 @@ class GoodsList extends DBDataSet {
                                 }
 
                                 $result[$feature->getFilterFieldName()] =
-                                    sprintf("(goods_id in (%s))", implode(',', $goods_ids));
+                                    sprintf("(shop_goods.goods_id in (%s))", implode(',', $goods_ids));
                             }
                             break;
                         // todo: обработка остальных типов фильтров

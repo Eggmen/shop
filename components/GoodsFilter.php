@@ -3,11 +3,11 @@
 namespace Energine\shop\components;
 
 use Energine\share\components\DataSet;
+use Energine\share\gears\Field;
 use Energine\share\gears\FieldDescription;
 use Energine\shop\gears\EmptyFormBuilder;
 use Energine\shop\gears\FeatureFieldAbstract;
 use Energine\shop\gears\FeatureFieldFactory;
-
 
 
 class GoodsFilter extends DataSet {
@@ -17,9 +17,10 @@ class GoodsFilter extends DataSet {
         parent::__construct($name, $params);
         $this->setParam('active', false);
         $this->setTitle($this->translate('TXT_FILTER'));
+
     }
 
-    protected function createBuilder(){
+    protected function createBuilder() {
         return new EmptyFormBuilder();
     }
 
@@ -108,7 +109,9 @@ class GoodsFilter extends DataSet {
 
         // получаем связанный с фильтром компонент
         $goodsList = E()->getDocument()->componentManager->getBlockByName($this->getParam('bind'));
-
+        /**
+         * @var GoodsList
+         */
         $this->filter_data = $goodsList->getFilterData();
 
         // если в конфиге задан фильтр по цене
@@ -126,10 +129,30 @@ class GoodsFilter extends DataSet {
 
     protected function buildProducersFilter() {
         if ($fd = $this->getDataDescription()->getFieldDescriptionByName('producers')) {
+
             $producers = $this->dbh->getColumn('SELECT DISTINCT producer_id  FROM shop_goods WHERE smap_id IN (%s)', array_merge([$this->document->getID()], array_keys(E()->getMap()->getTree()->getNodeById($this->document->getID())->asList())));
             $fd->setType(FieldDescription::FIELD_TYPE_MULTI);
             $fd->setProperty('title', 'FILTER_PRODUCERS');
             $fd->loadAvailableValues($this->dbh->select('SELECT p.producer_id, producer_name FROM shop_producers p LEFT JOIN shop_producers_translation pt ON(p.producer_id=pt.producer_id) AND (lang_id=%s) WHERE p.producer_id IN (%s)', $this->document->getLang(), $producers), 'producer_id', 'producer_name');
+            //inspect($this->filter_data);
+            if (isset($this->filter_data['producers']) && !empty($this->filter_data['producers'])) {
+                $f = new Field('producers');
+                $f->setData([$this->filter_data['producers']], true);
+                $this->getData()->addField($f);
+
+            }
+
         }
     }
+
+    public function build() {
+        foreach ($this->getDataDescription() as $fd) {
+            $fd->setProperty('tableName', 'goods_filter');
+            //   inspect($fd);
+        }
+        $result = parent::build();
+
+        return $result;
+    }
+
 }
