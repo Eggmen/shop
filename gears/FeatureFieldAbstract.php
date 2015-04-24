@@ -153,9 +153,9 @@ class FeatureFieldAbstract extends Object {
 				left join shop_feature_groups g on f.group_id = g.group_id
 				left join shop_feature_groups_translation gt on gt.group_id = g.group_id and gt.lang_id = %s
 				left join shop_features_translation ft
-				on ft.feature_id = f.feature_id and ft.lang_id = %s
+				on ft.feature_id = f.feature_id and ft.lang_id = %1$s
 				where f.feature_id = %s LIMIT 1',
-                E()->getDocument()->getLang(),
+
                 E()->getDocument()->getLang(),
                 $this->feature_id
             );
