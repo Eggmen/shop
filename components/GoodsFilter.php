@@ -4,8 +4,10 @@ namespace Energine\shop\components;
 
 use Energine\share\components\DataSet;
 use Energine\share\gears\FieldDescription;
+use Energine\shop\gears\EmptyFormBuilder;
 use Energine\shop\gears\FeatureFieldAbstract;
 use Energine\shop\gears\FeatureFieldFactory;
+
 
 
 class GoodsFilter extends DataSet {
@@ -15,6 +17,10 @@ class GoodsFilter extends DataSet {
         parent::__construct($name, $params);
         $this->setParam('active', false);
         $this->setTitle($this->translate('TXT_FILTER'));
+    }
+
+    protected function createBuilder(){
+        return new EmptyFormBuilder();
     }
 
     protected function defineParams() {
@@ -120,9 +126,10 @@ class GoodsFilter extends DataSet {
 
     protected function buildProducersFilter() {
         if ($fd = $this->getDataDescription()->getFieldDescriptionByName('producers')) {
+            $producers = $this->dbh->getColumn('SELECT DISTINCT producer_id  FROM shop_goods WHERE smap_id IN (%s)', array_merge([$this->document->getID()], array_keys(E()->getMap()->getTree()->getNodeById($this->document->getID())->asList())));
             $fd->setType(FieldDescription::FIELD_TYPE_MULTI);
             $fd->setProperty('title', 'FILTER_PRODUCERS');
-            $fd->loadAvailableValues($this->dbh->select('SELECT p.producer_id, producer_name FROM shop_producers p LEFT JOIN shop_producers_translation pt ON(p.producer_id=pt.producer_id) AND (lang_id=%s) WHERE p.producer_id IN (SELECT producer_id FROM shop_producers2sites WHERE site_id=%s)', $this->document->getLang(), E()->getSiteManager()->getCurrentSite()->id), 'producer_id', 'producer_name');
+            $fd->loadAvailableValues($this->dbh->select('SELECT p.producer_id, producer_name FROM shop_producers p LEFT JOIN shop_producers_translation pt ON(p.producer_id=pt.producer_id) AND (lang_id=%s) WHERE p.producer_id IN (%s)', $this->document->getLang(), $producers), 'producer_id', 'producer_name');
         }
     }
 }
