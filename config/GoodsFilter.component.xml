@@ -10,8 +10,8 @@
 			<field name="producers"/>
 		</fields>
 		<toolbar>
-			<control id="apply_filter" title="BTN_APPLY_FILTER" type="submit"/>
-			<control id="reset_filter" title="BTN_RESET_FILTER" type="submit"/>
+			<control id="apply" title="BTN_APPLY_FILTER" type="submit"/>
+			<control id="reset" title="BTN_RESET_FILTER" type="button"/>
 		</toolbar>
 	</state>
 </configuration>

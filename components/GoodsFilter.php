@@ -17,7 +17,6 @@ class GoodsFilter extends DataSet {
         parent::__construct($name, $params);
         $this->setParam('active', false);
         $this->setTitle($this->translate('TXT_FILTER'));
-
     }
 
     protected function createBuilder() {
@@ -105,6 +104,7 @@ class GoodsFilter extends DataSet {
     }
 
     public function main() {
+
         $this->prepare();
 
         // получаем связанный с фильтром компонент
@@ -112,6 +112,10 @@ class GoodsFilter extends DataSet {
         /**
          * @var GoodsList
          */
+        $this->setProperty('action', substr(array_reduce($goodsList->getSortData(), function ($p, $c) {
+                return $p . $c . '-';
+            }, 'sort-'), 0, -1) . '/');
+
         $this->filter_data = $goodsList->getFilterData();
 
         // если в конфиге задан фильтр по цене
@@ -147,7 +151,7 @@ class GoodsFilter extends DataSet {
 
     public function build() {
         foreach ($this->getDataDescription() as $fd) {
-            $fd->setProperty('tableName', 'goods_filter');
+            $fd->setProperty('tableName', 'f');
             //   inspect($fd);
         }
         $result = parent::build();

@@ -154,22 +154,10 @@ class GoodsList extends DBDataSet {
      * @return array
      */
     public function getFilterData() {
-
         $result = [];
-
-        // если пришел сброс фильтра - удаляем его из сессии
-        if (isset($_REQUEST['reset_filter'])) {
-            unset($_SESSION['goods_filter'][$this->document->getID()]);
-        } // если пришел признак применения фильтра - применяем
-        elseif (isset($_REQUEST['apply_filter'])) {
-            $_SESSION['goods_filter'][$this->document->getID()] = $_REQUEST['goods_filter'];
-        }
-
         // если фильтр взведен
-        if (!empty($_SESSION['goods_filter'][$this->document->getID()])) {
-
-            $filter = $_SESSION['goods_filter'][$this->document->getID()];
-
+        if (!empty($_REQUEST['f'])) {
+            $filter = $_REQUEST['f'];
             // price filter
             if (isset($filter['price'])) {
                 $price_begin = (!empty($filter['price']['begin'])) ? (float)$filter['price']['begin'] : 0;
@@ -394,8 +382,8 @@ class GoodsList extends DBDataSet {
     protected function main() {
         parent::main();
         $this->pager->setProperty('additional_url', substr(array_reduce($this->getSortData(), function ($p, $c) {
-            return $p . $c . '-';
-        }, 'sort-'),0,-1).'/');
+                return $p . $c . '-';
+            }, 'sort-'), 0, -1) . '/');
         // attachments in list
         $this->buildAttachments();
         // tags in list
@@ -415,7 +403,7 @@ class GoodsList extends DBDataSet {
             );
             $am->createFieldDescription();
             if ($f = $this->getData()->getFieldByName('goods_id')) {
-                $am->createField('goods_id', true, $f->getData());
+                $am->createField('goods_id', ($this->getType() == self::COMPONENT_TYPE_LIST), $f->getData());
             }
         }
     }

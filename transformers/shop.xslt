@@ -3,12 +3,13 @@
         xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
         version="1.0">
     <xsl:template match="component[@class='GoodsList' and @type='list']">
-        <div class="goods_list clearfix">
+
             <xsl:apply-templates/>
-        </div>
+
     </xsl:template>
 
     <xsl:template match="recordset[parent::component[@class='GoodsList' and @type='list']]">
+    <div class="goods_list clearfix">
         <xsl:for-each select="record">
             <xsl:variable name="URL">
                 <xsl:value-of select="$BASE"/><xsl:value-of select="$LANG_ABBR"/><xsl:value-of
@@ -41,7 +42,7 @@
                 </div>
             </div>
         </xsl:for-each>
-
+    </div>
     </xsl:template>
 
     <xsl:template match="component[@class='GoodsSort']">
@@ -49,15 +50,19 @@
         <xsl:variable name="TEMPLATE" select="@template"/>
         <xsl:variable name="RECORDS" select="recordset/record"/>
         <xsl:for-each select="$RECORDS/field[@name='field']/options/option">
-            <a href="{$BASE}{$LANG_ABBR}{$TEMPLATE}sort-{@id}-{$RECORDS/field[@name='dir']/options/option[not(@selected)]/@id}/{$GET}"><xsl:value-of select="."/><xsl:text disable-output-escaping="yes">&amp;nbsp;</xsl:text><xsl:value-of select="$RECORDS/field[@name='dir']/options/option[@selected]"/></a><xsl:if test="position()!=last()">
+            <a href="{$BASE}{$LANG_ABBR}{$TEMPLATE}sort-{@id}-{$RECORDS/field[@name='dir']/options/option[not(@selected)]/@id}/{$GET}"><xsl:value-of select="."/>
+                <xsl:if test="@selected">
+                    <xsl:text disable-output-escaping="yes">&amp;nbsp;</xsl:text><xsl:value-of
+                        select="$RECORDS/field[@name='dir']/options/option[@selected]"/>
+                </xsl:if>
+            </a><xsl:if test="position()!=last()">
             <xsl:text disable-output-escaping="yes">&amp;nbsp;|&amp;nbsp;</xsl:text>
         </xsl:if>
         </xsl:for-each>
     </xsl:template>
 
     <xsl:template match="component[@class='GoodsFilter']">
-        <form method="get" action="{@action}">
-            <input type="hidden" name="componentAction" value="{@componentAction}" id="componentAction"/>
+        <form method="get" action="{$BASE}{$LANG_ABBR}{@template}{@action}">
             <xsl:apply-templates/>
         </form>
     </xsl:template>
@@ -107,6 +112,10 @@
 			</div>
 		</div>
 	</xsl:template>
+
+    <xsl:template match="control[ancestor::component[@class='GoodsFilter']]">
+        <button id="{@id}" type="{@type}"><xsl:value-of select="@title"/></button>
+    </xsl:template>
 
 	<xsl:template match="component[@class='PageList' and @name='categoriesMenu']">
 		<div class="categories_list clearfix">
