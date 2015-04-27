@@ -3,7 +3,7 @@
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"  
     version="1.0">
 
-	<xsl:template match="component[@name='goodsList' and @componentAction='main']">
+	<xsl:template match="component[@class='GoodsList' and @type='list']">
 		<div class="goods_list clearfix">
 			<xsl:for-each select="recordset/record">
                 <xsl:variable name="URL" ><xsl:value-of select="$BASE"/><xsl:value-of select="$LANG_ABBR"/><xsl:value-of
@@ -12,7 +12,7 @@
 				<div class="goods_block">
 					<div class="goods_image">
 						<a href="{$URL}">
-							<img src="{$BASE}{field[@name='attachments']/recordset/record[1]/field[@name='file']}" alt="{field[@name='attachments']/recordset/record[1]/field[@name='title']}" />
+							<img src="{$RESIZER_URL}w200-h150/{field[@name='attachments']/recordset/record[1]/field[@name='file']}" alt="{field[@name='attachments']/recordset/record[1]/field[@name='title']}" />
 						</a>
 					</div>
 					<div class="goods_name">
