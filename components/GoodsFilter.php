@@ -12,6 +12,10 @@ use Energine\shop\gears\FeatureFieldFactory;
 
 class GoodsFilter extends DataSet {
     protected $filter_data = [];
+    /**
+     * @var GoodsList
+     */
+    private $boundComponent;
 
     public function __construct($name, array $params = NULL) {
         parent::__construct($name, $params);
@@ -50,12 +54,15 @@ class GoodsFilter extends DataSet {
             $max = ceil($this->dbh->getScalar(
                 'select max(goods_price) from ' .
                 $this->getParam('tableName') .
-                ' where smap_id = %s', $this->document->getID()
+                ' where smap_id IN (%s)', $this->boundComponent->getCategories()
             ));
             $begin = (isset($this->filter_data['price']['begin'])) ? (int)$this->filter_data['price']['begin'] : $min;
             $end = (isset($this->filter_data['price']['end'])) ? (int)$this->filter_data['price']['end'] : $max;
             if ($begin < $min) $begin = $min;
             if ($end > $max) $end = $max;
+
+            $fd->setProperty('text-from', $this->translate('TXT_FROM'));
+            $fd->setProperty('text-to', $this->translate('TXT_TO'));
 
             $fd->setProperty('range-min', (string)$min);
             $fd->setProperty('range-max', (string)$max);
@@ -104,19 +111,17 @@ class GoodsFilter extends DataSet {
     }
 
     public function main() {
+        $this->boundComponent = E()->getDocument()->componentManager->getBlockByName($this->getParam('bind'));
 
         $this->prepare();
-
-        // получаем связанный с фильтром компонент
-        $goodsList = E()->getDocument()->componentManager->getBlockByName($this->getParam('bind'));
         /**
          * @var GoodsList
          */
-        $this->setProperty('action', substr(array_reduce($goodsList->getSortData(), function ($p, $c) {
+        $this->setProperty('action', substr(array_reduce($this->boundComponent->getSortData(), function ($p, $c) {
                 return $p . $c . '-';
             }, 'sort-'), 0, -1) . '/');
 
-        $this->filter_data = $goodsList->getFilterData();
+        $this->filter_data = $this->boundComponent->getFilterData();
 
         // если в конфиге задан фильтр по цене
         $this->buildPriceFilter();
@@ -134,7 +139,7 @@ class GoodsFilter extends DataSet {
     protected function buildProducersFilter() {
         if ($fd = $this->getDataDescription()->getFieldDescriptionByName('producers')) {
 
-            $producers = $this->dbh->getColumn('SELECT DISTINCT producer_id  FROM shop_goods WHERE smap_id IN (%s)', array_merge([$this->document->getID()], array_keys(E()->getMap()->getTree()->getNodeById($this->document->getID())->asList())));
+            $producers = $this->dbh->getColumn('SELECT DISTINCT producer_id  FROM shop_goods WHERE smap_id IN (%s)', $this->boundComponent->getCategories());
             $fd->setType(FieldDescription::FIELD_TYPE_MULTI);
             $fd->setProperty('title', 'FILTER_PRODUCERS');
             $fd->loadAvailableValues($this->dbh->select('SELECT p.producer_id, producer_name FROM shop_producers p LEFT JOIN shop_producers_translation pt ON(p.producer_id=pt.producer_id) AND (lang_id=%s) WHERE p.producer_id IN (%s)', $this->document->getLang(), $producers), 'producer_id', 'producer_name');

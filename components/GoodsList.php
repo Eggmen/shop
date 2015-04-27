@@ -222,12 +222,7 @@ class GoodsList extends DBDataSet {
         return $result;
     }
 
-    /**
-     * Получение значения WHERE для фильтра (внешняя фильтрация по цене / характеристикам)
-     * @return string
-     */
-    protected function getFilterWhereConditions() {
-
+    public function getCategories(){
         if (!$this->getParam('recursive')) {
             $documentIDs = $this->document->getId();
 
@@ -235,6 +230,16 @@ class GoodsList extends DBDataSet {
             $documentIDs = array_merge([$id = $this->document->getID()],
                 array_keys(E()->getMap()->getDescendants($id)));
         }
+        return $documentIDs;
+    }
+
+    /**
+     * Получение значения WHERE для фильтра (внешняя фильтрация по цене / характеристикам)
+     * @return string
+     */
+    protected function getFilterWhereConditions() {
+        $documentIDs = $this->getCategories();
+
         $result = ['smap_id' => sprintf('(smap_id IN (%s))', implode(',', $documentIDs))];
 
         $filter_data = $this->filter_data;
