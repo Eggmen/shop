@@ -13,8 +13,7 @@
             <xsl:variable name="URL">
                 <xsl:value-of select="$BASE"/><xsl:value-of select="$LANG_ABBR"/><xsl:value-of
                     select="field[@name='smap_id']"/>view/<xsl:value-of
-                    select="field[@name='goods_segment']"/>/
-            </xsl:variable>
+                    select="field[@name='goods_segment']"/>/</xsl:variable>
             <div class="goods_block">
                 <div class="goods_image">
                     <a href="{$URL}">
@@ -27,8 +26,11 @@
                         <xsl:value-of select="field[@name='goods_name']"/>
                     </a>
                 </div>
+                <div class="goods_producer">
+                    <xsl:value-of select="field[@name='producer_id']/value"/>
+                </div>
                 <div class="goods_status available">
-                    <xsl:value-of select="field[@name='sell_status_id']/options/option[@selected]"/>
+                    <xsl:value-of select="field[@name='sell_status_id']/value"/>
                 </div>
                 <div class="goods_price">
                     <xsl:value-of select="field[@name='goods_price']"/>
@@ -43,12 +45,21 @@
     </xsl:template>
 
     <xsl:template match="component[@class='GoodsSort']">
+        <xsl:variable name="GET"><xsl:if test="@get!=''">?<xsl:value-of select="@get"/></xsl:if></xsl:variable>
+        <xsl:variable name="TEMPLATE" select="@template"/>
         <xsl:variable name="RECORDS" select="recordset/record"/>
         <xsl:for-each select="$RECORDS/field[@name='field']/options/option">
-            <a href="#"><xsl:value-of select="."/><xsl:text disable-output-escaping="yes">&amp;nbsp;</xsl:text><xsl:value-of select="$RECORDS/field[@name='dir']/options/option[@selected]"/></a><xsl:if test="position()!=last()">
+            <a href="{$BASE}{$LANG_ABBR}{$TEMPLATE}sort-{@id}-{$RECORDS/field[@name='dir']/options/option[not(@selected)]/@id}/{$GET}"><xsl:value-of select="."/><xsl:text disable-output-escaping="yes">&amp;nbsp;</xsl:text><xsl:value-of select="$RECORDS/field[@name='dir']/options/option[@selected]"/></a><xsl:if test="position()!=last()">
             <xsl:text disable-output-escaping="yes">&amp;nbsp;|&amp;nbsp;</xsl:text>
         </xsl:if>
         </xsl:for-each>
+    </xsl:template>
+
+    <xsl:template match="component[@class='GoodsFilter']">
+        <form method="get" action="{@action}">
+            <input type="hidden" name="componentAction" value="{@componentAction}" id="componentAction"/>
+            <xsl:apply-templates/>
+        </form>
     </xsl:template>
 
 

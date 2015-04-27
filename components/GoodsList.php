@@ -127,13 +127,13 @@ class GoodsList extends DBDataSet {
     }
 
 
-
     /**
      * Подготавливает условие сортировки датасета на основании внешних данных sort_data
      * @return array
      */
     protected function getSortConditions() {
-        $field = $this->sort_data['field'];
+        $field = 'goods_' . $this->sort_data['field'];
+
         $dir = strtoupper($this->sort_data['dir']);
 
         if (!in_array($field, ['goods_name', 'goods_price'])) {
@@ -393,6 +393,9 @@ class GoodsList extends DBDataSet {
      */
     protected function main() {
         parent::main();
+        $this->pager->setProperty('additional_url', substr(array_reduce($this->getSortData(), function ($p, $c) {
+            return $p . $c . '-';
+        }, 'sort-'),0,-1).'/');
         // attachments in list
         $this->buildAttachments();
         // tags in list

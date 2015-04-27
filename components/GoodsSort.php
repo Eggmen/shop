@@ -15,9 +15,8 @@ class GoodsSort extends DataSet {
     public function __construct($name, array $params = NULL) {
         $params['active'] = false;
         parent::__construct($name, $params);
-
-
         $this->setTitle($this->translate('TXT_SORT'));
+        $this->setProperty('get', http_build_query($_GET));
     }
 
 
@@ -44,8 +43,8 @@ class GoodsSort extends DataSet {
             $result->addFieldDescription($fd);
         }
         $r = [];
-        foreach(['goods_price', 'goods_name'] as $f){
-            array_push($r, ['id' => $f, 'value' => $this->translate('FIELD_'.$f)]);
+        foreach(['price', 'name'] as $f){
+            array_push($r, ['id' => $f, 'value' => $this->translate('FIELD_GOODS_'.$f)]);
         }
 
         $fd->loadAvailableValues($r, 'id', 'value');

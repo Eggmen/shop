@@ -32,6 +32,9 @@
 .goods_status {
     padding: 0 0 15px;
 }
+.goods_producer{
+    font-weight: bold;
+}
 .goods_status.available {
     color: rgb(125, 194, 125);
 }
