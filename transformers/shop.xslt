@@ -84,8 +84,16 @@
 			<xsl:for-each select="recordset/record">
 				<div class="category">
 					<a href="{field[@name='Segment']}">
+						<div class="category_image">
+							<div class="category_image_inner"> <!-- optional block for vertical align -->
+								<img src="{field[@name='attachments']/recordset/record[1]/field[@name='file']}" alt="{field[@name='attachments']/recordset/record[1]/field[@name='name']}" />
+							</div>
+						</div>
 						<div class="category_name">
 							<xsl:value-of select="field[@name='Name']" />
+						</div>
+						<div class="category_description">
+							<xsl:value-of select="field[@name='DescriptionRtf']" disable-output-escaping="yes" />
 						</div>
 					</a>
 				</div>
