@@ -40,7 +40,7 @@ class GoodsList extends DBDataSet {
      * @param string $name
      * @param array $params
      */
-    public function __construct($name, array $params = null) {
+    public function __construct($name, array $params = NULL) {
         parent::__construct($name, $params);
 
         $this->setTableName('shop_goods');
@@ -67,7 +67,7 @@ class GoodsList extends DBDataSet {
             parent::defineParams(),
             [
                 'recursive' => false,
-                'active'    => true
+                'active' => true
             ]
         );
     }
@@ -92,29 +92,15 @@ class GoodsList extends DBDataSet {
      * @return array
      */
     public function getSortData() {
-        if (isset($_REQUEST['sort'])) {
-            $field = isset($_REQUEST['sort']['field']) ? $_REQUEST['sort']['field'] : 'price';
-            if (!in_array($field, ['price', 'name'])) {
-                $field = 'price';
-            }
-            $dir = isset($_REQUEST['sort']['dir']) ? $_REQUEST['sort']['dir'] : 'asc';
-            if (!in_array($dir, ['asc', 'desc'])) {
-                $dir = 'asc';
-            }
-            $_SESSION['goods_sort'] = [
-                'field' => $field,
-                'dir'   => $dir
-            ];
+        $sp = $this->getStateParams(true);
+        $field = 'goods_price';
+        $dir = 'asc';
 
-            return $_SESSION['goods_sort'];
-        } elseif (isset($_SESSION['goods_sort'])) {
-            return $_SESSION['goods_sort'];
-        } else {
-            return [
-                'field' => 'price',
-                'dir'   => 'asc'
-            ];
+        if (isset($sp['sfield']) && isset($sp['sdir'])) {
+            $field = $sp['sfield'];
+            $dir = in_array(strtoupper($sp['sdir']), [QAL::ASC, QAL::DESC]) ? $sp['sdir'] : QAL::ASC;
         }
+        return ['field' => $field, 'dir' => $dir];
     }
 
     protected function loadDataDescription() {
@@ -129,7 +115,7 @@ class GoodsList extends DBDataSet {
     protected function loadData() {
         $result = parent::loadData();
         $map = E()->getMap();
-        $result = array_map(function ($row) use ($map){
+        $result = array_map(function ($row) use ($map) {
             if (isset($row['smap_id'])) {
                 $row['smap_id'] = $map->getURLByID($row['smap_id']);
             }
@@ -141,33 +127,22 @@ class GoodsList extends DBDataSet {
     }
 
 
+
     /**
      * Подготавливает условие сортировки датасета на основании внешних данных sort_data
      * @return array
      */
     protected function getSortConditions() {
+        $field = $this->sort_data['field'];
+        $dir = strtoupper($this->sort_data['dir']);
 
-        switch ($this->sort_data['field']) {
-            case 'price':
-                $field = 'goods_price';
-                break;
-            case 'name':
-                $field = 'goods_name';
-                break;
-            default:
-                $field = 'goods_price';
+        if (!in_array($field, ['goods_name', 'goods_price'])) {
+            $field = 'goods_price';
+        }
+        if (!in_array($dir, [QAL::ASC, QAL::DESC])) {
+            $dir = QAL::ASC;
         }
 
-        switch ($this->sort_data['dir']) {
-            case 'asc':
-                $dir = QAL::ASC;
-                break;
-            case 'desc':
-                $dir = QAL::DESC;
-                break;
-            default:
-                $dir = QAL::ASC;
-        }
 
         return [$field => $dir];
     }
@@ -202,7 +177,7 @@ class GoodsList extends DBDataSet {
                 if ($price_begin || $price_end) {
                     $result['price'] = [
                         'begin' => $price_begin,
-                        'end'   => $price_end
+                        'end' => $price_end
                     ];
                 }
 
@@ -225,8 +200,8 @@ class GoodsList extends DBDataSet {
                             $end = (!empty($filter[$feature_name]['end'])) ? (float)$filter[$feature_name]['end'] : 0;
                             $result['features'][$feature_name] = [
                                 'feature' => $feature,
-                                'begin'   => $begin,
-                                'end'     => $end
+                                'begin' => $begin,
+                                'end' => $end
                             ];
                             break;
                         // checkbox group (multiple values)
@@ -235,7 +210,7 @@ class GoodsList extends DBDataSet {
                             if (!empty($selected_ids)) {
                                 $result['features'][$feature_name] = [
                                     'feature' => $feature,
-                                    'values'  => $selected_ids
+                                    'values' => $selected_ids
                                 ];
                             }
                             break;
@@ -246,7 +221,7 @@ class GoodsList extends DBDataSet {
                             if (!empty($selected_id)) {
                                 $result['features'][$feature_name] = [
                                     'feature' => $feature,
-                                    'value'   => $selected_id
+                                    'value' => $selected_id
                                 ];
                             }
                             break;
@@ -541,16 +516,16 @@ class GoodsList extends DBDataSet {
                 }
 
                 $feature_data[] = [
-                    'feature_id'      => $feature->getFeatureId(),
-                    'feature_name'    => $feature->getName(),
-                    'feature_title'   => $feature->getTitle(),
+                    'feature_id' => $feature->getFeatureId(),
+                    'feature_name' => $feature->getName(),
+                    'feature_title' => $feature->getTitle(),
                     'feature_sysname' => $feature->getSysName(),
-                    'feature_type'    => $feature->getType(),
-                    'feature_value'   => (string)$feature,
-                    'group_id'        => $feature->getGroupId(),
-                    'group_title'     => $feature->getGroupName(),
-                    'feature_values'  => $view_values,
-                    'feature_images'  => $images
+                    'feature_type' => $feature->getType(),
+                    'feature_value' => (string)$feature,
+                    'group_id' => $feature->getGroupId(),
+                    'group_title' => $feature->getGroupName(),
+                    'feature_values' => $view_values,
+                    'feature_images' => $images
                 ];
             }
 
