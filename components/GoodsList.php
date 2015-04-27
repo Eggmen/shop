@@ -250,11 +250,8 @@ class GoodsList extends DBDataSet {
 
             if (isset($filter_data['features'])) {
                 foreach ($filter_data['features'] as $filter_feature) {
-
                     $feature = $filter_feature['feature'];
-
                     switch ($feature->getFilterType()) {
-
                         // для диапазона ищем все goods_id, у которых опция (title) характеристики
                         // попадает в выбранный диапазон float значений
                         case FeatureFieldAbstract::FEATURE_FILTER_TYPE_RANGE:
@@ -297,6 +294,7 @@ class GoodsList extends DBDataSet {
                         case FeatureFieldAbstract::FEATURE_FILTER_TYPE_CHECKBOXGROUP:
                             $option_ids = [];
                             $options = $feature->getOptions();
+
                             if (empty($options)) {
                                 continue;
                             }
@@ -307,7 +305,6 @@ class GoodsList extends DBDataSet {
                             }
 
                             if ($option_ids) {
-
                                 $where = [];
                                 foreach ($option_ids as $option_id) {
                                     $where[] = "FIND_IN_SET('$option_id', fvt.fpv_data)>0";

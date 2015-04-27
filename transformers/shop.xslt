@@ -139,4 +139,33 @@
 		</div>
 	</xsl:template>
 
+    <xsl:template match="component[@class='Categories']">
+        <xsl:if test="not(@empty)">
+                <xsl:apply-templates/>
+        </xsl:if>
+    </xsl:template>
+
+    <xsl:template match="recordset[ancestor::component[@class='Categories']]">
+        <ul class="main_menu clearfix">
+            <xsl:apply-templates select="record"/>
+        </ul>
+    </xsl:template>
+
+    <xsl:template match="record[ancestor::component[@class='Categories']]">
+        <li class="main_menu_item">
+            <xsl:attribute name="class">main_menu_item<xsl:if test="field[@name='Id']=$ID"> active</xsl:if></xsl:attribute>
+            <a>
+                <xsl:if test="$DOC_PROPS[@name='ID']!=field[@name='Id']">
+                    <xsl:attribute name="href"><xsl:value-of select="$BASE"/><xsl:value-of select="$LANG_ABBR"/><xsl:value-of select="field[@name='Segment']"/></xsl:attribute>
+                </xsl:if>
+                <xsl:value-of select="field[@name='Name']"/>
+            </a>
+            <xsl:if test="recordset">
+                <xsl:apply-templates select="recordset"/>
+            </xsl:if>
+
+
+        </li>
+    </xsl:template>
+
 </xsl:stylesheet>
