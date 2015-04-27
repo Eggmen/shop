@@ -33,7 +33,7 @@
 		</div>
 	</xsl:template>
 
-	<xsl:template match="component[@name='goodsList' and @componentAction='view']/recordset/record">
+	<xsl:template match="component[@class='GoodsList' and @type='form']/recordset/record">
 		<div class="goods_view clearfix">
 			<div class="goods_image_block">
 				<div class="goods_image">
@@ -79,5 +79,18 @@
 		</div>
 	</xsl:template>
 
+	<xsl:template match="component[@class='PageList' and @name='categoriesMenu']">
+		<div class="categories_list clearfix">
+			<xsl:for-each select="recordset/record">
+				<div class="category">
+					<a href="{field[@name='Segment']}">
+						<div class="category_name">
+							<xsl:value-of select="field[@name='Name']" />
+						</div>
+					</a>
+				</div>
+			</xsl:for-each>
+		</div>
+	</xsl:template>
 
 </xsl:stylesheet>

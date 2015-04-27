@@ -86,3 +86,22 @@
     background: rgb(240, 240, 240);
 }
 /* ----- /goods_view ---- */
+/* ----- categories list ----- */
+.categories_list .category {
+    float: left;
+    width: 25%;
+}
+.categories_list .category a {
+    display: block;
+
+    transition:         background 0.5s;
+    -webkit-transition: background 0.5s;
+    -moz-transition:    background 0.5s;
+}
+.categories_list .category a:hover {
+    background: rgb(245, 245, 245);
+}
+.category .category_name {
+    text-align: center;
+}
+/* ----- /categories list ---- */
