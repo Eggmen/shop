@@ -24,6 +24,9 @@
 		<uri_patterns>
 			<pattern>/view/[goodsSegment]/</pattern>
 		</uri_patterns>
+        <javascript>
+            <behavior name="ProductView"/>
+        </javascript>
 		<fields>
 			<field name="goods_id"/>
 			<field name="goods_name"/>

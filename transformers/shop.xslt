@@ -67,6 +67,42 @@
         </form>
     </xsl:template>
 
+    <xsl:template match="field[ancestor::component[@type='form'] and (@subtype='RANGE')]" mode="field_input">
+        <span><xsl:value-of select="@text-from"/>:</span>
+            <input class="text inp_filter"  type="text">
+                <xsl:attribute name="name"><xsl:value-of select="@tableName"/>[<xsl:value-of select="@name"/>][begin]</xsl:attribute>
+                <xsl:if test="@range-begin">
+                    <xsl:attribute name="value"><xsl:value-of select="@range-begin"/></xsl:attribute>
+                </xsl:if>
+                <xsl:choose>
+                    <xsl:when test="@range-min">
+                        <xsl:attribute name="placeholder"><xsl:value-of select="@range-min"/></xsl:attribute>
+                        <xsl:attribute name="min"><xsl:value-of select="@range-min"/></xsl:attribute>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:attribute name="placeholder">0</xsl:attribute>
+                        <xsl:attribute name="min">0</xsl:attribute>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </input>
+        <span style="padding-left:10px;"><xsl:value-of select="@text-to"/>:</span>
+            <input class="text inp_filter" type="text">
+                <xsl:attribute name="name"><xsl:value-of select="@tableName"/>[<xsl:value-of select="@name"/>][end]</xsl:attribute>
+                <xsl:if test="@range-end">
+                    <xsl:attribute name="value"><xsl:value-of select="@range-end"/></xsl:attribute>
+                </xsl:if>
+                <xsl:choose>
+                    <xsl:when test="@range-max">
+                        <xsl:attribute name="placeholder"><xsl:value-of select="@range-max"/></xsl:attribute>
+                        <xsl:attribute name="max"><xsl:value-of select="@range-max"/></xsl:attribute>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:attribute name="placeholder">0</xsl:attribute>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </input>
+    </xsl:template>
+
 	<xsl:template match="component[@class='GoodsList' and @type='form']/recordset/record">
 		<div class="goods_view clearfix">
 			<div class="goods_image_block">
@@ -159,5 +195,34 @@
 			</xsl:for-each>
 		</div>
 	</xsl:template>
+
+    <xsl:template match="component[@class='Categories']">
+        <xsl:if test="not(@empty)">
+                <xsl:apply-templates/>
+        </xsl:if>
+    </xsl:template>
+
+    <xsl:template match="recordset[ancestor::component[@class='Categories']]">
+        <ul class="main_menu clearfix">
+            <xsl:apply-templates select="record"/>
+        </ul>
+    </xsl:template>
+
+    <xsl:template match="record[ancestor::component[@class='Categories']]">
+        <li class="main_menu_item">
+            <xsl:attribute name="class">main_menu_item<xsl:if test="field[@name='Id']=$ID"> active</xsl:if></xsl:attribute>
+            <a>
+                <xsl:if test="$DOC_PROPS[@name='ID']!=field[@name='Id']">
+                    <xsl:attribute name="href"><xsl:value-of select="$BASE"/><xsl:value-of select="$LANG_ABBR"/><xsl:value-of select="field[@name='Segment']"/></xsl:attribute>
+                </xsl:if>
+                <xsl:value-of select="field[@name='Name']"/>
+            </a>
+            <xsl:if test="recordset">
+                <xsl:apply-templates select="recordset"/>
+            </xsl:if>
+
+
+        </li>
+    </xsl:template>
 
 </xsl:stylesheet>
