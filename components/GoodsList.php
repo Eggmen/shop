@@ -222,12 +222,7 @@ class GoodsList extends DBDataSet {
         return $result;
     }
 
-    /**
-     * Получение значения WHERE для фильтра (внешняя фильтрация по цене / характеристикам)
-     * @return string
-     */
-    protected function getFilterWhereConditions() {
-
+    public function getCategories(){
         if (!$this->getParam('recursive')) {
             $documentIDs = $this->document->getId();
 
@@ -235,6 +230,16 @@ class GoodsList extends DBDataSet {
             $documentIDs = array_merge([$id = $this->document->getID()],
                 array_keys(E()->getMap()->getDescendants($id)));
         }
+        return $documentIDs;
+    }
+
+    /**
+     * Получение значения WHERE для фильтра (внешняя фильтрация по цене / характеристикам)
+     * @return string
+     */
+    protected function getFilterWhereConditions() {
+        $documentIDs = $this->getCategories();
+
         $result = ['smap_id' => sprintf('(smap_id IN (%s))', implode(',', $documentIDs))];
 
         $filter_data = $this->filter_data;
@@ -250,11 +255,8 @@ class GoodsList extends DBDataSet {
 
             if (isset($filter_data['features'])) {
                 foreach ($filter_data['features'] as $filter_feature) {
-
                     $feature = $filter_feature['feature'];
-
                     switch ($feature->getFilterType()) {
-
                         // для диапазона ищем все goods_id, у которых опция (title) характеристики
                         // попадает в выбранный диапазон float значений
                         case FeatureFieldAbstract::FEATURE_FILTER_TYPE_RANGE:
@@ -297,6 +299,7 @@ class GoodsList extends DBDataSet {
                         case FeatureFieldAbstract::FEATURE_FILTER_TYPE_CHECKBOXGROUP:
                             $option_ids = [];
                             $options = $feature->getOptions();
+
                             if (empty($options)) {
                                 continue;
                             }
@@ -307,7 +310,6 @@ class GoodsList extends DBDataSet {
                             }
 
                             if ($option_ids) {
-
                                 $where = [];
                                 foreach ($option_ids as $option_id) {
                                     $where[] = "FIND_IN_SET('$option_id', fvt.fpv_data)>0";

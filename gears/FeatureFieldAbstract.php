@@ -224,7 +224,6 @@ class FeatureFieldAbstract extends Object {
 
     public function getFilterFieldDescription($filter_data = false) {
         $fd = new FieldDescription($this->getFilterFieldName());
-
         $fd->setProperty('title', ($this->data['feature_title'])?$this->data['feature_title']:$this->data['feature_name']);
 
         $fd->setProperty('group_id', $this->data['group_id']);
@@ -281,8 +280,11 @@ class FeatureFieldAbstract extends Object {
                 break;
             // диапазон
             case self::FEATURE_FILTER_TYPE_RANGE:
+
                 $fd->setType(FieldDescription::FIELD_TYPE_CUSTOM);
                 $fd->setProperty('subtype', self::FEATURE_FILTER_TYPE_RANGE);
+                $fd->setProperty('text-from', $this->translate('TXT_FROM'));
+                $fd->setProperty('text-to', $this->translate('TXT_TO'));
 
                 if ($this->options) {
 
@@ -301,6 +303,8 @@ class FeatureFieldAbstract extends Object {
 
                     $begin = (isset($filter_data['begin'])) ? (float)$filter_data['begin'] : $min;
                     $end = (isset($filter_data['end'])) ? (float)$filter_data['end'] : $max;
+
+
 
                     $fd->setProperty('range-min', $min);
                     $fd->setProperty('range-max', $max);
