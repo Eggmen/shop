@@ -106,9 +106,30 @@
 	<xsl:template match="component[@class='GoodsList' and @type='form']/recordset/record">
 		<div class="goods_view clearfix">
 			<div class="goods_image_block">
-				<div class="goods_image">
-					<img src="{field[@name='attachments']/recordset/record[1]/field[@name='file']}" alt="{field[@name='attachments']/recordset/record[1]/field[@name='name']}" />
+				<div id="goodsGalleryLarge" class="carousel goods_gallery_large">
+					<div class="carousel_viewbox">
+						<div class="playlist_local">
+							<xsl:for-each select="field[@name='attachments']/recordset/record">
+								<div class="goods_image">
+									<img src="{$RESIZER_URL}w400-h300/{field[@name='file']}" alt="{field[@name='name']}" />
+								</div>
+							</xsl:for-each>
+						</div>
+					</div>
 				</div>
+				<div id="goodsGallerySmall" class="carousel goods_gallery_small">
+					<div class="carousel_viewbox">
+						<div class="playlist_local">
+							<xsl:for-each select="field[@name='attachments']/recordset/record">
+								<div class="goods_image">
+									<img src="{$RESIZER_URL}w100-h75/{field[@name='file']}" alt="{field[@name='name']}" />
+								</div>
+							</xsl:for-each>
+						</div>
+					</div>
+				</div>
+				<script type="text/javascript" src="scripts/Carousel.js"></script>
+				<script type="text/javascript" src="scripts/ShopCarousel.js"></script>
 			</div>
 			<div class="goods_info">
 				<div class="goods_name">
