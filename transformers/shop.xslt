@@ -92,8 +92,6 @@
 						</div>
 					</div>
 				</div>
-				<script type="text/javascript" src="scripts/Carousel.js"></script>
-				<script type="text/javascript" src="scripts/ShopCarousel.js"></script>
 			</div>
 			<div class="goods_info">
 				<div class="goods_name">
