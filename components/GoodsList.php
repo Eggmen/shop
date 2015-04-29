@@ -119,6 +119,7 @@ class GoodsList extends DBDataSet {
     }
 
     protected function loadData() {
+        $tagFilter = false;
         if ($tags = $this->getParam('tags')) {
             if (!($tagFilter = TagManager::getFilter(TagManager::getID($tags), $this->getTableName()))) {
                 return false;
