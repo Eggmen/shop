@@ -55,6 +55,10 @@ class GoodsList extends DBDataSet {
         $this->sort_data = $this->getSortData();
         $sort = $this->getSortConditions();
         $this->setOrder($sort);
+        if ($limit = $this->getParam('limit')) {
+            $this->setParam('recordsPerPage', false);
+            $this->setLimit([$limit]);
+        }
 
     }
 
@@ -68,7 +72,8 @@ class GoodsList extends DBDataSet {
             [
                 'recursive' => false,
                 'active' => true,
-                'tags' => false
+                'tags' => false,
+                'limit' => false
             ]
         );
     }
@@ -114,15 +119,15 @@ class GoodsList extends DBDataSet {
     }
 
     protected function loadData() {
-        if($tags = $this->getParam('tags')){
-            if(!($tagFilter = TagManager::getFilter(TagManager::getID($tags), $this->getTableName()))){
+        if ($tags = $this->getParam('tags')) {
+            if (!($tagFilter = TagManager::getFilter(TagManager::getID($tags), $this->getTableName()))) {
                 return false;
             }
         }
         $result = parent::loadData();
-        if($tagFilter){
-            $result = array_filter($result, function($row) use($tagFilter){
-                return in_array($row[$this->getPK()],  $tagFilter);
+        if ($tagFilter) {
+            $result = array_filter($result, function ($row) use ($tagFilter) {
+                return in_array($row[$this->getPK()], $tagFilter);
             });
         }
         $map = E()->getMap();
@@ -392,9 +397,11 @@ class GoodsList extends DBDataSet {
      */
     protected function main() {
         parent::main();
-        $this->pager->setProperty('additional_url', substr(array_reduce($this->getSortData(), function ($p, $c) {
-                return $p . $c . '-';
-            }, 'sort-'), 0, -1) . '/');
+        if ($this->pager) {
+            $this->pager->setProperty('additional_url', substr(array_reduce($this->getSortData(), function ($p, $c) {
+                    return $p . $c . '-';
+                }, 'sort-'), 0, -1) . '/');
+        }
         // attachments in list
         $this->buildAttachments();
         // tags in list

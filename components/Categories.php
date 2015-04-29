@@ -10,6 +10,7 @@ namespace Energine\shop\components;
 
 
 use Energine\share\components\PageList;
+use Energine\share\gears\UserSession;
 
 class Categories extends PageList {
     protected function defineParams() {
@@ -32,6 +33,7 @@ class Categories extends PageList {
     }
 
     protected function main() {
+        UserSession::start(true);
         parent::main();
         if (($bind = $this->getParam('bind')) && ($c = $this->document->componentManager->getBlockByName($bind))) {
             $sortSegment = substr(array_reduce($c->getSortData(), function ($p, $c) {
