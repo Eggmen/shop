@@ -67,7 +67,8 @@ class GoodsList extends DBDataSet {
             parent::defineParams(),
             [
                 'recursive' => false,
-                'active' => true
+                'active' => true,
+                'tags' => false
             ]
         );
     }
@@ -81,7 +82,7 @@ class GoodsList extends DBDataSet {
         return $this->dbh->getColumn(
             'shop_sitemap2features',
             'feature_id',
-            ['smap_id' => $this->document->getID()]
+            ['smap_id' => $this->getCategories()]
         );
 
     }
@@ -113,7 +114,17 @@ class GoodsList extends DBDataSet {
     }
 
     protected function loadData() {
+        if($tags = $this->getParam('tags')){
+            if(!($tagFilter = TagManager::getFilter(TagManager::getID($tags), $this->getTableName()))){
+                return false;
+            }
+        }
         $result = parent::loadData();
+        if($tagFilter){
+            $result = array_filter($result, function($row) use($tagFilter){
+                return in_array($row[$this->getPK()],  $tagFilter);
+            });
+        }
         $map = E()->getMap();
         $result = array_map(function ($row) use ($map) {
             if (isset($row['smap_id'])) {
@@ -222,10 +233,9 @@ class GoodsList extends DBDataSet {
         return $result;
     }
 
-    public function getCategories(){
+    public function getCategories() {
         if (!$this->getParam('recursive')) {
-            $documentIDs = $this->document->getId();
-
+            $documentIDs = [$this->document->getID()];
         } else {
             $documentIDs = array_merge([$id = $this->document->getID()],
                 array_keys(E()->getMap()->getDescendants($id)));
@@ -239,7 +249,6 @@ class GoodsList extends DBDataSet {
      */
     protected function getFilterWhereConditions() {
         $documentIDs = $this->getCategories();
-
         $result = ['smap_id' => sprintf('(smap_id IN (%s))', implode(',', $documentIDs))];
 
         $filter_data = $this->filter_data;
