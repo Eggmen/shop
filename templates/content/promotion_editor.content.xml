@@ -4,8 +4,6 @@
 		<component name="promotionEditor" class="Energine\shop\components\PromotionEditor">
 			<params>
 				<param name="rights">3</param>
-				<param name="tableName">shop_promotions</param>
-				<param name="config">core/modules/shop/config/PromotionEditor.component.xml</param>
 			</params>
 		</component>
 	</container>
