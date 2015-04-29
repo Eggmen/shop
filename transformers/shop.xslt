@@ -9,7 +9,7 @@
     </xsl:template>
 
     <xsl:template match="recordset[parent::component[@class='GoodsList' and @type='list']]">
-    <div class="goods_list clearfix">
+    <div class="goods_list wide_list clearfix"> <!-- клас .wide_list для списка -->
         <xsl:for-each select="record">
             <xsl:variable name="URL">
                 <xsl:value-of select="$BASE"/><xsl:value-of select="$LANG_ABBR"/><xsl:value-of
@@ -22,24 +22,26 @@
                              alt="{field[@name='attachments']/recordset/record[1]/field[@name='title']}"/>
                     </a>
                 </div>
-                <div class="goods_name">
-                    <a href="{$URL}">
-                        <xsl:value-of select="field[@name='goods_name']"/>
-                    </a>
-                </div>
-                <div class="goods_producer">
-                    <xsl:value-of select="field[@name='producer_id']/value"/>
-                </div>
-                <div class="goods_status available">
-                    <xsl:value-of select="field[@name='sell_status_id']/value"/>
-                </div>
-                <div class="goods_price">
-                    <xsl:value-of select="field[@name='goods_price']"/>
-                </div>
-                <div class="goods_controls clearfix">
-                    <button type="button" class="buy_goods">BUY</button>
-                    <a href="#" class="add_to_wishlist">ADD_TO_WISHLIST</a>
-                </div>
+	            <div class="goods_info">
+	                <div class="goods_name">
+	                    <a href="{$URL}">
+	                        <xsl:value-of select="field[@name='goods_name']"/>
+	                    </a>
+	                </div>
+	                <div class="goods_producer">
+	                    <xsl:value-of select="field[@name='producer_id']/value"/>
+	                </div>
+	                <div class="goods_status available">
+	                    <xsl:value-of select="field[@name='sell_status_id']/value"/>
+	                </div>
+	                <div class="goods_price">
+	                    <xsl:value-of select="field[@name='goods_price']"/>
+	                </div>
+	                <div class="goods_controls clearfix">
+	                    <button type="button" class="buy_goods">BUY</button>
+	                    <a href="#" class="add_to_wishlist">ADD_TO_WISHLIST</a>
+	                </div>
+	            </div>
             </div>
         </xsl:for-each>
     </div>
