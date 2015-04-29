@@ -49,11 +49,21 @@
     float: left;
     width: 49%;
 }
+.goods_view .goods_gallery_large {
+    position: relative;
+}
 .goods_view .goods_gallery_large .goods_image {
+    position: absolute;
+    top: 0;
     height: 300px;
 }
 .goods_view .goods_gallery_small .goods_image {
     height: 75px;
+}
+.gallery_controls {
+    margin: 0;
+    padding: 0;
+    list-style: none;
 }
 .goods_view .goods_image img {
     max-width: 100%;

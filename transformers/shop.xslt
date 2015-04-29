@@ -116,6 +116,14 @@
 							</xsl:for-each>
 						</div>
 					</div>
+					<ul class="gallery_controls">
+						<li class="gallery_control_previous">
+							<a class="icon icon_gallery_control_previous previous" href="#" unselectable="on">TXT_PREV</a>
+						</li>
+						<li class="gallery_control_next">
+							<a class="icon icon_gallery_control_next next" href="#" unselectable="on">TXT_NEXT</a>
+						</li>
+					</ul>
 				</div>
 				<div id="goodsGallerySmall" class="carousel goods_gallery_small">
 					<div class="carousel_viewbox">
@@ -127,6 +135,14 @@
 							</xsl:for-each>
 						</div>
 					</div>
+					<ul class="gallery_controls">
+						<li class="gallery_control_previous">
+							<a class="icon icon_gallery_control_previous previous" href="#" unselectable="on">TXT_PREV</a>
+						</li>
+						<li class="gallery_control_next">
+							<a class="icon icon_gallery_control_next next" href="#" unselectable="on">TXT_NEXT</a>
+						</li>
+					</ul>
 				</div>
 			</div>
 			<div class="goods_info">
