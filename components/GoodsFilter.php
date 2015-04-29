@@ -45,12 +45,11 @@ class GoodsFilter extends DataSet {
             $fd->setProperty('title', $this->translate('FILTER_PRICE'));
             $fd->setProperty('subtype', FeatureFieldAbstract::FEATURE_FILTER_TYPE_RANGE);
 
-            /*$min = ceil( $this -> dbh -> getScalar(
+            $min = ceil( $this -> dbh -> getScalar(
                 'select min(goods_price) from ' .
                 $this -> getParam('tableName') .
-                ' where smap_id = %s', $this -> document -> getID()
-            ));*/
-            $min = 0;
+                ' where smap_id IN( %s)', $this->boundComponent->getCategories()
+            ));
             $max = ceil($this->dbh->getScalar(
                 'select max(goods_price) from ' .
                 $this->getParam('tableName') .
