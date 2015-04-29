@@ -14,5 +14,8 @@
             <field name="producer_id" type="lookup"/>
 			<field name="attachments"/>
 		</fields>
+		<javascript>
+			<behavior name="GoodsCarousel" />
+		</javascript>
 	</state>
 </configuration>
