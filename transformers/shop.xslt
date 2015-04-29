@@ -45,6 +45,55 @@
     </div>
     </xsl:template>
 
+	<xsl:template match="recordset[parent::component[(@class='GoodsList') and (@type='list') and (descendant::javascript/behavior/@name = 'GoodsCarousel')]]">
+		<div id="goodsCarousel" class="carousel goods_list clearfix">
+			<div class="carousel_viewbox">
+				<div class="playlist_local">
+					<xsl:for-each select="record">
+						<xsl:variable name="URL">
+							<xsl:value-of select="$BASE"/><xsl:value-of select="$LANG_ABBR"/><xsl:value-of
+								select="field[@name='smap_id']"/>view/<xsl:value-of
+								select="field[@name='goods_segment']"/>/</xsl:variable>
+						<div class="item goods_block">
+							<div class="goods_image">
+								<a href="{$URL}">
+									<img src="{$RESIZER_URL}w200-h150/{field[@name='attachments']/recordset/record[1]/field[@name='file']}"
+									     alt="{field[@name='attachments']/recordset/record[1]/field[@name='title']}"/>
+								</a>
+							</div>
+							<div class="goods_name">
+								<a href="{$URL}">
+									<xsl:value-of select="field[@name='goods_name']"/>
+								</a>
+							</div>
+							<div class="goods_producer">
+								<xsl:value-of select="field[@name='producer_id']/value"/>
+							</div>
+							<div class="goods_status available">
+								<xsl:value-of select="field[@name='sell_status_id']/value"/>
+							</div>
+							<div class="goods_price">
+								<xsl:value-of select="field[@name='goods_price']"/>
+							</div>
+							<div class="goods_controls clearfix">
+								<button type="button" class="buy_goods">BUY</button>
+								<a href="#" class="add_to_wishlist">ADD_TO_WISHLIST</a>
+							</div>
+						</div>
+					</xsl:for-each>
+				</div>
+			</div>
+			<ul class="gallery_controls">
+				<li class="gallery_control_previous">
+					<a class="icon icon_gallery_control_previous previous" href="#" unselectable="on">TXT_PREV</a>
+				</li>
+				<li class="gallery_control_next">
+					<a class="icon icon_gallery_control_next next" href="#" unselectable="on">TXT_NEXT</a>
+				</li>
+			</ul>
+		</div>
+	</xsl:template>
+
     <xsl:template match="component[@class='GoodsSort']">
         <xsl:variable name="GET"><xsl:if test="@get!=''">?<xsl:value-of select="@get"/></xsl:if></xsl:variable>
         <xsl:variable name="TEMPLATE" select="@template"/>
