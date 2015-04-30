@@ -11,6 +11,7 @@ use Energine\share\gears\DataDescription;
 use Energine\share\gears\Data;
 use Energine\shop\gears\FeatureFieldAbstract;
 use Energine\shop\gears\FeatureFieldFactory;
+use Energine\share\gears\UserSession;
 
 class GoodsCompare extends DataSet
 {
@@ -46,6 +47,7 @@ class GoodsCompare extends DataSet
 
     private function getGoodsFromSession() {
 
+        UserSession::start(true);
         $goods_ids = (!empty($_SESSION['goods_compare'])) ? $_SESSION['goods_compare'] : array();
 
         $goods_table = $this -> getParam('goodsTableName');
@@ -146,6 +148,7 @@ class GoodsCompare extends DataSet
 
     protected function add()
     {
+        UserSession::start(true);
         $sp = $this -> getStateParams(true);
         $goods_id = $sp['goodsId'];
         $goods_ids = (!empty($_SESSION['goods_compare'])) ? $_SESSION['goods_compare'] : array();
@@ -158,6 +161,7 @@ class GoodsCompare extends DataSet
 
     protected function remove()
     {
+        UserSession::start(true);
         $sp = $this -> getStateParams(true);
         $goods_id = $sp['goodsId'];
         $goods_ids = (!empty($_SESSION['goods_compare'])) ? $_SESSION['goods_compare'] : array();
@@ -172,6 +176,7 @@ class GoodsCompare extends DataSet
 
     protected function clear()
     {
+        UserSession::start(true);
         if (!empty($_SESSION['goods_compare'])) {
             $_SESSION['goods_compare'] = [];
         }
