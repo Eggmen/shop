@@ -99,7 +99,7 @@ class GoodsList extends DBDataSet {
      */
     public function getSortData() {
         $sp = $this->getStateParams(true);
-        $field = 'goods_price';
+        $field = 'price';
         $dir = 'asc';
 
         if (isset($sp['sfield']) && isset($sp['sdir'])) {
