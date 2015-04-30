@@ -12,7 +12,7 @@
 			 data-informer-url="{$BASE}{$LANG_ABBR}{@single_template}informer/"
 			 data-add-url="{$BASE}{$LANG_ABBR}{@single_template}add/"
 			 data-remove-url="{$BASE}{$LANG_ABBR}{@single_template}remove/"
-			 data-clean-url="{$BASE}{$LANG_ABBR}{@single_template}clean/"
+			 data-clear-url="{$BASE}{$LANG_ABBR}{@single_template}clear/"
 				>
 			<!-- контейнер для содержимого информера -->
 		</div>
@@ -20,7 +20,7 @@
 	</xsl:template>
 
 	<!-- информер + попап сравнения в шапке (вызывается через single) -->
-	<xsl:template match="component[@class='GoodsCompare' and @componentAction='informer']">
+	<xsl:template match="component[@class='GoodsCompare' and (@componentAction='informer' or @componentAction='add' or @componentAction='remove' or @componentAction='clear')]">
 		<xsl:if test="@goods_count>0">
 			<a href="#" class="compare_link">
 				<xsl:text>Сравнение (</xsl:text>

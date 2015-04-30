@@ -73,7 +73,9 @@ class GoodsList extends DBDataSet {
                 'recursive' => false,
                 'active' => true,
                 'tags' => false,
-                'limit' => false
+                'limit' => false,
+                'target_ids' => false,
+                'list_features' => false, // false | any | feature_sysname1,feature_sysname2,..
             ]
         );
     }
@@ -90,6 +92,153 @@ class GoodsList extends DBDataSet {
             ['smap_id' => $this->getCategories()]
         );
 
+    }
+
+    /**
+     * Возвращает массив идентификаторов характеристик, которые есть в заданом наборе goods_ids
+     *
+     * @param array $goods_ids
+     * @return array
+     */
+    protected function getGoodsDivisionFeatureIds($goods_ids) {
+        $goods_table = $this -> getTableName();
+        return $this->dbh->getColumn(
+            "select DISTINCT sf.feature_id
+            from shop_sitemap2features sf
+            join {$goods_table} g on g.smap_id = sf.smap_id
+            where g.goods_id in (%s)", $goods_ids
+        );
+    }
+
+    /**
+     * Метод построения поля features с характеристиками для списка
+     *
+     * @param Field $field_goods_id
+     * @param array $goods_ids
+     * @throws \SystemException
+     */
+    protected function buildFeatures($field_goods_id, $goods_ids) {
+
+        $list_features = $this -> getParam('list_features');
+
+        // если выключен вывод характеристик для списка - ничего не делаем
+        if (!$list_features) return;
+
+        if ($list_features != 'any') {
+            $list_features = explode(',', $list_features);
+        }
+
+        if ($fd = $this->getDataDescription()->getFieldDescriptionByName('features')) {
+
+            $fd->setType(FieldDescription::FIELD_TYPE_CUSTOM);
+
+            $f = new Field('features');
+            $this->getData()->addField($f);
+
+            // получаем список фич разделов указанных товаров
+            $features = $this -> getGoodsDivisionFeatureIds($goods_ids);
+
+            // получаем список значений fpv_data для заданного массива goods_id
+            $fpv_indexed = array();
+            $fpv = $this->dbh->select(
+                'select f.fpv_id, f.goods_id, f.feature_id, ft.fpv_data
+				from shop_feature2good_values f
+				left join shop_feature2good_values_translation ft
+				on ft.fpv_id = f.fpv_id and ft.lang_id = %s
+				where f.feature_id in (%s) and f.goods_id in (%s)',
+                $this -> document -> getLang(),
+                $features,
+                $goods_ids
+            );
+
+            if ($fpv)
+                foreach ($fpv as $row) {
+                    $fpv_indexed[$row['goods_id']][$row['feature_id']] = $row;
+                }
+
+            // проходимся по всем данным, создаем каждую фичу через фабрику, передаем feature_id и fpv_data
+            foreach ($field_goods_id->getData() as $key => $goods_id) {
+
+                $feature_data = array();
+
+                foreach ($features as $feature_id) {
+
+                    $fpv_data = (isset($fpv_indexed[$goods_id][$feature_id]['fpv_data'])) ? $fpv_indexed[$goods_id][$feature_id]['fpv_data'] : '';
+                    $feature = FeatureFieldFactory::getField($feature_id, $fpv_data);
+
+                    if (is_array($list_features) and !in_array($feature->getSysName(), $list_features))
+                        continue;
+
+                    $images = array();
+                    if ($feature->getType() == FeatureFieldAbstract::FEATURE_TYPE_MULTIOPTION) {
+                        $options = $feature->getOptions();
+                        $values = $feature->getValue();
+                        foreach ($values as $value) {
+                            if (!empty($options[$value]['path'])) {
+                                $images[$value] = $options[$value]['path'];
+                            }
+                        }
+                    }
+
+                    $feature_data[] = array(
+                        'feature_id' => $feature -> getFeatureId(),
+                        'feature_name' => $feature -> getName(),
+                        'feature_title' => $feature -> getTitle(),
+                        'feature_sysname' => $feature -> getSysName(),
+                        'feature_type' => $feature->getType(),
+                        'feature_value' => (string) $feature,
+                        'group_id' => $feature -> getGroupId(),
+                        'group_title' => $feature -> getGroupName(),
+                        'feature_images' => $images
+                    );
+                }
+
+                $builder = new SimpleBuilder();
+                $localData = new Data();
+                $localData->load($feature_data);
+
+                $dataDescription = new DataDescription();
+                $ffd =  new FieldDescription('feature_id');
+                $dataDescription->addFieldDescription($ffd);
+
+                $ffd = new FieldDescription('group_title');
+                $ffd->setType(FieldDescription::FIELD_TYPE_STRING);
+                $dataDescription->addFieldDescription($ffd);
+
+                $ffd = new FieldDescription('group_id');
+                $ffd->setType(FieldDescription::FIELD_TYPE_INT);
+                $dataDescription->addFieldDescription($ffd);
+
+                $ffd = new FieldDescription('feature_title');
+                $ffd->setType(FieldDescription::FIELD_TYPE_STRING);
+                $dataDescription->addFieldDescription($ffd);
+
+                $ffd = new FieldDescription('feature_sysname');
+                $ffd->setType(FieldDescription::FIELD_TYPE_STRING);
+                $dataDescription->addFieldDescription($ffd);
+
+                $ffd = new FieldDescription('feature_type');
+                $ffd->setType(FieldDescription::FIELD_TYPE_STRING);
+                $dataDescription->addFieldDescription($ffd);
+
+                $ffd = new FieldDescription('feature_value');
+                $ffd->setType(FieldDescription::FIELD_TYPE_STRING);
+                $dataDescription->addFieldDescription($ffd);
+
+                $ffd = new FieldDescription('feature_images');
+                $ffd->setType(FieldDescription::FIELD_TYPE_TEXTBOX_LIST);
+                $dataDescription->addFieldDescription($ffd);
+
+                $builder->setData($localData);
+                $builder->setDataDescription($dataDescription);
+
+                $builder->build();
+
+                $f->setRowData($key, $builder->getResult());
+
+            }
+            // на выходе получаем строковые значения поля
+        }
     }
 
     /**
@@ -256,118 +405,52 @@ class GoodsList extends DBDataSet {
     protected function getFilterWhereConditions() {
         $documentIDs = $this->getCategories();
         $result = ['smap_id' => sprintf('(smap_id IN (%s))', implode(',', $documentIDs))];
+        $table_name = $this -> getTableName();
 
-        $filter_data = $this->filter_data;
-        if ($filter_data) {
-            if (isset($filter_data['price'])) {
-                $result['price'] = sprintf("(goods_price between %d and %d)", $filter_data['price']['begin'],
-                    $filter_data['price']['end']);
-            }
-            if (isset($filter_data['producers']) && !empty($filter_data['producers'])) {
+        // если в компонент пришли id-шки товаров - используем их
+        if ($target_ids = $this->getParam('target_ids')) {
+            $target_ids = explode(',', $target_ids);
+            $result['goods_id'] =
+                sprintf("({$table_name}.goods_id in (%s))", implode(',', $target_ids));
+        } else {
+            // иначе используем внешние фильтры
+            $filter_data = $this->filter_data;
+            if ($filter_data) {
+                if (isset($filter_data['price'])) {
+                    $result['price'] = sprintf("(goods_price between %d and %d)", $filter_data['price']['begin'],
+                        $filter_data['price']['end']);
+                }
+                if (isset($filter_data['producers']) && !empty($filter_data['producers'])) {
 
-                $result['producers'] = sprintf('(producer_id IN (%s))', implode(',', $filter_data['producers']));
-            }
+                    $result['producers'] = sprintf('(producer_id IN (%s))', implode(',', $filter_data['producers']));
+                }
 
-            if (isset($filter_data['features'])) {
-                foreach ($filter_data['features'] as $filter_feature) {
-                    $feature = $filter_feature['feature'];
-                    switch ($feature->getFilterType()) {
-                        // для диапазона ищем все goods_id, у которых опция (title) характеристики
-                        // попадает в выбранный диапазон float значений
-                        case FeatureFieldAbstract::FEATURE_FILTER_TYPE_RANGE:
-                            $option_ids = [];
-                            $options = $feature->getOptions();
-                            if (empty($options)) {
-                                continue;
-                            }
-
-                            foreach ($options as $option_id => $option_data) {
-                                if ((float)$option_data['value'] >= $filter_feature['begin']
-                                    and (float)$option_data['value'] <= $filter_feature['end']
-                                ) {
-                                    $option_ids[] = $option_id;
+                if (isset($filter_data['features'])) {
+                    foreach ($filter_data['features'] as $filter_feature) {
+                        $feature = $filter_feature['feature'];
+                        switch ($feature->getFilterType()) {
+                            // для диапазона ищем все goods_id, у которых опция (title) характеристики
+                            // попадает в выбранный диапазон float значений
+                            case FeatureFieldAbstract::FEATURE_FILTER_TYPE_RANGE:
+                                $option_ids = [];
+                                $options = $feature->getOptions();
+                                if (empty($options)) {
+                                    continue;
                                 }
-                            }
-                            $goods_ids = $this->dbh->getColumn(
-                                'select distinct g.goods_id
-								from shop_goods g
-								join shop_feature2good_values fv on g.goods_id = fv.goods_id and fv.feature_id = %s
-								join shop_feature2good_values_translation fvt on fvt.fpv_id = fv.fpv_id and fvt.lang_id = %s
-								where g.smap_id in( %s) and fvt.fpv_data in (%s)',
-                                $feature->getFeatureId(),
-                                $this->document->getLang(),
-                                $documentIDs,
-                                $option_ids
-                            );
 
-                            if (empty($goods_ids)) {
-                                $goods_ids = ['-1'];
-                            }
-
-                            $result[$feature->getFilterFieldName()] =
-                                sprintf("(shop_goods.goods_id in (%s))", implode(',', $goods_ids));
-                            break;
-
-                        // множественный выбор (check box group)
-                        // находим все id-шки и ищем через FIND_IN_SET() каждую
-                        // на выходе получаем фильтр по goods_id
-                        case FeatureFieldAbstract::FEATURE_FILTER_TYPE_CHECKBOXGROUP:
-                            $option_ids = [];
-                            $options = $feature->getOptions();
-
-                            if (empty($options)) {
-                                continue;
-                            }
-                            foreach ($feature->getOptions() as $option_id => $option_data) {
-                                if (in_array($option_id, $filter_feature['values'])) {
-                                    $option_ids[] = $option_id;
+                                foreach ($options as $option_id => $option_data) {
+                                    if ((float)$option_data['value'] >= $filter_feature['begin']
+                                        and (float)$option_data['value'] <= $filter_feature['end']
+                                    ) {
+                                        $option_ids[] = $option_id;
+                                    }
                                 }
-                            }
-
-                            if ($option_ids) {
-                                $where = [];
-                                foreach ($option_ids as $option_id) {
-                                    $where[] = "FIND_IN_SET('$option_id', fvt.fpv_data)>0";
-                                }
-                                $where = ' AND (' . implode(' OR ', $where) . ')';
-
                                 $goods_ids = $this->dbh->getColumn(
-                                    'select distinct g.goods_id
-									from shop_goods g
-									join shop_feature2good_values fv on g.goods_id = fv.goods_id and fv.feature_id = %s
-									join shop_feature2good_values_translation fvt on fvt.fpv_id = fv.fpv_id and fvt.lang_id = %s
-									where g.smap_id IN (%s) ' . $where,
-                                    $feature->getFeatureId(),
-                                    $this->document->getLang(),
-                                    $documentIDs
-                                );
-
-                                if (empty($goods_ids)) {
-                                    $goods_ids = ['-1'];
-                                }
-
-                                $result[$feature->getFilterFieldName()] =
-                                    sprintf("(shop_goods.goods_id in (%s))", implode(',', $goods_ids));
-                            }
-                            break;
-
-                        // одиночный выбор значения (select или radio)
-                        case FeatureFieldAbstract::FEATURE_FILTER_TYPE_SELECT:
-                        case FeatureFieldAbstract::FEATURE_FILTER_TYPE_RADIOGROUP:
-                            $option_ids = [];
-                            foreach ($feature->getOptions() as $option_id => $option_data) {
-                                if ($option_id == $filter_feature['value']) {
-                                    $option_ids[] = $option_id;
-                                }
-                            }
-
-                            if ($option_ids) {
-                                $goods_ids = $this->dbh->getColumn(
-                                    'select distinct g.goods_id
-									from shop_goods g
-									join shop_feature2good_values fv on g.goods_id = fv.goods_id and fv.feature_id = %s
-									join shop_feature2good_values_translation fvt on fvt.fpv_id = fv.fpv_id and fvt.lang_id = %s
-									where g.smap_id IN (%s) and fvt.fpv_data in (%s)',
+                                    "select distinct g.goods_id
+                                    from {$table_name} g
+                                    join shop_feature2good_values fv on g.goods_id = fv.goods_id and fv.feature_id = %s
+                                    join shop_feature2good_values_translation fvt on fvt.fpv_id = fv.fpv_id and fvt.lang_id = %s
+                                    where g.smap_id in( %s) and fvt.fpv_data in (%s)",
                                     $feature->getFeatureId(),
                                     $this->document->getLang(),
                                     $documentIDs,
@@ -379,10 +462,85 @@ class GoodsList extends DBDataSet {
                                 }
 
                                 $result[$feature->getFilterFieldName()] =
-                                    sprintf("(shop_goods.goods_id in (%s))", implode(',', $goods_ids));
-                            }
-                            break;
-                        // todo: обработка остальных типов фильтров
+                                    sprintf("({$table_name}.goods_id in (%s))", implode(',', $goods_ids));
+                                break;
+
+                            // множественный выбор (check box group)
+                            // находим все id-шки и ищем через FIND_IN_SET() каждую
+                            // на выходе получаем фильтр по goods_id
+                            case FeatureFieldAbstract::FEATURE_FILTER_TYPE_CHECKBOXGROUP:
+                                $option_ids = [];
+                                $options = $feature->getOptions();
+
+                                if (empty($options)) {
+                                    continue;
+                                }
+                                foreach ($feature->getOptions() as $option_id => $option_data) {
+                                    if (in_array($option_id, $filter_feature['values'])) {
+                                        $option_ids[] = $option_id;
+                                    }
+                                }
+
+                                if ($option_ids) {
+                                    $where = [];
+                                    foreach ($option_ids as $option_id) {
+                                        $where[] = "FIND_IN_SET('$option_id', fvt.fpv_data)>0";
+                                    }
+                                    $where = ' AND (' . implode(' OR ', $where) . ')';
+
+                                    $goods_ids = $this->dbh->getColumn(
+                                        "select distinct g.goods_id
+                                        from {$table_name} g
+                                        join shop_feature2good_values fv on g.goods_id = fv.goods_id and fv.feature_id = %s
+                                        join shop_feature2good_values_translation fvt on fvt.fpv_id = fv.fpv_id and fvt.lang_id = %s
+                                        where g.smap_id IN (%s) " . $where,
+                                        $feature->getFeatureId(),
+                                        $this->document->getLang(),
+                                        $documentIDs
+                                    );
+
+                                    if (empty($goods_ids)) {
+                                        $goods_ids = ['-1'];
+                                    }
+
+                                    $result[$feature->getFilterFieldName()] =
+                                        sprintf("({$table_name}.goods_id in (%s))", implode(',', $goods_ids));
+                                }
+                                break;
+
+                            // одиночный выбор значения (select или radio)
+                            case FeatureFieldAbstract::FEATURE_FILTER_TYPE_SELECT:
+                            case FeatureFieldAbstract::FEATURE_FILTER_TYPE_RADIOGROUP:
+                                $option_ids = [];
+                                foreach ($feature->getOptions() as $option_id => $option_data) {
+                                    if ($option_id == $filter_feature['value']) {
+                                        $option_ids[] = $option_id;
+                                    }
+                                }
+
+                                if ($option_ids) {
+                                    $goods_ids = $this->dbh->getColumn(
+                                        "select distinct g.goods_id
+                                        from {$table_name} g
+                                        join shop_feature2good_values fv on g.goods_id = fv.goods_id and fv.feature_id = %s
+                                        join shop_feature2good_values_translation fvt on fvt.fpv_id = fv.fpv_id and fvt.lang_id = %s
+                                        where g.smap_id IN (%s) and fvt.fpv_data in (%s)",
+                                        $feature->getFeatureId(),
+                                        $this->document->getLang(),
+                                        $documentIDs,
+                                        $option_ids
+                                    );
+
+                                    if (empty($goods_ids)) {
+                                        $goods_ids = ['-1'];
+                                    }
+
+                                    $result[$feature->getFilterFieldName()] =
+                                        sprintf("({$table_name}.goods_id in (%s))", implode(',', $goods_ids));
+                                }
+                                break;
+                            // todo: обработка остальных типов фильтров
+                        }
                     }
                 }
             }
@@ -407,6 +565,13 @@ class GoodsList extends DBDataSet {
         $this->buildAttachments();
         // tags in list
         $this->buildTags();
+
+        // получаем массив всех goods_id
+        $field_goods_id = $this->getData()->getFieldByName('goods_id');
+        $goods_ids = $field_goods_id->getData();
+
+        // features
+        $this -> buildFeatures($field_goods_id, $goods_ids);
     }
 
     /**
