@@ -405,12 +405,13 @@ class GoodsList extends DBDataSet {
     protected function getFilterWhereConditions() {
         $documentIDs = $this->getCategories();
         $result = ['smap_id' => sprintf('(smap_id IN (%s))', implode(',', $documentIDs))];
+        $table_name = $this -> getTableName();
 
         // если в компонент пришли id-шки товаров - используем их
         if ($target_ids = $this->getParam('target_ids')) {
             $target_ids = explode(',', $target_ids);
             $result['goods_id'] =
-                sprintf("(shop_goods.goods_id in (%s))", implode(',', $target_ids));
+                sprintf("({$table_name}.goods_id in (%s))", implode(',', $target_ids));
         } else {
             // иначе используем внешние фильтры
             $filter_data = $this->filter_data;
@@ -445,11 +446,11 @@ class GoodsList extends DBDataSet {
                                     }
                                 }
                                 $goods_ids = $this->dbh->getColumn(
-                                    'select distinct g.goods_id
-                                    from shop_goods g
+                                    "select distinct g.goods_id
+                                    from {$table_name} g
                                     join shop_feature2good_values fv on g.goods_id = fv.goods_id and fv.feature_id = %s
                                     join shop_feature2good_values_translation fvt on fvt.fpv_id = fv.fpv_id and fvt.lang_id = %s
-                                    where g.smap_id in( %s) and fvt.fpv_data in (%s)',
+                                    where g.smap_id in( %s) and fvt.fpv_data in (%s)",
                                     $feature->getFeatureId(),
                                     $this->document->getLang(),
                                     $documentIDs,
@@ -461,7 +462,7 @@ class GoodsList extends DBDataSet {
                                 }
 
                                 $result[$feature->getFilterFieldName()] =
-                                    sprintf("(shop_goods.goods_id in (%s))", implode(',', $goods_ids));
+                                    sprintf("({$table_name}.goods_id in (%s))", implode(',', $goods_ids));
                                 break;
 
                             // множественный выбор (check box group)
@@ -488,11 +489,11 @@ class GoodsList extends DBDataSet {
                                     $where = ' AND (' . implode(' OR ', $where) . ')';
 
                                     $goods_ids = $this->dbh->getColumn(
-                                        'select distinct g.goods_id
-                                        from shop_goods g
+                                        "select distinct g.goods_id
+                                        from {$table_name} g
                                         join shop_feature2good_values fv on g.goods_id = fv.goods_id and fv.feature_id = %s
                                         join shop_feature2good_values_translation fvt on fvt.fpv_id = fv.fpv_id and fvt.lang_id = %s
-                                        where g.smap_id IN (%s) ' . $where,
+                                        where g.smap_id IN (%s) " . $where,
                                         $feature->getFeatureId(),
                                         $this->document->getLang(),
                                         $documentIDs
@@ -503,7 +504,7 @@ class GoodsList extends DBDataSet {
                                     }
 
                                     $result[$feature->getFilterFieldName()] =
-                                        sprintf("(shop_goods.goods_id in (%s))", implode(',', $goods_ids));
+                                        sprintf("({$table_name}.goods_id in (%s))", implode(',', $goods_ids));
                                 }
                                 break;
 
@@ -519,11 +520,11 @@ class GoodsList extends DBDataSet {
 
                                 if ($option_ids) {
                                     $goods_ids = $this->dbh->getColumn(
-                                        'select distinct g.goods_id
-                                        from shop_goods g
+                                        "select distinct g.goods_id
+                                        from {$table_name} g
                                         join shop_feature2good_values fv on g.goods_id = fv.goods_id and fv.feature_id = %s
                                         join shop_feature2good_values_translation fvt on fvt.fpv_id = fv.fpv_id and fvt.lang_id = %s
-                                        where g.smap_id IN (%s) and fvt.fpv_data in (%s)',
+                                        where g.smap_id IN (%s) and fvt.fpv_data in (%s)",
                                         $feature->getFeatureId(),
                                         $this->document->getLang(),
                                         $documentIDs,
@@ -535,7 +536,7 @@ class GoodsList extends DBDataSet {
                                     }
 
                                     $result[$feature->getFilterFieldName()] =
-                                        sprintf("(shop_goods.goods_id in (%s))", implode(',', $goods_ids));
+                                        sprintf("({$table_name}.goods_id in (%s))", implode(',', $goods_ids));
                                 }
                                 break;
                             // todo: обработка остальных типов фильтров

@@ -193,6 +193,8 @@ class GoodsCompare extends DataSet
             'list_features' => 'any' // вывод всех фич товаров в списке
         );
 
+        $this -> setBuilder(new EmptyBuilder());
+
         $goodsList =
             $this->document->componentManager->createComponent('compareGoodsList', 'Energine\shop\components\GoodsList', $params);
         $this->document->componentManager->add($goodsList);
