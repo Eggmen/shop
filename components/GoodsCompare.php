@@ -14,7 +14,6 @@ use Energine\shop\gears\FeatureFieldFactory;
 
 class GoodsCompare extends DataSet
 {
-
     public function __construct($name, array $params = NULL)
     {
         parent::__construct($name, $params);
@@ -29,6 +28,7 @@ class GoodsCompare extends DataSet
             parent::defineParams(),
             [
                 'goodsTableName' => 'shop_goods',
+                'goodsListClass' => 'Energine\shop\components\GoodsList',
                 'singleTemplate' => '../../../../core/modules/shop/transformers/single_compare.xslt'
             ]
         );
@@ -179,9 +179,18 @@ class GoodsCompare extends DataSet
         $this -> informer();
     }
 
-    protected function compare()
-    {
-        parent::prepare();
+    public function build() {
+
+        $doc = parent::build();
+
+        if ($this -> getState() == 'compare') {
+            $doc = $this -> buildCompare($doc);
+        }
+
+        return $doc;
+    }
+
+    protected function buildCompare(\DomDocument $builderDoc) {
 
         $sp = $this -> getStateParams(true);
         $goods_ids = array_filter(explode(',', $sp['goodsIds']), 'is_numeric');
@@ -193,12 +202,35 @@ class GoodsCompare extends DataSet
             'list_features' => 'any' // вывод всех фич товаров в списке
         );
 
-        $this -> setBuilder(new EmptyBuilder());
-
-        $goodsList =
-            $this->document->componentManager->createComponent('compareGoodsList', 'Energine\shop\components\GoodsList', $params);
-        $this->document->componentManager->add($goodsList);
+        $goodsList = $this->document->componentManager->createComponent(
+            'compareGoodsList',
+            $this -> getParam('goodsListClass'),
+            $params
+        );
         $goodsList->run();
+        $goodsDoc = $goodsList->build();
+
+        $builderXpath = new \DOMXPath($builderDoc);
+        $recordsets = $builderXpath->query("/component/recordset");
+
+        $goodsXpath = new \DOMXPath($goodsDoc);
+        $records = $goodsXpath->query("/component/recordset/record");
+
+        foreach ($records as $record) {
+            $record = $builderDoc -> importNode($record, true);
+
+            foreach ($recordsets as $recordset) {
+                $recordset -> appendChild($record);
+            }
+        }
+
+        return $builderDoc;
+    }
+
+    protected function compare()
+    {
+        parent::prepare();
+        $this -> setBuilder(new EmptyBuilder());
     }
 
 }
