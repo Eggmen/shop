@@ -60,11 +60,25 @@ var GoodsCompare = new Class({
 
 	add: function(goods_id) {
 		var url = this.element.getProperty('data-add-url') + goods_id + '/?html&' + Math.floor((Math.random()*10000));
+		this.element.set(
+			'load',
+			{
+				method: 'get',
+				'onFailure': this.error.bind(this),
+				'onComplete': this.init.bind(this)
+			});
 		this.element.load(url);
 	},
 
 	remove: function(goods_id) {
 		var url = this.element.getProperty('data-remove-url') + goods_id + '/?html&' + Math.floor((Math.random()*10000));
+		this.element.set(
+			'load',
+			{
+				method: 'get',
+				'onFailure': this.error.bind(this),
+				'onComplete': this.init.bind(this)
+			});
 		this.element.load(url);
 	},
 
@@ -87,6 +101,13 @@ var GoodsCompare = new Class({
 
 	clear: function() {
 		var url = this.element.getProperty('data-clear-url') + '?html&' + Math.floor((Math.random() * 10000));
+		this.element.set(
+			'load',
+			{
+				method: 'get',
+				'onFailure': this.error.bind(this),
+				'onComplete': this.init.bind(this)
+			});
 		this.element.load(url);
 	}
 
