@@ -87,10 +87,10 @@
 			</div>
 			<ul class="gallery_controls">
 				<li class="gallery_control_previous">
-					<a class="icon icon_gallery_control_previous previous" href="#" unselectable="on">TXT_PREV</a>
+					<a class="icon icon_gallery_control_previous previous fa fa-chevron-left" href="#" unselectable="on"></a>
 				</li>
 				<li class="gallery_control_next">
-					<a class="icon icon_gallery_control_next next" href="#" unselectable="on">TXT_NEXT</a>
+					<a class="icon icon_gallery_control_next next fa fa-chevron-right" href="#" unselectable="on"></a>
 				</li>
 			</ul>
 		</div>
@@ -171,10 +171,10 @@
 					</div>
 					<ul class="gallery_controls">
 						<li class="gallery_control_previous">
-							<a class="icon icon_gallery_control_previous previous" href="#" unselectable="on">TXT_PREV</a>
+							<a class="icon icon_gallery_control_previous previous fa fa-chevron-left" href="#" unselectable="on"></a>
 						</li>
 						<li class="gallery_control_next">
-							<a class="icon icon_gallery_control_next next" href="#" unselectable="on">TXT_NEXT</a>
+							<a class="icon icon_gallery_control_next next fa fa-chevron-right" href="#" unselectable="on"></a>
 						</li>
 					</ul>
 				</div>
@@ -190,10 +190,10 @@
 					</div>
 					<ul class="gallery_controls">
 						<li class="gallery_control_previous">
-							<a class="icon icon_gallery_control_previous previous" href="#" unselectable="on">TXT_PREV</a>
+							<a class="icon icon_gallery_control_previous previous fa fa-chevron-left" href="#" unselectable="on"></a>
 						</li>
 						<li class="gallery_control_next">
-							<a class="icon icon_gallery_control_next next" href="#" unselectable="on">TXT_NEXT</a>
+							<a class="icon icon_gallery_control_next next fa fa-chevron-right" href="#" unselectable="on"></a>
 						</li>
 					</ul>
 				</div>
