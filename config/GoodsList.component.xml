@@ -17,6 +17,7 @@
 			<field name="sell_status_id" type="lookup"/>
             <field name="producer_id" type="lookup"/>
 			<field name="attachments"/>
+			<field name="features"/>
 			<field name="tags"/>
 		</fields>
 	</state>
