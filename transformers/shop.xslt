@@ -21,10 +21,15 @@
     <xsl:template match="toolbar[parent::component[@class='GoodsList'] and @name='product']" />
 
     <xsl:template match="toolbar[parent::component[@class='GoodsList'] and @name='product']" mode="list">
+
         <div class="goods_controls clearfix">
-            <xsl:apply-templates />
-            <!--<button type="button" class="buy_goods">BUY</button>
-            <a href="#" class="add_to_wishlist">ADD_TO_WISHLIST</a>-->
+            <ul class="inline wo-separator">
+                <xsl:for-each select="control">
+                    <li><xsl:apply-templates select="."/></li>
+                </xsl:for-each>
+                <!--<button type="button" class="buy_goods">BUY</button>
+                <a href="#" class="add_to_wishlist">ADD_TO_WISHLIST</a>-->
+            </ul>
         </div>
     </xsl:template>
 
