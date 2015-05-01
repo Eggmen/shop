@@ -48,7 +48,7 @@
     </xsl:template>
 
 	<xsl:template match="recordset[parent::component[(@class='GoodsList') and (@type='list') and (descendant::javascript/behavior/@name = 'GoodsCarousel')]]">
-		<div id="goodsCarousel" class="carousel goods_list clearfix">
+		<div id="{generate-id(.)}" class="carousel goods_list clearfix">
 			<div class="carousel_viewbox">
 				<div class="playlist_local">
 					<xsl:for-each select="record">
