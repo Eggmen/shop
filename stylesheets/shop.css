@@ -24,7 +24,7 @@
 }
 .goods_image {
     width: 100%;
-    height: 250px;
+    /*height: 250px;*/
     text-align: center;
 }
 .wide_list .goods_image {
@@ -222,5 +222,11 @@
 }
 .inp_filter {
     width:20%;
+}
+.goods_sort {
+    padding-bottom: 10px;
+}
+.goods_view_type {
+    float:right;
 }
 /* ----- /categories list ---- */

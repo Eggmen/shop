@@ -101,7 +101,7 @@ class GoodsList extends DBDataSet {
      * @return array
      */
     protected function getGoodsDivisionFeatureIds($goods_ids) {
-        $goods_table = $this -> getTableName();
+        $goods_table = $this->getTableName();
         return $this->dbh->getColumn(
             "select DISTINCT sf.feature_id
             from shop_sitemap2features sf
@@ -119,7 +119,7 @@ class GoodsList extends DBDataSet {
      */
     protected function buildFeatures($field_goods_id, $goods_ids) {
 
-        $list_features = $this -> getParam('list_features');
+        $list_features = $this->getParam('list_features');
 
         // если выключен вывод характеристик для списка - ничего не делаем
         if (!$list_features) return;
@@ -136,17 +136,17 @@ class GoodsList extends DBDataSet {
             $this->getData()->addField($f);
 
             // получаем список фич разделов указанных товаров
-            $features = $this -> getGoodsDivisionFeatureIds($goods_ids);
+            $features = $this->getGoodsDivisionFeatureIds($goods_ids);
 
             // получаем список значений fpv_data для заданного массива goods_id
-            $fpv_indexed = array();
+            $fpv_indexed = [];
             $fpv = $this->dbh->select(
                 'select f.fpv_id, f.goods_id, f.feature_id, ft.fpv_data
 				from shop_feature2good_values f
 				left join shop_feature2good_values_translation ft
 				on ft.fpv_id = f.fpv_id and ft.lang_id = %s
 				where f.feature_id in (%s) and f.goods_id in (%s)',
-                $this -> document -> getLang(),
+                $this->document->getLang(),
                 $features,
                 $goods_ids
             );
@@ -159,7 +159,7 @@ class GoodsList extends DBDataSet {
             // проходимся по всем данным, создаем каждую фичу через фабрику, передаем feature_id и fpv_data
             foreach ($field_goods_id->getData() as $key => $goods_id) {
 
-                $feature_data = array();
+                $feature_data = [];
 
                 foreach ($features as $feature_id) {
 
@@ -169,7 +169,7 @@ class GoodsList extends DBDataSet {
                     if (is_array($list_features) and !in_array($feature->getSysName(), $list_features))
                         continue;
 
-                    $images = array();
+                    $images = [];
                     if ($feature->getType() == FeatureFieldAbstract::FEATURE_TYPE_MULTIOPTION) {
                         $options = $feature->getOptions();
                         $values = $feature->getValue();
@@ -180,17 +180,17 @@ class GoodsList extends DBDataSet {
                         }
                     }
 
-                    $feature_data[] = array(
-                        'feature_id' => $feature -> getFeatureId(),
-                        'feature_name' => $feature -> getName(),
-                        'feature_title' => $feature -> getTitle(),
-                        'feature_sysname' => $feature -> getSysName(),
+                    $feature_data[] = [
+                        'feature_id' => $feature->getFeatureId(),
+                        'feature_name' => $feature->getName(),
+                        'feature_title' => $feature->getTitle(),
+                        'feature_sysname' => $feature->getSysName(),
                         'feature_type' => $feature->getType(),
-                        'feature_value' => (string) $feature,
-                        'group_id' => $feature -> getGroupId(),
-                        'group_title' => $feature -> getGroupName(),
+                        'feature_value' => (string)$feature,
+                        'group_id' => $feature->getGroupId(),
+                        'group_title' => $feature->getGroupName(),
                         'feature_images' => $images
-                    );
+                    ];
                 }
 
                 $builder = new SimpleBuilder();
@@ -198,7 +198,7 @@ class GoodsList extends DBDataSet {
                 $localData->load($feature_data);
 
                 $dataDescription = new DataDescription();
-                $ffd =  new FieldDescription('feature_id');
+                $ffd = new FieldDescription('feature_id');
                 $dataDescription->addFieldDescription($ffd);
 
                 $ffd = new FieldDescription('group_title');
@@ -248,7 +248,7 @@ class GoodsList extends DBDataSet {
      */
     public function getSortData() {
         $sp = $this->getStateParams(true);
-        $field = 'goods_price';
+        $field = 'price';
         $dir = 'asc';
 
         if (isset($sp['sfield']) && isset($sp['sdir'])) {
@@ -275,18 +275,21 @@ class GoodsList extends DBDataSet {
             }
         }
         $result = parent::loadData();
-        if ($tagFilter) {
-            $result = array_filter($result, function ($row) use ($tagFilter) {
-                return in_array($row[$this->getPK()], $tagFilter);
-            });
-        }
-        $map = E()->getMap();
-        $result = array_map(function ($row) use ($map) {
-            if (isset($row['smap_id'])) {
-                $row['smap_id'] = $map->getURLByID($row['smap_id']);
+
+        if (!empty($result)) {
+            if ($tagFilter) {
+                $result = array_filter($result, function ($row) use ($tagFilter) {
+                    return in_array($row[$this->getPK()], $tagFilter);
+                });
             }
-            return $row;
-        }, $result);
+            $map = E()->getMap();
+            $result = array_map(function ($row) use ($map) {
+                if (isset($row['smap_id'])) {
+                    $row['smap_id'] = $map->getURLByID($row['smap_id']);
+                }
+                return $row;
+            }, $result);
+        }
 
 
         return $result;
@@ -403,8 +406,6 @@ class GoodsList extends DBDataSet {
      * @return string
      */
     protected function getFilterWhereConditions() {
-        $documentIDs = $this->getCategories();
-        $result = ['smap_id' => sprintf('(smap_id IN (%s))', implode(',', $documentIDs))];
         $table_name = $this -> getTableName();
 
         // если в компонент пришли id-шки товаров - используем их
@@ -413,7 +414,10 @@ class GoodsList extends DBDataSet {
             $result['goods_id'] =
                 sprintf("({$table_name}.goods_id in (%s))", implode(',', $target_ids));
         } else {
-            // иначе используем внешние фильтры
+            // иначе используем внешние фильтры + привязку к категории
+            $documentIDs = $this->getCategories();
+            $result = ['smap_id' => sprintf('(smap_id IN (%s))', implode(',', $documentIDs))];
+
             $filter_data = $this->filter_data;
             if ($filter_data) {
                 if (isset($filter_data['price'])) {
@@ -567,11 +571,13 @@ class GoodsList extends DBDataSet {
         $this->buildTags();
 
         // получаем массив всех goods_id
-        $field_goods_id = $this->getData()->getFieldByName('goods_id');
-        $goods_ids = $field_goods_id->getData();
+        if ($field_goods_id = $this->getData()->getFieldByName('goods_id')) {
+            $goods_ids = $field_goods_id->getData();
 
-        // features
-        $this -> buildFeatures($field_goods_id, $goods_ids);
+            // features
+            $this->buildFeatures($field_goods_id, $goods_ids);
+        }
+
     }
 
     /**

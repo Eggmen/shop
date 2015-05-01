@@ -3,9 +3,19 @@
         xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
         version="1.0">
     <xsl:template match="component[@class='GoodsList' and @type='list']">
-
+        <div class="products" id="{generate-id(recordset)}">
             <xsl:apply-templates/>
+        </div>
+    </xsl:template>
 
+    <xsl:template match="toolbar[parent::component[@class='GoodsList'] and @name='list_type']">
+        <div class="goods_view_type">
+            <xsl:for-each select="control">
+                <xsl:apply-templates select="."/>
+                <xsl:if test="position()!=last()"><xsl:text disable-output-escaping="yes">&amp;nbsp;</xsl:text>|<xsl:text disable-output-escaping="yes">&amp;nbsp;</xsl:text></xsl:if>
+            </xsl:for-each>
+
+        </div>
     </xsl:template>
 
     <xsl:template match="recordset[parent::component[@class='GoodsList' and @type='list']]">
@@ -87,19 +97,21 @@
 	</xsl:template>
 
     <xsl:template match="component[@class='GoodsSort']">
-        <xsl:variable name="GET"><xsl:if test="@get!=''">?<xsl:value-of select="@get"/></xsl:if></xsl:variable>
-        <xsl:variable name="TEMPLATE" select="@template"/>
-        <xsl:variable name="RECORDS" select="recordset/record"/>
-        <xsl:for-each select="$RECORDS/field[@name='field']/options/option">
-            <a href="{$BASE}{$LANG_ABBR}{$TEMPLATE}sort-{@id}-{$RECORDS/field[@name='dir']/options/option[not(@selected)]/@id}/{$GET}"><xsl:value-of select="."/>
-                <xsl:if test="@selected">
-                    <xsl:text disable-output-escaping="yes">&amp;nbsp;</xsl:text><xsl:value-of
-                        select="$RECORDS/field[@name='dir']/options/option[@selected]"/>
-                </xsl:if>
-            </a><xsl:if test="position()!=last()">
-            <xsl:text disable-output-escaping="yes">&amp;nbsp;|&amp;nbsp;</xsl:text>
-        </xsl:if>
-        </xsl:for-each>
+        <div class="goods_sort">
+            <xsl:variable name="GET"><xsl:if test="@get!=''">?<xsl:value-of select="@get"/></xsl:if></xsl:variable>
+            <xsl:variable name="TEMPLATE" select="@template"/>
+            <xsl:variable name="RECORDS" select="recordset/record"/>
+            <xsl:for-each select="$RECORDS/field[@name='field']/options/option">
+                <a href="{$BASE}{$LANG_ABBR}{$TEMPLATE}sort-{@id}-{$RECORDS/field[@name='dir']/options/option[not(@selected)]/@id}/{$GET}"><xsl:value-of select="."/>
+                    <xsl:if test="@selected">
+                        <xsl:text disable-output-escaping="yes">&amp;nbsp;</xsl:text><xsl:value-of
+                            select="$RECORDS/field[@name='dir']/options/option[@selected]"/>
+                    </xsl:if>
+                </a><xsl:if test="position()!=last()">
+                <xsl:text disable-output-escaping="yes">&amp;nbsp;|&amp;nbsp;</xsl:text>
+            </xsl:if>
+            </xsl:for-each>
+        </div>
     </xsl:template>
 
     <xsl:template match="component[@class='GoodsFilter']">
