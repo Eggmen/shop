@@ -10,11 +10,21 @@
 
     <xsl:template match="toolbar[parent::component[@class='GoodsList'] and @name='list_type']">
         <div class="goods_view_type">
-            <xsl:for-each select="control">
-                <xsl:apply-templates select="."/>
-                <xsl:if test="position()!=last()"><xsl:text disable-output-escaping="yes">&amp;nbsp;</xsl:text>|<xsl:text disable-output-escaping="yes">&amp;nbsp;</xsl:text></xsl:if>
-            </xsl:for-each>
+            <ul class="inline">
+                <xsl:for-each select="control">
+                    <li><xsl:apply-templates select="."/></li>
+                </xsl:for-each>
+            </ul>
+        </div>
+    </xsl:template>
 
+    <xsl:template match="toolbar[parent::component[@class='GoodsList'] and @name='product']" />
+
+    <xsl:template match="toolbar[parent::component[@class='GoodsList'] and @name='product']" mode="list">
+        <div class="goods_controls clearfix">
+            <xsl:apply-templates />
+            <!--<button type="button" class="buy_goods">BUY</button>
+            <a href="#" class="add_to_wishlist">ADD_TO_WISHLIST</a>-->
         </div>
     </xsl:template>
 
@@ -47,10 +57,7 @@
 	                <div class="goods_price">
 	                    <xsl:value-of select="field[@name='goods_price']"/>
 	                </div>
-	                <div class="goods_controls clearfix">
-	                    <button type="button" class="buy_goods">BUY</button>
-	                    <a href="#" class="add_to_wishlist">ADD_TO_WISHLIST</a>
-	                </div>
+                    <xsl:apply-templates select="../../toolbar[@name='product']" mode="list"/>
 	            </div>
             </div>
         </xsl:for-each>
@@ -58,7 +65,7 @@
     </xsl:template>
 
 	<xsl:template match="recordset[parent::component[(@class='GoodsList') and (@type='list') and (descendant::javascript/behavior/@name = 'GoodsCarousel')]]">
-		<div id="goodsCarousel" class="carousel goods_list clearfix">
+		<div id="{generate-id(.)}" class="carousel goods_list clearfix" >
 			<div class="carousel_viewbox">
 				<div class="playlist_local">
 					<xsl:for-each select="record">
@@ -101,16 +108,16 @@
             <xsl:variable name="GET"><xsl:if test="@get!=''">?<xsl:value-of select="@get"/></xsl:if></xsl:variable>
             <xsl:variable name="TEMPLATE" select="@template"/>
             <xsl:variable name="RECORDS" select="recordset/record"/>
+            <ul class="inline">
             <xsl:for-each select="$RECORDS/field[@name='field']/options/option">
-                <a href="{$BASE}{$LANG_ABBR}{$TEMPLATE}sort-{@id}-{$RECORDS/field[@name='dir']/options/option[not(@selected)]/@id}/{$GET}"><xsl:value-of select="."/>
+                <li><a href="{$BASE}{$LANG_ABBR}{$TEMPLATE}sort-{@id}-{$RECORDS/field[@name='dir']/options/option[not(@selected)]/@id}/{$GET}"><xsl:value-of select="."/>
                     <xsl:if test="@selected">
                         <xsl:text disable-output-escaping="yes">&amp;nbsp;</xsl:text><xsl:value-of
                             select="$RECORDS/field[@name='dir']/options/option[@selected]"/>
                     </xsl:if>
-                </a><xsl:if test="position()!=last()">
-                <xsl:text disable-output-escaping="yes">&amp;nbsp;|&amp;nbsp;</xsl:text>
-            </xsl:if>
+                </a></li>
             </xsl:for-each>
+            </ul>
         </div>
     </xsl:template>
 
