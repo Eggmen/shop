@@ -277,9 +277,9 @@ a.icon_carousel_control_previous.previous:hover {
 /* ----- /categories list ---- */
 /* ----- goods sort ----- */
 .ficon_desc:before {
-    content: "\f078";
+    content: "\f175";
 }
 .ficon_asc:before {
-    content: "\f077";
+    content: "\f176";
 }
 /* ----- /goods sort ---- */

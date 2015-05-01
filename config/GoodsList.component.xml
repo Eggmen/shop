@@ -37,7 +37,7 @@
             <pattern>/view/[goodsSegment]/</pattern>
         </uri_patterns>
         <javascript>
-            <behavior name="ProductView"/>
+            <behavior name="ProductView" library="jquery"/>
         </javascript>
         <fields>
             <field name="goods_id"/>
