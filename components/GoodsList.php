@@ -406,9 +406,7 @@ class GoodsList extends DBDataSet {
      * @return string
      */
     protected function getFilterWhereConditions() {
-        $documentIDs = $this->getCategories();
-        $result = ['smap_id' => sprintf('(smap_id IN (%s))', implode(',', $documentIDs))];
-        $table_name = $this->getTableName();
+        $table_name = $this -> getTableName();
 
         // если в компонент пришли id-шки товаров - используем их
         if ($target_ids = $this->getParam('target_ids')) {
@@ -416,7 +414,10 @@ class GoodsList extends DBDataSet {
             $result['goods_id'] =
                 sprintf("({$table_name}.goods_id in (%s))", implode(',', $target_ids));
         } else {
-            // иначе используем внешние фильтры
+            // иначе используем внешние фильтры + привязку к категории
+            $documentIDs = $this->getCategories();
+            $result = ['smap_id' => sprintf('(smap_id IN (%s))', implode(',', $documentIDs))];
+
             $filter_data = $this->filter_data;
             if ($filter_data) {
                 if (isset($filter_data['price'])) {
