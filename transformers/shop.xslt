@@ -113,8 +113,8 @@
             <xsl:for-each select="$RECORDS/field[@name='field']/options/option">
                 <li><a href="{$BASE}{$LANG_ABBR}{$TEMPLATE}sort-{@id}-{$RECORDS/field[@name='dir']/options/option[not(@selected)]/@id}/{$GET}"><xsl:value-of select="."/>
                     <xsl:if test="@selected">
-                        <xsl:text disable-output-escaping="yes">&amp;nbsp;</xsl:text><xsl:value-of
-                            select="$RECORDS/field[@name='dir']/options/option[@selected]"/>
+                        <xsl:text disable-output-escaping="yes">&amp;nbsp;</xsl:text>
+	                    <i class="fa ficon_{$RECORDS/field[@name='dir']/options/option[@selected]}"></i>
                     </xsl:if>
                 </a></li>
             </xsl:for-each>

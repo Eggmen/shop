@@ -275,3 +275,11 @@ a.icon_carousel_control_previous.previous:hover {
     float:right;
 }
 /* ----- /categories list ---- */
+/* ----- goods sort ----- */
+.ficon_desc:before {
+    content: "\f078";
+}
+.ficon_asc:before {
+    content: "\f077";
+}
+/* ----- /goods sort ---- */
