@@ -26,38 +26,40 @@
                     select="field[@name='smap_id']"/>view/<xsl:value-of
                     select="field[@name='goods_segment']"/>/</xsl:variable>
             <div class="goods_block">
-                <div class="goods_image">
-                    <a href="{$URL}">
-                        <img src="{$RESIZER_URL}w200-h150/{field[@name='attachments']/recordset/record[1]/field[@name='file']}"
-                             alt="{field[@name='attachments']/recordset/record[1]/field[@name='title']}"/>
-                    </a>
-                </div>
-	            <div class="goods_info">
-	                <div class="goods_name">
+	            <div class="goods_block_inner clearfix">
+	                <div class="goods_image">
 	                    <a href="{$URL}">
-	                        <xsl:value-of select="field[@name='goods_name']"/>
+	                        <img src="{$RESIZER_URL}w200-h150/{field[@name='attachments']/recordset/record[1]/field[@name='file']}"
+	                             alt="{field[@name='attachments']/recordset/record[1]/field[@name='title']}"/>
 	                    </a>
 	                </div>
-	                <div class="goods_producer">
-	                    <xsl:value-of select="field[@name='producer_id']/value"/>
-	                </div>
-	                <div class="goods_status available">
-	                    <xsl:value-of select="field[@name='sell_status_id']/value"/>
-	                </div>
-	                <div class="goods_price">
-	                    <xsl:value-of select="field[@name='goods_price']"/>
-	                </div>
-	                <div class="goods_controls clearfix">
-	                    <button type="button" class="buy_goods">BUY</button>
-	                    <a href="#" class="add_to_wishlist">ADD_TO_WISHLIST</a>
-	                </div>
+		            <div class="goods_info">
+		                <div class="goods_name">
+		                    <a href="{$URL}">
+		                        <xsl:value-of select="field[@name='goods_name']"/>
+		                    </a>
+		                </div>
+		                <div class="goods_producer">
+		                    <xsl:value-of select="field[@name='producer_id']/value"/>
+		                </div>
+		                <div class="goods_status available">
+		                    <xsl:value-of select="field[@name='sell_status_id']/value"/>
+		                </div>
+		                <div class="goods_price">
+		                    <xsl:value-of select="field[@name='goods_price']"/>
+		                </div>
+		                <div class="goods_controls clearfix">
+		                    <button type="button" class="buy_goods">BUY</button>
+		                    <a href="#" class="add_to_wishlist">ADD_TO_WISHLIST</a>
+		                </div>
+		            </div>
 	            </div>
             </div>
         </xsl:for-each>
     </div>
     </xsl:template>
 
-	<xsl:template match="recordset[parent::component[(@class='GoodsList') and (@type='list') and (descendant::javascript/behavior/@name = 'GoodsCarousel')]]">
+	<xsl:template match="recordset[parent::component[(@class='GoodsList') and (@type='list') and (descendant::javascript/behavior/@name = 'ProductsCarousel')]]">
 		<div id="{generate-id(.)}" class="carousel goods_list clearfix">
 			<div class="carousel_viewbox">
 				<div class="playlist_local">
@@ -67,30 +69,28 @@
 								select="field[@name='smap_id']"/>view/<xsl:value-of
 								select="field[@name='goods_segment']"/>/</xsl:variable>
 						<div class="item goods_block">
-							<div class="goods_image">
-								<a href="{$URL}">
+							<a href="{$URL}" class="goods_block_inner">
+								<div class="goods_image">
 									<img src="{$RESIZER_URL}w200-h150/{field[@name='attachments']/recordset/record[1]/field[@name='file']}"
 									     alt="{field[@name='attachments']/recordset/record[1]/field[@name='title']}"/>
-								</a>
-							</div>
-							<div class="goods_name">
-								<a href="{$URL}">
+								</div>
+								<div class="goods_name">
 									<xsl:value-of select="field[@name='goods_name']"/>
-								</a>
-							</div>
-							<div class="goods_price">
-								<xsl:value-of select="field[@name='goods_price']"/>
-							</div>
+								</div>
+								<div class="goods_price">
+									<xsl:value-of select="field[@name='goods_price']"/>
+								</div>
+							</a>
 						</div>
 					</xsl:for-each>
 				</div>
 			</div>
-			<ul class="gallery_controls">
-				<li class="gallery_control_previous">
-					<a class="icon icon_gallery_control_previous previous fa fa-chevron-left" href="#" unselectable="on"></a>
+			<ul class="carousel_controls">
+				<li class="carousel_control_previous">
+					<a class="icon icon_carousel_control_previous previous fa fa-chevron-left" href="#" unselectable="on"></a>
 				</li>
-				<li class="gallery_control_next">
-					<a class="icon icon_gallery_control_next next fa fa-chevron-right" href="#" unselectable="on"></a>
+				<li class="carousel_control_next">
+					<a class="icon icon_carousel_control_next next fa fa-chevron-right" href="#" unselectable="on"></a>
 				</li>
 			</ul>
 		</div>
@@ -169,12 +169,12 @@
 							</xsl:for-each>
 						</div>
 					</div>
-					<ul class="gallery_controls">
-						<li class="gallery_control_previous">
-							<a class="icon icon_gallery_control_previous previous fa fa-chevron-left" href="#" unselectable="on"></a>
+					<ul class="carousel_controls">
+						<li class="carousel_control_previous">
+							<a class="icon icon_carousel_control_previous previous fa fa-chevron-left" href="#" unselectable="on"></a>
 						</li>
-						<li class="gallery_control_next">
-							<a class="icon icon_gallery_control_next next fa fa-chevron-right" href="#" unselectable="on"></a>
+						<li class="carousel_control_next">
+							<a class="icon icon_carousel_control_next next fa fa-chevron-right" href="#" unselectable="on"></a>
 						</li>
 					</ul>
 				</div>
@@ -188,12 +188,12 @@
 							</xsl:for-each>
 						</div>
 					</div>
-					<ul class="gallery_controls">
-						<li class="gallery_control_previous">
-							<a class="icon icon_gallery_control_previous previous fa fa-chevron-left" href="#" unselectable="on"></a>
+					<ul class="carousel_controls">
+						<li class="carousel_control_previous">
+							<a class="icon icon_carousel_control_previous previous fa fa-chevron-left" href="#" unselectable="on"></a>
 						</li>
-						<li class="gallery_control_next">
-							<a class="icon icon_gallery_control_next next fa fa-chevron-right" href="#" unselectable="on"></a>
+						<li class="carousel_control_next">
+							<a class="icon icon_carousel_control_next next fa fa-chevron-right" href="#" unselectable="on"></a>
 						</li>
 					</ul>
 				</div>
