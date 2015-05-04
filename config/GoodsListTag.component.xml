@@ -15,7 +15,7 @@
 			<field name="attachments"/>
 		</fields>
 		<javascript>
-			<behavior name="ProductsCarousel" />
+			<behavior name="ProductCarousel" use="jquery"/>
 		</javascript>
 	</state>
 </configuration>

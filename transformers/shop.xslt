@@ -72,40 +72,28 @@
     </div>
     </xsl:template>
 
-	<xsl:template match="recordset[parent::component[(@class='GoodsList') and (@type='list') and (descendant::javascript/behavior/@name = 'ProductsCarousel')]]">
-		<div id="{generate-id(.)}" class="carousel goods_list clearfix">
-			<div class="carousel_viewbox">
-				<div class="playlist_local">
-					<xsl:for-each select="record">
-						<xsl:variable name="URL">
-							<xsl:value-of select="$BASE"/><xsl:value-of select="$LANG_ABBR"/><xsl:value-of
-								select="field[@name='smap_id']"/>view/<xsl:value-of
-								select="field[@name='goods_segment']"/>/</xsl:variable>
-						<div class="item goods_block">
-							<a href="{$URL}" class="goods_block_inner">
-								<div class="goods_image">
-									<img src="{$RESIZER_URL}w200-h150/{field[@name='attachments']/recordset/record[1]/field[@name='file']}"
-									     alt="{field[@name='attachments']/recordset/record[1]/field[@name='title']}"/>
-								</div>
-								<div class="goods_name">
-									<xsl:value-of select="field[@name='goods_name']"/>
-								</div>
-								<div class="goods_price">
-									<xsl:value-of select="field[@name='goods_price']"/>
-								</div>
-							</a>
-						</div>
-					</xsl:for-each>
-				</div>
-			</div>
-			<ul class="carousel_controls">
-				<li class="carousel_control_previous">
-					<a class="icon icon_carousel_control_previous previous fa fa-chevron-left" href="#" unselectable="on"></a>
-				</li>
-				<li class="carousel_control_next">
-					<a class="icon icon_carousel_control_next next fa fa-chevron-right" href="#" unselectable="on"></a>
-				</li>
-			</ul>
+	<xsl:template match="recordset[parent::component[(@class='GoodsList') and (@type='list') and (descendant::javascript/behavior/@name = 'ProductCarousel')]]">
+		<div class="multiple-items">
+            <xsl:for-each select="record">
+                <xsl:variable name="URL">
+                    <xsl:value-of select="$BASE"/><xsl:value-of select="$LANG_ABBR"/><xsl:value-of
+                        select="field[@name='smap_id']"/>view/<xsl:value-of
+                        select="field[@name='goods_segment']"/>/</xsl:variable>
+                <div class="item goods_block">
+                    <a href="{$URL}" class="goods_block_inner">
+                        <div class="goods_image">
+                            <img src="{$RESIZER_URL}w200-h150/{field[@name='attachments']/recordset/record[1]/field[@name='file']}"
+                                 alt="{field[@name='attachments']/recordset/record[1]/field[@name='title']}"/>
+                        </div>
+                        <div class="goods_name">
+                            <xsl:value-of select="field[@name='goods_name']"/>
+                        </div>
+                        <div class="goods_price">
+                            <xsl:value-of select="field[@name='goods_price']"/>
+                        </div>
+                    </a>
+                </div>
+            </xsl:for-each>
 		</div>
 	</xsl:template>
 
