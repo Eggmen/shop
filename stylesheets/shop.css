@@ -77,11 +77,6 @@ a.goods_block_inner:hover {
 .goods_status.available {
     color: rgb(125, 194, 125);
 }
-@media screen and (max-width: 1500px) {
-    .carousel .goods_image {
-        height: 100px;
-    }
-}
 @media screen and (max-width: 768px) {
     .goods_block {
         width: 99%;

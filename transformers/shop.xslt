@@ -72,6 +72,10 @@
     </div>
     </xsl:template>
 
+    <xsl:template match="recordset[parent::component[@class='GoodsList' and @type='list']][@empty]">
+            <div><xsl:value-of select="@empty"/></div>
+    </xsl:template>
+
 	<xsl:template match="recordset[parent::component[(@class='GoodsList') and (@type='list') and (descendant::javascript/behavior/@name = 'ProductCarousel')]]">
 		<div class="multiple-items">
             <xsl:for-each select="record">
