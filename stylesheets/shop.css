@@ -87,25 +87,6 @@ a.goods_block_inner:hover {
         width: 99%;
     }
 }
-/* ---- carousel --- */
-.goods_list.carousel {
-    margin: 0;
-    padding: 20px;
-}
-.carousel .goods_block_inner {
-    border: 0;
-}
-.carousel .goods_image {
-    height: 100px;
-}
-.carousel .goods_block {
-    margin-left: 0;
-    width: 25%;
-}
-.carousel .goods_block:hover {
-    background: rgba(220, 220, 220, 0.3);
-}
-/* --- /carousel --- */
 /* ----- /goods list ---- */
 /* ----- goods_view ----- */
 .goods_view .goods_image_block {
@@ -121,44 +102,7 @@ a.goods_block_inner:hover {
 .goods_view .goods_gallery_small {
     padding: 10px 0;
 }
-.goods_view .goods_gallery_large .carousel_viewbox,
-.goods_view .goods_gallery_small .carousel_viewbox {
-    width: 100%;
-    overflow: hidden;
-}
-.goods_view .goods_gallery_large .goods_image {
-    position: absolute;
-    top: 0;
-    width: 500px;
-    height: 300px;
-}
-.goods_view .goods_gallery_small .goods_image {
-    position: absolute;
-    top: 0;
-    width: 120px;
-    height: 75px;
-}
-.carousel_controls {
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-.carousel_control_previous,
-.carousel_control_next {
-    margin: 0;
-    font-size: 24px;
-}
-.icon_carousel_control_previous.previous {
-    left: 0;
-}
-.icon_carousel_control_next.next {
-    right: 0;
-}
-a.icon_carousel_control_next.next:hover,
-a.icon_carousel_control_previous.previous:hover {
-    text-decoration: none;
-}
+
 .goods_view .goods_image img {
     max-width: 100%;
 }
