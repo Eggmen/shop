@@ -11,6 +11,7 @@ use Energine\shop\gears\FeatureFieldFactory;
 
 
 class GoodsFilter extends DataSet {
+    const FILTER_GET = 'filter';
     protected $filter_data = [];
     /**
      * @var GoodsList
@@ -159,9 +160,9 @@ class GoodsFilter extends DataSet {
     }
 
     public function build() {
+        $this->setProperty('filter-name', self::FILTER_GET);
         foreach ($this->getDataDescription() as $fd) {
-            $fd->setProperty('tableName', 'f');
-            //   inspect($fd);
+            $fd->setProperty('tableName', self::FILTER_GET);
         }
         $result = parent::build();
 

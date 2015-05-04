@@ -120,7 +120,7 @@
     </xsl:template>
 
     <xsl:template match="component[@class='GoodsFilter']">
-        <form method="get" action="{$BASE}{$LANG_ABBR}{@template}{@action}">
+        <form method="get" action="{$BASE}{$LANG_ABBR}{@template}{@action}" data-filter-name="{@filter-name}">
             <xsl:apply-templates/>
         </form>
     </xsl:template>
