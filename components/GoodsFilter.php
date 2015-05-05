@@ -34,7 +34,8 @@ class GoodsFilter extends DataSet {
             [
                 'bind' => false,
                 'tableName' => 'shop_goods',
-                'active' => false
+                'active' => false,
+                'showForProduct' => false
             ]
         );
     }
@@ -111,9 +112,8 @@ class GoodsFilter extends DataSet {
 
     public function main() {
         $this->boundComponent = E()->getDocument()->componentManager->getBlockByName($this->getParam('bind'));
-        if ($this->boundComponent->getState() == 'view') {
+        if (!$this->getParam('showForProduct') && ($this->boundComponent->getState() == 'view')) {
             $this->disable();
-
             return;
         }
 
