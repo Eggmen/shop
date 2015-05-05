@@ -323,10 +323,13 @@ class GoodsList extends DBDataSet {
      * @return array
      */
     public function getFilterData() {
-        $result = [];
+        static $result = null;
+
         // если фильтр взведен
-        if (!empty($_REQUEST[GoodsFilter::FILTER_GET])) {
+        if (is_null($result) && !empty($_REQUEST[GoodsFilter::FILTER_GET])) {
+            $result =[];
             $filter = $_REQUEST[GoodsFilter::FILTER_GET];
+
             $f = explode(';', $filter);
             if( sizeof($f)> 1 || strpos($f[0], '=')){
                 $prepFilter = [];
@@ -357,10 +360,8 @@ class GoodsList extends DBDataSet {
             if (isset($filter['producers']) && !empty($filter['producers'])) {
                 $result['producers'] = $filter['producers'];
             }
-
             // features filter
             foreach ($this->div_feature_ids as $feature_id) {
-
                 $feature = FeatureFieldFactory::getField($feature_id);
                 $feature_name = $feature->getFilterFieldName();
 
@@ -375,6 +376,7 @@ class GoodsList extends DBDataSet {
                                 'begin' => $begin,
                                 'end' => $end
                             ];
+
                             break;
                         // checkbox group (multiple values)
                         case FeatureFieldAbstract::FEATURE_FILTER_TYPE_CHECKBOXGROUP:

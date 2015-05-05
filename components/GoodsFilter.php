@@ -100,7 +100,6 @@ class GoodsFilter extends DataSet {
                     $feature = FeatureFieldFactory::getField($feature_id);
 
                     if ($feature->isActive() and $feature->isFilter()) {
-
                         $filter_data = isset($this->filter_data['features'][$feature->getFilterFieldName()]) ? $this->filter_data['features'][$feature->getFilterFieldName()] : false;
                         $this->getDataDescription()->addFieldDescription($feature->getFilterFieldDescription($filter_data));
                         $this->getData()->addField($feature->getFilterField($filter_data));
