@@ -32,7 +32,6 @@ var GoodsForm = new Class(/** @lends GoodsForm# */{
 	},
 
 	onTabChange: function () {
-
 		// warning: контекст this тут не формы, а TabPane !!!
 
 		// принудительно переписовываем вкладку с характеристиками при каждой активации

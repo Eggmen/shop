@@ -171,35 +171,7 @@
 									<img src="{$RESIZER_URL}w400-h300/{field[@name='file']}" alt="{field[@name='name']}" />
 								</div>
 							</xsl:for-each>
-
-					<!--<ul class="carousel_controls">
-						<li class="carousel_control_previous">
-							<a class="icon icon_carousel_control_previous previous fa fa-chevron-left" href="#" unselectable="on"></a>
-						</li>
-						<li class="carousel_control_next">
-							<a class="icon icon_carousel_control_next next fa fa-chevron-right" href="#" unselectable="on"></a>
-						</li>
-					</ul>-->
 				</div>
-				<!--<div id="goodsGallerySmall" class="carousel goods_gallery_small">
-					<div class="carousel_viewbox">
-						<div class="playlist_local">
-							<xsl:for-each select="field[@name='attachments']/recordset/record">
-								<div class="goods_image">
-									<img src="{$RESIZER_URL}w100-h75/{field[@name='file']}" alt="{field[@name='name']}" />
-								</div>
-							</xsl:for-each>
-						</div>
-					</div>
-					<ul class="carousel_controls">
-						<li class="carousel_control_previous">
-							<a class="icon icon_carousel_control_previous previous fa fa-chevron-left" href="#" unselectable="on"></a>
-						</li>
-						<li class="carousel_control_next">
-							<a class="icon icon_carousel_control_next next fa fa-chevron-right" href="#" unselectable="on"></a>
-						</li>
-					</ul>
-				</div>-->
 			</div>
 			<div class="goods_info">
 				<div class="goods_name">
