@@ -190,26 +190,35 @@
 					<xsl:value-of select="field[@name='goods_description_rtf']" disable-output-escaping="yes" />
 				</div>
 			</div>
-			<div class="goods_features_block">
-				<table class="goods_features">
-					<thead>
-						<tr>
-							<th colspan="2">CHARACTERISTICS</th>
-						</tr>
-					</thead>
-					<tbody>
-						<xsl:for-each select="field[@name='features']/recordset/record">
-							<xsl:if test="not(field[@name='feature_title'] = '')">
-								<tr>
-									<th><xsl:value-of select="field[@name='feature_title']" /></th>
-									<td><xsl:value-of select="field[@name='feature_value']" /></td>
-								</tr>
-							</xsl:if>
-						</xsl:for-each>
-					</tbody>
-				</table>
-			</div>
-		</div>
+            <xsl:if test="not(field[@name='features']/recordset/@empty)">
+                <div class="goods_features_block">
+                    <table class="goods_features">
+                        <thead>
+                            <tr>
+                                <th colspan="2">
+                                    <xsl:value-of select="field[@name='features']/@title"/>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <xsl:for-each select="field[@name='features']/recordset/record">
+                                <xsl:if test="not(field[@name='feature_title'] = '')">
+                                    <tr>
+                                        <th>
+                                            <xsl:value-of select="field[@name='feature_title']"/>
+                                        </th>
+                                        <td>
+                                            <xsl:value-of select="field[@name='feature_value']"/>
+                                        </td>
+                                    </tr>
+                                </xsl:if>
+                            </xsl:for-each>
+                        </tbody>
+                    </table>
+                </div>
+            </xsl:if>
+
+        </div>
 	</xsl:template>
 
     <xsl:template match="control[ancestor::component[@class='GoodsFilter']]">

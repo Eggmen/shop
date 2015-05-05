@@ -663,6 +663,8 @@ class GoodsList extends DBDataSet {
         if ($fd = $this->getDataDescription()->getFieldDescriptionByName('features')) {
 
             $fd->setType(FieldDescription::FIELD_TYPE_CUSTOM);
+            if(!$fd->getPropertyValue('title'))
+                $fd->setProperty('title', 'TXT_FEATURES');
 
             $f = new Field('features');
             $this->getData()->addField($f);

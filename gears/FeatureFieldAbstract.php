@@ -64,7 +64,7 @@ class FeatureFieldAbstract extends Object {
     }
 
     public function getTitle() {
-        return (isset($this->data['feature_title'])) ? $this->data['feature_title'] : '';
+        return (isset($this->data['feature_title']) && ($this->data['feature_title'])) ? $this->data['feature_title'] : $this->getName();
     }
 
     public function getDescription() {
