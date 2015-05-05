@@ -28,12 +28,11 @@ var GoodsFilter = new Class({
                 //console.log(val, name);
                 if ((typeof val != 'undefined') && matches) {
                     name = matches[1] + matches[2];
-                    //console.log(matches[2]);
                     if ((matches[2] == '[begin]') || (matches[2] == '[end]')) {
                         if (!rangeFilters[matches[1]]) {
                             rangeFilters[matches[1]] = [];
                         }
-                        rangeFilters[matches[1]].push(val.toInt() ? val : 0);
+                        rangeFilters[matches[1]].push(val);
                     }
                     else if (matches[2] == '[]') {
                         if (!multiFilters[matches[1]]) {
@@ -41,8 +40,9 @@ var GoodsFilter = new Class({
                         }
                         multiFilters[matches[1]].push(val);
                     }
-
-
+                    else {
+                        queryString.push(name + '=' + val);
+                    }
                 }
             });
 

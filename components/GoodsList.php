@@ -85,11 +85,9 @@ class GoodsList extends DBDataSet {
      * @return array
      */
     protected function getDivisionFeatureIds() {
-
         return $this->dbh->getColumn(
-            'shop_sitemap2features',
-            'feature_id',
-            ['smap_id' => $this->getCategories()]
+            'SELECT DiSTINCT feature_id FROM shop_sitemap2features WHERE smap_id IN (%s)',
+            $this->getCategories()
         );
 
     }
@@ -685,6 +683,7 @@ class GoodsList extends DBDataSet {
                 $id
             );
 
+
             if ($fpv) {
                 foreach ($fpv as $row) {
                     $fpv_indexed[$row['goods_id']][$row['feature_id']] = $row;
@@ -726,7 +725,6 @@ class GoodsList extends DBDataSet {
                     'feature_images' => $images
                 ];
             }
-
             $builder = new SimpleBuilder();
             $localData = new Data();
             $localData->load($feature_data);
