@@ -172,6 +172,14 @@
 								</div>
 							</xsl:for-each>
 				</div>
+                <div id="goodsGallerySmall" class="multiple-items slider ">
+
+                    <xsl:for-each select="field[@name='attachments']/recordset/record">
+                        <div >
+                            <img src="{$RESIZER_URL}w100-h75/{field[@name='file']}" alt="{field[@name='name']}" />
+                        </div>
+                    </xsl:for-each>
+                </div>
 			</div>
 			<div class="goods_info">
 				<div class="goods_name">
