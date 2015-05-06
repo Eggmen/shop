@@ -164,8 +164,35 @@
     </xsl:template>-->
 
     <xsl:template match="field[ancestor::component[@type='form'] and (@subtype='RANGE')]" mode="field_input">
+        <xsl:variable name="NAME"><xsl:value-of select="@tableName"/>[<xsl:value-of select="@name"/>]</xsl:variable>
             <div class="range">
-
+                <xsl:if test="@range-begin">
+                    <xsl:attribute name="data-start"><xsl:value-of select="@range-begin"/></xsl:attribute>
+                </xsl:if>
+                <xsl:if test="@range-end">
+                    <xsl:attribute name="data-end"><xsl:value-of select="@range-end"/></xsl:attribute>
+                </xsl:if>
+                <xsl:if test="@range-min">
+                    <xsl:attribute name="data-min"><xsl:value-of select="@range-min"/></xsl:attribute>
+                </xsl:if>
+                <xsl:if test="@range-max">
+                    <xsl:attribute name="data-max"><xsl:value-of select="@range-max"/></xsl:attribute>
+                </xsl:if><xsl:if test="@range-max">
+                    <xsl:attribute name="data-max"><xsl:value-of select="@range-max"/></xsl:attribute>
+                </xsl:if>
+                <xsl:if test="@range-step">
+                    <xsl:attribute name="data-step"><xsl:value-of select="@range-step"/></xsl:attribute>
+                </xsl:if>
+                <input type="hidden" name="{$NAME}[begin]" class="lower">
+                    <xsl:if test="@range-begin">
+                        <xsl:attribute name="value"><xsl:value-of select="@range-begin"/></xsl:attribute>
+                    </xsl:if>
+                </input>
+                <input type="hidden" name="{$NAME}[end]" class="upper">
+                    <xsl:if test="@range-end">
+                        <xsl:attribute name="value"><xsl:value-of select="@range-end"/></xsl:attribute>
+                    </xsl:if>
+                </input>
             </div>
         </xsl:template>
 
