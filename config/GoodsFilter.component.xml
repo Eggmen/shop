@@ -3,6 +3,7 @@
 	<state name="main">
 		<javascript>
 			<behavior name="GoodsFilter"/>
+			<behavior name="ProductFilter" use="jquery"/>
 		</javascript>
 		<fields>
 			<field name="price"/>

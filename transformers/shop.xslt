@@ -127,7 +127,7 @@
         </form>
     </xsl:template>
 
-    <xsl:template match="field[ancestor::component[@type='form'] and (@subtype='RANGE')]" mode="field_input">
+    <!--<xsl:template match="field[ancestor::component[@type='form'] and (@subtype='RANGE')]" mode="field_input">
         <span><xsl:value-of select="@text-from"/>:</span>
             <input class="text inp_filter"  type="text">
                 <xsl:attribute name="name"><xsl:value-of select="@tableName"/>[<xsl:value-of select="@name"/>][begin]</xsl:attribute>
@@ -161,9 +161,13 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </input>
-    </xsl:template>
+    </xsl:template>-->
 
+    <xsl:template match="field[ancestor::component[@type='form'] and (@subtype='RANGE')]" mode="field_input">
+            <div class="range">
 
+            </div>
+        </xsl:template>
 
 	<xsl:template match="component[@class='GoodsList' and @type='form']/recordset/record">
 		<div class="goods_view clearfix">
