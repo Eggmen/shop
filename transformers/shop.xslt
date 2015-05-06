@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <xsl:stylesheet
         xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+        xmlns:set="http://exslt.org/sets"
+        extension-element-prefixes="set"
         version="1.0">
     <xsl:template match="component[@class='GoodsList' and @type='list']">
         <div class="products" id="{generate-id(recordset)}">
@@ -161,6 +163,8 @@
             </input>
     </xsl:template>
 
+
+
 	<xsl:template match="component[@class='GoodsList' and @type='form']/recordset/record">
 		<div class="goods_view clearfix">
 			<div class="goods_image_block">
@@ -190,7 +194,8 @@
 					<xsl:value-of select="field[@name='goods_description_rtf']" disable-output-escaping="yes" />
 				</div>
 			</div>
-            <xsl:if test="not(field[@name='features']/recordset/@empty)">
+            <xsl:variable name="RECORDSET" select="field[@name='features']/recordset"/>
+            <xsl:if test="not($RECORDSET/@empty)">
                 <div class="goods_features_block">
                     <table class="goods_features">
                         <thead>
@@ -201,8 +206,16 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <xsl:for-each select="field[@name='features']/recordset/record">
-                                <xsl:if test="not(field[@name='feature_title'] = '')">
+                            <xsl:for-each select="set:distinct($RECORDSET/record/field[@name='group_id'])">
+                                <xsl:variable name="GROUP_ID" select="."/>
+                                <xsl:if test="$GROUP_ID!=''">
+                                    <tr>
+                                        <td colspan="2" class="group">
+                                            <xsl:value-of select="../field[@name='group_title']"/>
+                                        </td>
+                                    </tr>
+                                </xsl:if>
+                                <xsl:for-each select="$RECORDSET/record[field[@name='group_id'] =$GROUP_ID]">
                                     <tr>
                                         <th>
                                             <xsl:value-of select="field[@name='feature_title']"/>
@@ -211,7 +224,7 @@
                                             <xsl:value-of select="field[@name='feature_value']"/>
                                         </td>
                                     </tr>
-                                </xsl:if>
+                                </xsl:for-each>
                             </xsl:for-each>
                         </tbody>
                     </table>

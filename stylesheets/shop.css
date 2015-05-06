@@ -129,6 +129,10 @@ a.goods_block_inner:hover {
     padding: 15px 0;
     text-align: center;
 }
+.goods_view .goods_features  td.group {
+    text-align: center;
+    font-weight: bold;
+}
 .goods_view .goods_features tbody th,
 .goods_view .goods_features tbody td {
     padding: 10px 15px;
@@ -137,6 +141,7 @@ a.goods_block_inner:hover {
 .goods_view .goods_features tbody tr:nth-child(even) {
     background: rgb(240, 240, 240);
 }
+
 /* ----- /goods_view ---- */
 /* ----- categories list ----- */
 .categories_list .category {
