@@ -68,8 +68,7 @@ class GoodsFilter extends DataSet {
                 $fd->setProperty('range-begin', (string)$begin);
                 $fd->setProperty('range-end', (string)$end);
                 $fd->setProperty('range-step', 1);
-            }
-            else {
+            } else {
                 $this->getDataDescription()->removeFieldDescription($fd);
             }
 
@@ -149,17 +148,18 @@ class GoodsFilter extends DataSet {
             $producers = $this->dbh->getColumn('SELECT DISTINCT producer_id  FROM shop_goods WHERE smap_id IN (%s)', $this->boundComponent->getCategories());
             $fd->setType(FieldDescription::FIELD_TYPE_MULTI);
             $fd->setProperty('title', 'FILTER_PRODUCERS');
-            $fd->loadAvailableValues($this->dbh->select('SELECT p.producer_id, producer_name FROM shop_producers p LEFT JOIN shop_producers_translation pt ON(p.producer_id=pt.producer_id) AND (lang_id=%s) WHERE p.producer_id IN (%s)', $this->document->getLang(), $producers), 'producer_id', 'producer_name');
-            //inspect($this->filter_data);
-            if (isset($this->filter_data['producers']) && !empty($this->filter_data['producers'])) {
-                $f = new Field('producers');
-                $f->setData([$this->filter_data['producers']], true);
-                $this->getData()->addField($f);
+            if ($values = $this->dbh->select('SELECT p.producer_id, producer_name FROM shop_producers p LEFT JOIN shop_producers_translation pt ON(p.producer_id=pt.producer_id) AND (lang_id=%s) WHERE p.producer_id IN (%s)', $this->document->getLang(), $producers)) {
+                $fd->loadAvailableValues($values, 'producer_id', 'producer_name');
+                if (isset($this->filter_data['producers']) && !empty($this->filter_data['producers'])) {
+                    $f = new Field('producers');
+                    $f->setData([$this->filter_data['producers']], true);
+                    $this->getData()->addField($f);
 
-            } else {
+                }
+            }
+            else {
                 $this->getDataDescription()->removeFieldDescription($fd);
             }
-
         }
     }
 

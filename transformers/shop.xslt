@@ -129,14 +129,7 @@
         </xsl:if>
     </xsl:template>
 
-    <xsl:template match="field[ancestor::component[@type='form' and @class='GoodsFilter']]">
-        <div>
-            <xsl:apply-templates select="." mode="field_name"/>
-            <xsl:apply-templates select="." mode="field_content"/>
-        </div>
-    </xsl:template>
-
-    <xsl:template match="field[ancestor::component[@type='form'] and (@subtype='RANGE')]" mode="field_input">
+     <xsl:template match="field[ancestor::component[@type='form'] and (@subtype='RANGE')]" mode="field_input">
         <xsl:variable name="NAME"><xsl:value-of select="@tableName"/>[<xsl:value-of select="@name"/>]</xsl:variable>
             <div class="range">
                 <xsl:if test="@range-begin">
