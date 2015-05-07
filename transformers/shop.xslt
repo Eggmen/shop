@@ -122,46 +122,19 @@
     </xsl:template>
 
     <xsl:template match="component[@class='GoodsFilter']">
-        <form method="get" action="{$BASE}{$LANG_ABBR}{@template}{@action}" data-filter-name="{@filter-name}">
-            <xsl:apply-templates/>
-        </form>
+        <xsl:if test="count(recordset/record)&gt;0">
+            <form method="get" action="{$BASE}{$LANG_ABBR}{@template}{@action}" data-filter-name="{@filter-name}">
+                <xsl:apply-templates/>
+            </form>
+        </xsl:if>
     </xsl:template>
 
-    <!--<xsl:template match="field[ancestor::component[@type='form'] and (@subtype='RANGE')]" mode="field_input">
-        <span><xsl:value-of select="@text-from"/>:</span>
-            <input class="text inp_filter"  type="text">
-                <xsl:attribute name="name"><xsl:value-of select="@tableName"/>[<xsl:value-of select="@name"/>][begin]</xsl:attribute>
-                <xsl:if test="@range-begin">
-                    <xsl:attribute name="value"><xsl:value-of select="@range-begin"/></xsl:attribute>
-                </xsl:if>
-                <xsl:choose>
-                    <xsl:when test="@range-min">
-                        <xsl:attribute name="placeholder"><xsl:value-of select="@range-min"/></xsl:attribute>
-                        <xsl:attribute name="min"><xsl:value-of select="@range-min"/></xsl:attribute>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:attribute name="placeholder">0</xsl:attribute>
-                        <xsl:attribute name="min">0</xsl:attribute>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </input>
-        <span style="padding-left:10px;"><xsl:value-of select="@text-to"/>:</span>
-            <input class="text inp_filter" type="text">
-                <xsl:attribute name="name"><xsl:value-of select="@tableName"/>[<xsl:value-of select="@name"/>][end]</xsl:attribute>
-                <xsl:if test="@range-end">
-                    <xsl:attribute name="value"><xsl:value-of select="@range-end"/></xsl:attribute>
-                </xsl:if>
-                <xsl:choose>
-                    <xsl:when test="@range-max">
-                        <xsl:attribute name="placeholder"><xsl:value-of select="@range-max"/></xsl:attribute>
-                        <xsl:attribute name="max"><xsl:value-of select="@range-max"/></xsl:attribute>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:attribute name="placeholder">0</xsl:attribute>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </input>
-    </xsl:template>-->
+    <xsl:template match="field[ancestor::component[@type='form' and @class='GoodsFilter']]">
+        <div>
+            <xsl:apply-templates select="." mode="field_name"/>
+            <xsl:apply-templates select="." mode="field_content"/>
+        </div>
+    </xsl:template>
 
     <xsl:template match="field[ancestor::component[@type='form'] and (@subtype='RANGE')]" mode="field_input">
         <xsl:variable name="NAME"><xsl:value-of select="@tableName"/>[<xsl:value-of select="@name"/>]</xsl:variable>

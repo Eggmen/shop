@@ -42,11 +42,9 @@ class GoodsFilter extends DataSet {
 
     protected function buildPriceFilter() {
         if ($fd = $this->getDataDescription()->getFieldDescriptionByName('price')) {
-
             $fd->setType(FieldDescription::FIELD_TYPE_CUSTOM);
             $fd->setProperty('title', $this->translate('FILTER_PRICE'));
             $fd->setProperty('subtype', FeatureFieldAbstract::FEATURE_FILTER_TYPE_RANGE);
-
             $min = ceil($this->dbh->getScalar(
                 'select min(goods_price) from ' .
                 $this->getParam('tableName') .
@@ -61,15 +59,20 @@ class GoodsFilter extends DataSet {
             $end = (isset($this->filter_data['price']['end'])) ? (int)$this->filter_data['price']['end'] : $max;
             if ($begin < $min) $begin = $min;
             if ($end > $max) $end = $max;
+            if (($min && $max && $begin && $end)) {
+                $fd->setProperty('text-from', $this->translate('TXT_FROM'));
+                $fd->setProperty('text-to', $this->translate('TXT_TO'));
 
-            $fd->setProperty('text-from', $this->translate('TXT_FROM'));
-            $fd->setProperty('text-to', $this->translate('TXT_TO'));
+                $fd->setProperty('range-min', (string)$min);
+                $fd->setProperty('range-max', (string)$max);
+                $fd->setProperty('range-begin', (string)$begin);
+                $fd->setProperty('range-end', (string)$end);
+                $fd->setProperty('range-step', 1);
+            }
+            else {
+                $this->getDataDescription()->removeFieldDescription($fd);
+            }
 
-            $fd->setProperty('range-min', (string)$min);
-            $fd->setProperty('range-max', (string)$max);
-            $fd->setProperty('range-begin', (string)$begin);
-            $fd->setProperty('range-end', (string)$end);
-            $fd->setProperty('range-step', 1);
         }
     }
 
@@ -153,6 +156,8 @@ class GoodsFilter extends DataSet {
                 $f->setData([$this->filter_data['producers']], true);
                 $this->getData()->addField($f);
 
+            } else {
+                $this->getDataDescription()->removeFieldDescription($fd);
             }
 
         }
