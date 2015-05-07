@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+    <state name="main">
+        <uri_patterns>
+            <pattern>/</pattern>
+        </uri_patterns>
+    </state>
+    <state name="add">
+        <uri_patterns>
+            <pattern>/wadd/[productID]/</pattern>
+        </uri_patterns>
+    </state>
+    <state name="delete">
+        <uri_patterns>
+            <pattern>/wdel/[productID]/</pattern>
+        </uri_patterns>
+    </state>
+    <state name="show">
+        <uri_patterns>
+            <pattern>/wshow/</pattern>
+        </uri_patterns>
+    </state>
+</configuration>
