@@ -9,9 +9,9 @@
 namespace Energine\shop\components;
 
 use Energine\share\components\DBDataSet;
+use Energine\share\gears\ComponentProxyBuilder;
 use Energine\share\gears\EmptyBuilder;
 use Energine\share\gears\QAL;
-use Energine\share\gears\SimpleBuilder;
 
 /**
  * Список пожеланий
@@ -20,20 +20,14 @@ use Energine\share\gears\SimpleBuilder;
  * @author dr.Pavka
  */
 class Wishlist extends DBDataSet {
-    private $products = [];
-
     public function __construct($name, $module, array $params = NULL) {
-
         parent::__construct($name, $module, $params);
-
-        //if (!$this->document->getUser()->isAuthenticated()) $this->disable();
-
         $this->setTableName('shop_wishlist');
         $this->setFilter(['u_id' => $this->document->getUser()->getID()]);
         $this->setOrder(['w_date' => QAL::ASC]);
     }
 
-    protected function main() {
+    protected function mainState() {
         $this->setBuilder(new EmptyBuilder());
         $this->setProperty('count', $this->getCount());
     }
@@ -57,52 +51,26 @@ class Wishlist extends DBDataSet {
     }
 
     protected function showState() {
-        $this->setBuilder(new EmptyBuilder());
-        $this->products = $this->dbh->getColumn($this->getTableName(), 'goods_id', $this->getFilter());
-    }
-
-    public function build() {
-        $doc = parent::build();
-        if ($this->getState() == 'show') {
-            inspect($doc->saveXML());
-            $doc = $this->buildList($doc);
-        }
-        return $doc;
-    }
-
-    private function buildList(\DOMDocument $builderDoc) {
-        if (!empty($this->products)) {
+        $products = $this->dbh->getColumn($this->getTableName(), 'goods_id', $this->getFilter());
+        if (!empty($products)) {
+            $this->setBuilder($b = new ComponentProxyBuilder());
             $params = [
                 'active' => false,
                 'state' => 'main',
-                'id' => $this->products,
+                'id'    => $products,
                 'list_features' => 'any' // вывод всех фич товаров в списке
             ];
-
-            $goodsList = $this->document->componentManager->createComponent(
-                'products',
+            $b->setComponent('products',
                 '\\Energine\\shop\\components\\GoodsList',
-                $params
-            );
-            $goodsList->run();
-            $goodsDoc = $goodsList->build();
-
-            $builderXpath = new \DOMXPath($builderDoc);
-            $recordsets = $builderXpath->query("/component/recordset");
-
-            $goodsXpath = new \DOMXPath($goodsDoc);
-            $records = $goodsXpath->query("/component/recordset/record");
-
-            foreach ($records as $record) {
-                $record = $builderDoc->importNode($record, true);
-
-                foreach ($recordsets as $recordset) {
-                    $recordset->appendChild($record);
-                }
+                $params);
+            $toolbars = $this->createToolbar();
+            if (!empty($toolbars)) {
+                $this->addToolbar($toolbars);
             }
-
-
+            $this->js = $this->buildJS();
+        } else {
+            $this->setBuilder(new EmptyBuilder());
         }
-        return $builderDoc;
     }
+
 }
