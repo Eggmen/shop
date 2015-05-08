@@ -328,21 +328,25 @@ class GoodsList extends DBDataSet {
             $result =[];
             $filter = $_REQUEST[GoodsFilter::FILTER_GET];
 
-            $f = explode(';', $filter);
-            if( sizeof($f)> 1 || strpos($f[0], '=')){
-                $prepFilter = [];
-                foreach($f as $rawFilter){
-                    list($filterName, $filterValues) = explode('=', $rawFilter);
-                    if(strpos($filterValues, '-')){
-                        list($begin, $end) = explode('-', $filterValues);
-                        $prepFilter[$filterName] =compact('begin', 'end');
+            //new filter format ?filter=feature_n=
+            if (is_string($filter)) {
+                $f = explode(';', $filter);
+                if( sizeof($f)> 1 || strpos($f[0], '=')){
+                    $prepFilter = [];
+                    foreach($f as $rawFilter){
+                        list($filterName, $filterValues) = explode('=', $rawFilter);
+                        if(strpos($filterValues, '-')){
+                            list($begin, $end) = explode('-', $filterValues);
+                            $prepFilter[$filterName] =compact('begin', 'end');
+                        }
+                        else {
+                            $prepFilter[$filterName] =explode(',', $filterValues);
+                        }
                     }
-                    else {
-                        $prepFilter[$filterName] =explode(',', $filterValues);
-                    }
+                    $filter = $prepFilter;
                 }
-                $filter = $prepFilter;
             }
+
             // price filter
             if (isset($filter['price'])) {
                 $price_begin = (!empty($filter['price']['begin'])) ? (float)$filter['price']['begin'] : 0;
