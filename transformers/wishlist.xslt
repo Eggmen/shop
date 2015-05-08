@@ -10,8 +10,12 @@
     </xsl:template>
 
     <xsl:template match="component[@class='Wishlist' and @componentAction='show']">
+        <xsl:apply-templates />
+    </xsl:template>
+
+    <xsl:template match="recordset[parent::component[@class='Wishlist' and @componentAction='show']]">
         <div class="goods_list clearfix"> <!-- клас .wide_list для списка -->
-            <xsl:for-each select="recordset/record">
+            <xsl:for-each select="record">
                 <xsl:variable name="URL">
                     <xsl:value-of select="$BASE"/><xsl:value-of select="$LANG_ABBR"/><xsl:value-of
                         select="field[@name='smap_id']"/>view/<xsl:value-of
