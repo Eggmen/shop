@@ -64,6 +64,7 @@ class Wishlist extends DBDataSet {
     public function build() {
         $doc = parent::build();
         if ($this->getState() == 'show') {
+            inspect($doc->saveXML());
             $doc = $this->buildList($doc);
         }
         return $doc;
