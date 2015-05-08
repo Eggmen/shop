@@ -14,7 +14,7 @@ var ProductView;
              centerPadding: '25%',*/
             focusOnSelect: true
         });
-        this.productID = this.el.prop('id');
+        this.productID = this.el.data('id');
 
         $('#wishlist').click($.proxy(function(e){
             e.preventDefault();
@@ -22,7 +22,13 @@ var ProductView;
         }, this));
     }
     ProductView.prototype.addToWishlist = function(productID){
-        console.log(this.el.prop('wishlist-url') + productID +'/');
+        $.ajax({
+          url: this.el.data('wishlist-url') + productID +'/',
+          success: function(){
+              console.log(arguments);
+          }
+        });
+
     }
 }(window.jQuery, window, document));
 

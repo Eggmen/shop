@@ -30,13 +30,21 @@ class Wishlist extends DBDataSet {
     }
 
     protected function main() {
-
         $this->setBuilder(new EmptyBuilder());
-        $this->setProperty('count', $this->dbh->getScalar($this->getTableName(), 'COUNT(w_id)', $this->getFilter()));
+        $this->setProperty('count', $this->getCount());
+    }
+    private function getCount(){
+        return $this->dbh->getScalar($this->getTableName(), 'COUNT(w_id)', $this->getFilter());
     }
 
-    protected function addState() {
+    protected function addState($productID) {
+        //E()->getController()->getTransformer()->setFileName(CORE_DIR.MODULES.);
+        $this->setBuilder(new EmptyBuilder());
+        if($this->document->getUser()->isAuthenticated() && $this->dbh->getScalar('shop_goods', 'goods_id', ['goods_id' => $productID])){
+            $this->dbh->modify(QAL::INSERT_IGNORE, $this->getTableName(), ['u_id' => $this->document->getUser()->getID(), 'goods_id' => $productID]);
 
+            $this->setProperty('count', $this->getCount());
+        }
     }
 
     protected function deleteState() {

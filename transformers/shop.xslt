@@ -167,7 +167,7 @@
         </xsl:template>
 
 	<xsl:template match="recordset[parent::component[@class='GoodsList' and @type='form']]">
-		<div class="goods_view clearfix" id="{generate-id(.)}" data-id="{record/field[@name='goods_id']}" data-compare-url="" data-wishlist-url="{$BASE}{$LANG_ABBR}single/wishlist/add/" data-basket-url="">
+		<div class="goods_view clearfix" id="{generate-id(.)}" data-id="{record/field[@name='goods_id']}" data-compare-url="" data-wishlist-url="{$BASE}{$LANG_ABBR}single/wishlist/wadd/" data-basket-url="">
             <xsl:for-each select="record">
                 <div class="goods_image_block">
                     <div id="goodsGalleryLarge" class="single-item slider ">
