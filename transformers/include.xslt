@@ -5,5 +5,6 @@
 
 	<xsl:include href="goods_editor.xslt"/>
 	<xsl:include href="shop.xslt"/>
+	<xsl:include href="wishlist.xslt"/>
 
 </xsl:stylesheet>

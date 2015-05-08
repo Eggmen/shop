@@ -13,13 +13,11 @@ use Energine\shop\gears\FeatureFieldAbstract;
 use Energine\shop\gears\FeatureFieldFactory;
 use Energine\share\gears\UserSession;
 
-class GoodsCompare extends DataSet
-{
-    public function __construct($name, array $params = NULL)
-    {
+class GoodsCompare extends DataSet {
+    public function __construct($name, array $params = NULL) {
         parent::__construct($name, $params);
         // active only in single mode
-        $this->setParam('active', ($this -> getProperty('single') != 'single') ? false : true);
+        $this->setParam('active', ($this->getProperty('single') != 'single') ? false : true);
         $this->setTitle($this->translate('TXT_COMPARE'));
         $this->setProperty('recordsPerPage', false);
     }
@@ -39,8 +37,7 @@ class GoodsCompare extends DataSet
         return new SimpleBuilder();
     }
 
-    protected function main()
-    {
+    protected function main() {
         $this->setBuilder(new EmptyBuilder());
         $this->js = $this->buildJS();
     }
@@ -48,24 +45,24 @@ class GoodsCompare extends DataSet
     private function getGoodsFromSession() {
 
         UserSession::start(true);
-        $goods_ids = (!empty($_SESSION['goods_compare'])) ? $_SESSION['goods_compare'] : array();
+        $goods_ids = (!empty($_SESSION['goods_compare'])) ? $_SESSION['goods_compare'] : [];
 
-        $goods_table = $this -> getParam('goodsTableName');
-        $res = $this -> dbh -> select(
+        $goods_table = $this->getParam('goodsTableName');
+        $res = $this->dbh->select(
             "SELECT g.goods_id, gt.goods_name, gc.smap_id, gct.smap_name
              FROM {$goods_table} g
              LEFT JOIN shop_goods_translation gt on g.goods_id = gt.goods_id and gt.lang_id = %s
              LEFT JOIN share_sitemap gc on g.smap_id = gc.smap_id
              LEFT JOIN share_sitemap_translation gct on gc.smap_id = gct.smap_id and gct.lang_id = %s
              WHERE g.goods_id in (%s)",
-            $this -> document -> getLang(),
-            $this -> document -> getLang(),
+            $this->document->getLang(),
+            $this->document->getLang(),
             $goods_ids
         );
 
-        $data = array();
+        $data = [];
         if ($res) {
-            foreach($res as $row) {
+            foreach ($res as $row) {
                 $data['smap_id'][] = $row;
             }
         }
@@ -73,71 +70,70 @@ class GoodsCompare extends DataSet
         return $data;
     }
 
-    protected function informer()
-    {
-        $goods = $this -> getGoodsFromSession();
+    protected function informer() {
+        $goods = $this->getGoodsFromSession();
         $counter = 0;
 
         $d = new Data();
-        $data = array();
+        $data = [];
         if ($goods) {
             foreach ($goods as $smap_id => $cgoods) {
                 $counter = $counter + count($cgoods);
                 $current = current($cgoods);
-                $ids = array();
-                foreach($cgoods as $row) {
+                $ids = [];
+                foreach ($cgoods as $row) {
                     $ids[] = $row['goods_id'];
                 }
-                $data[] = array(
+                $data[] = [
                     'smap_id' => $smap_id,
                     'smap_name' => $current['smap_name'],
                     'goods_ids' => implode(',', $ids),
                     'goods_count' => count($cgoods)
-                );
+                ];
             }
         }
         $this->prepare();
-        $d -> load($data);
-        $this -> setData($d);
+        $d->load($data);
+        $this->setData($d);
         $this->setProperty('goods_count', $counter);
     }
 
     protected function prepare() {
         // data description для информера
-        if (in_array($this -> getState(), ['informer', 'add', 'remove', 'clear'])) {
+        if (in_array($this->getState(), ['informer', 'add', 'remove', 'clear'])) {
             $data = new Data();
             $dataDescription = new DataDescription();
             $dataDescription->load(
-                array(
-                    'smap_id' => array(
+                [
+                    'smap_id' => [
                         'key' => true,
                         'nullable' => false,
                         'type' => FieldDescription::FIELD_TYPE_INT,
                         'length' => 10,
                         'index' => 'PRI'
-                    ),
-                    'smap_name' => array(
+                    ],
+                    'smap_name' => [
                         'key' => false,
                         'nullable' => false,
                         'type' => FieldDescription::FIELD_TYPE_STRING,
                         'length' => 255,
                         'index' => false
-                    ),
-                    'goods_ids' => array(
+                    ],
+                    'goods_ids' => [
                         'key' => false,
                         'nullable' => false,
                         'type' => FieldDescription::FIELD_TYPE_STRING,
                         'length' => 255,
                         'index' => false
-                    ),
-                    'goods_count' => array(
+                    ],
+                    'goods_count' => [
                         'key' => false,
                         'nullable' => false,
                         'type' => FieldDescription::FIELD_TYPE_STRING,
                         'length' => 255,
                         'index' => false
-                    )
-                )
+                    ]
+                ]
             );
             $this->setData($data);
             $this->setDataDescription($dataDescription);
@@ -146,70 +142,65 @@ class GoodsCompare extends DataSet
         }
     }
 
-    protected function add()
-    {
+    protected function add() {
         UserSession::start(true);
-        $sp = $this -> getStateParams(true);
+        $sp = $this->getStateParams(true);
         $goods_id = $sp['goodsId'];
-        $goods_ids = (!empty($_SESSION['goods_compare'])) ? $_SESSION['goods_compare'] : array();
+        $goods_ids = (!empty($_SESSION['goods_compare'])) ? $_SESSION['goods_compare'] : [];
         if (!in_array($goods_id, $goods_ids)) {
             $_SESSION['goods_compare'][] = $goods_id;
         }
 
-        $this -> informer();
+        $this->informer();
     }
 
-    protected function remove()
-    {
+    protected function remove() {
         UserSession::start(true);
-        $sp = $this -> getStateParams(true);
+        $sp = $this->getStateParams(true);
         $goods_id = $sp['goodsId'];
-        $goods_ids = (!empty($_SESSION['goods_compare'])) ? $_SESSION['goods_compare'] : array();
+        $goods_ids = (!empty($_SESSION['goods_compare'])) ? $_SESSION['goods_compare'] : [];
         if (in_array($goods_id, $goods_ids)) {
             if (($key = array_search($goods_id, $goods_ids)) !== false) {
                 unset($_SESSION['goods_compare'][$key]);
             }
         }
 
-        $this -> informer();
+        $this->informer();
     }
 
-    protected function clear()
-    {
+    protected function clear() {
         UserSession::start(true);
         if (!empty($_SESSION['goods_compare'])) {
             $_SESSION['goods_compare'] = [];
         }
 
-        $this -> informer();
+        $this->informer();
     }
 
     public function build() {
 
         $doc = parent::build();
 
-        if ($this -> getState() == 'compare') {
-            $doc = $this -> buildCompare($doc);
+        if ($this->getState() == 'compare') {
+            $doc = $this->buildCompare($doc);
         }
 
         return $doc;
     }
 
-    protected function buildCompare(\DomDocument $builderDoc) {
+    protected function buildCompare(\DOMDocument $builderDoc) {
+        $sp = $this->getStateParams(true);
 
-        $sp = $this -> getStateParams(true);
-        $goods_ids = array_filter(explode(',', $sp['goodsIds']), 'is_numeric');
-
-        $params = array(
+        $params = [
             'active' => false,
             'state' => 'main',
-            'target_ids' => implode(',', $goods_ids), // вывод только заданных id
+            'id' => implode(',', array_filter(explode(',', $sp['goodsIds']), 'is_numeric')), // вывод только заданных id
             'list_features' => 'any' // вывод всех фич товаров в списке
-        );
+        ];
 
         $goodsList = $this->document->componentManager->createComponent(
             'compareGoodsList',
-            $this -> getParam('goodsListClass'),
+            $this->getParam('goodsListClass'),
             $params
         );
         $goodsList->run();
@@ -222,20 +213,19 @@ class GoodsCompare extends DataSet
         $records = $goodsXpath->query("/component/recordset/record");
 
         foreach ($records as $record) {
-            $record = $builderDoc -> importNode($record, true);
+            $record = $builderDoc->importNode($record, true);
 
             foreach ($recordsets as $recordset) {
-                $recordset -> appendChild($record);
+                $recordset->appendChild($record);
             }
         }
 
         return $builderDoc;
     }
 
-    protected function compare()
-    {
+    protected function compare() {
         parent::prepare();
-        $this -> setBuilder(new EmptyBuilder());
+        $this->setBuilder(new EmptyBuilder());
     }
 
 }

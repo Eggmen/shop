@@ -16,8 +16,12 @@
         </uri_patterns>
     </state>
     <state name="show">
-        <uri_patterns>
-            <pattern>/wshow/</pattern>
-        </uri_patterns>
+        <javascript>
+            <behavior name="Wishlist"/>
+        </javascript>
+        <toolbar>
+            <control type="button" id="basket" title="BTN_MOVE_BASKET"/>
+            <control type="button" id="delete" title="BTN_DELETE"/>
+        </toolbar>
     </state>
 </configuration>

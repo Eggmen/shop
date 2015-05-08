@@ -74,7 +74,7 @@ class GoodsList extends DBDataSet {
                 'active' => true,
                 'tags' => false,
                 'limit' => false,
-                'target_ids' => false,
+                'id' => false,
                 'list_features' => false, // false | any | feature_sysname1,feature_sysname2,..
             ]
         );
@@ -427,8 +427,7 @@ class GoodsList extends DBDataSet {
         $table_name = $this->getTableName();
 
         // если в компонент пришли id-шки товаров - используем их
-        if ($target_ids = $this->getParam('target_ids')) {
-            $target_ids = explode(',', $target_ids);
+        if ($target_ids = $this->getParam('id')) {
             $result['goods_id'] =
                 sprintf("({$table_name}.goods_id in (%s))", implode(',', $target_ids));
         } else {
