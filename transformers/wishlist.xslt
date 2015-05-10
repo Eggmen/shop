@@ -10,7 +10,9 @@
     </xsl:template>
 
     <xsl:template match="component[@class='Wishlist' and @componentAction='show']">
-        <xsl:apply-templates />
+        <form id="{generate-id(recordset)}" method="post" action="">
+            <xsl:apply-templates/>
+        </form>
     </xsl:template>
 
     <xsl:template match="recordset[parent::component[@class='Wishlist' and @componentAction='show']]">
@@ -30,7 +32,8 @@
                         </div>
                         <div class="goods_info">
                             <div class="goods_name">
-                                <input type="checkbox"/><a href="{$URL}">
+                                <input type="checkbox" name="products[]" value="{field[@name='goods_id']}"/>
+                                <a href="{$URL}">
                                     <xsl:value-of select="field[@name='goods_name']"/>
                                 </a>
                             </div>

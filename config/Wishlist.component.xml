@@ -21,6 +21,7 @@
         </javascript>
         <toolbar>
             <control type="button" id="basket" title="BTN_MOVE_BASKET"/>
+            <control type="separator" id="s1"/>
             <control type="button" id="delete" title="BTN_DELETE"/>
         </toolbar>
     </state>
