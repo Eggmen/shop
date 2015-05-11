@@ -266,20 +266,14 @@ class GoodsList extends DBDataSet {
     }
 
     protected function loadData() {
-        $tagFilter = false;
         if ($tags = $this->getParam('tags')) {
             if (!($tagFilter = TagManager::getFilter(TagManager::getID($tags), $this->getTableName()))) {
                 return false;
             }
+            $this->addFilterCondition([$this->getTableName().'.'.$this->getPK() => $tagFilter]);
         }
         $result = parent::loadData();
-
         if (!empty($result)) {
-            if ($tagFilter) {
-                $result = array_filter($result, function ($row) use ($tagFilter) {
-                    return in_array($row[$this->getPK()], $tagFilter);
-                });
-            }
             $map = E()->getMap();
             $result = array_map(function ($row) use ($map) {
                 if (isset($row['smap_id'])) {
@@ -288,8 +282,6 @@ class GoodsList extends DBDataSet {
                 return $row;
             }, $result);
         }
-
-
         return $result;
     }
 
@@ -341,26 +333,9 @@ class GoodsList extends DBDataSet {
                         } else {
                             $prepFilter[$filterName] = explode(',', $filterValues);
                         }
-            //new filter format ?filter=feature_n=
-            if (is_string($filter)) {
-                $f = explode(';', $filter);
-                if( sizeof($f)> 1 || strpos($f[0], '=')){
-                    $prepFilter = [];
-                    foreach($f as $rawFilter){
-                        list($filterName, $filterValues) = explode('=', $rawFilter);
-                        if(strpos($filterValues, '-')){
-                            list($begin, $end) = explode('-', $filterValues);
-                            $prepFilter[$filterName] =compact('begin', 'end');
-                        }
-                        else {
-                            $prepFilter[$filterName] =explode(',', $filterValues);
-                        }
                     }
-                    else {
-                        $prepFilter[$filterName] =explode(',', $filterValues);
-                    }
+                    $filter = $prepFilter;
                 }
-                $filter = $prepFilter;
             }
             // price filter
             if (isset($filter['price'])) {
