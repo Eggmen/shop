@@ -74,7 +74,7 @@ class GoodsList extends DBDataSet {
                 'active' => true,
                 'tags' => false,
                 'limit' => false,
-                'target_ids' => false,
+                'id' => false,
                 'list_features' => false, // false | any | feature_sysname1,feature_sysname2,..
             ]
         );
@@ -321,13 +321,26 @@ class GoodsList extends DBDataSet {
      * @return array
      */
     public function getFilterData() {
-        static $result = null;
+        static $result = NULL;
 
         // если фильтр взведен
         if (is_null($result) && !empty($_REQUEST[GoodsFilter::FILTER_GET])) {
-            $result =[];
+            $result = [];
             $filter = $_REQUEST[GoodsFilter::FILTER_GET];
 
+            //new filter format ?filter=feature_n=
+            if (is_string($filter)) {
+                $f = explode(';', $filter);
+                if (sizeof($f) > 1 || strpos($f[0], '=')) {
+                    $prepFilter = [];
+                    foreach ($f as $rawFilter) {
+                        list($filterName, $filterValues) = explode('=', $rawFilter);
+                        if (strpos($filterValues, '-')) {
+                            list($begin, $end) = explode('-', $filterValues);
+                            $prepFilter[$filterName] = compact('begin', 'end');
+                        } else {
+                            $prepFilter[$filterName] = explode(',', $filterValues);
+                        }
             //new filter format ?filter=feature_n=
             if (is_string($filter)) {
                 $f = explode(';', $filter);
@@ -343,10 +356,12 @@ class GoodsList extends DBDataSet {
                             $prepFilter[$filterName] =explode(',', $filterValues);
                         }
                     }
-                    $filter = $prepFilter;
+                    else {
+                        $prepFilter[$filterName] =explode(',', $filterValues);
+                    }
                 }
+                $filter = $prepFilter;
             }
-
             // price filter
             if (isset($filter['price'])) {
                 $price_begin = (!empty($filter['price']['begin'])) ? (float)$filter['price']['begin'] : 0;
@@ -425,11 +440,10 @@ class GoodsList extends DBDataSet {
      * @return string
      */
     protected function getFilterWhereConditions() {
-        $table_name = $this -> getTableName();
+        $table_name = $this->getTableName();
 
         // если в компонент пришли id-шки товаров - используем их
-        if ($target_ids = $this->getParam('target_ids')) {
-            $target_ids = explode(',', $target_ids);
+        if ($target_ids = $this->getParam('id')) {
             $result['goods_id'] =
                 sprintf("({$table_name}.goods_id in (%s))", implode(',', $target_ids));
         } else {
@@ -667,7 +681,7 @@ class GoodsList extends DBDataSet {
         if ($fd = $this->getDataDescription()->getFieldDescriptionByName('features')) {
 
             $fd->setType(FieldDescription::FIELD_TYPE_CUSTOM);
-            if(!$fd->getPropertyValue('title'))
+            if (!$fd->getPropertyValue('title'))
                 $fd->setProperty('title', 'TXT_FEATURES');
 
             $f = new Field('features');
