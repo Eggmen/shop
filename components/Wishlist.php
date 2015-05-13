@@ -30,6 +30,7 @@ class Wishlist extends DBDataSet {
     protected function mainState() {
         $this->setBuilder(new EmptyBuilder());
         $this->setProperty('count', $this->getCount());
+        $this->js = $this->buildJS();
     }
 
     private function getCount() {
