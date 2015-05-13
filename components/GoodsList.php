@@ -15,7 +15,7 @@ use Energine\share\gears\Data;
 use Energine\share\gears\DataDescription;
 use Energine\share\gears\SimpleBuilder;
 
-class GoodsList extends DBDataSet {
+class GoodsList extends DBDataSet implements SampleGoodsList{
 
     /**
      * Массив feature_id текущего раздела
@@ -270,7 +270,7 @@ class GoodsList extends DBDataSet {
             if (!($tagFilter = TagManager::getFilter(TagManager::getID($tags), $this->getTableName()))) {
                 return false;
             }
-            $this->addFilterCondition([$this->getTableName().'.'.$this->getPK() => $tagFilter]);
+            $this->addFilterCondition([$this->getTableName() . '.' . $this->getPK() => $tagFilter]);
         }
         $result = parent::loadData();
         if (!empty($result)) {
@@ -867,5 +867,9 @@ class GoodsList extends DBDataSet {
         // если не нашлось совпадений - беда
         return false;
     }
+
+}
+
+interface SampleGoodsList {
 
 }

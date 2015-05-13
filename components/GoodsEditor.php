@@ -59,14 +59,27 @@ class GoodsEditor extends Grid implements SampleGoodsEditor {
     public function __construct($name, array $params = NULL) {
         parent::__construct($name, $params);
         $this->setTableName('shop_goods');
-        //показываем  только те товары которые принадлежат к магазинам на которые есть права
-        if ($this->document->getRights() < ACCESS_FULL) {
-            $siteIDs = $this->document->getUser()->getSites();
-            if (empty($siteIDs)) {
-                $siteIDs = [0];
-            }
-            $this->addFilterCondition('smap_id IN (SELECT smap_id FROM share_sitemap WHERE site_id IN (' . implode(',', $siteIDs) . '))');
+        $this->addFilterCondition('smap_id IN (SELECT smap_id FROM share_sitemap WHERE site_id IN (' . implode(',', $this->getSites()) . '))');
+    }
+
+    private function getSites() {
+        $result = [];
+        if ($siteID = $this->getParam('site')) {
+            $result = [$siteID];
         }
+        elseif ($this->document->getRights() < ACCESS_FULL) {
+            $result = $this->document->getUser()->getSites();
+            if (empty($result)) {
+                $result = [0];
+            }
+        }
+        else {
+            foreach(E()->getSiteManager() as $site){
+                $result[] = $site->id;
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -79,6 +92,7 @@ class GoodsEditor extends Grid implements SampleGoodsEditor {
             parent::defineParams(),
             [
                 'selector' => false,
+                'site' => false
             ]
         );
     }
@@ -124,12 +138,12 @@ class GoodsEditor extends Grid implements SampleGoodsEditor {
 
     protected function getFKData($fkTableName, $fkKey) {
         $result = false;
-        if (($fkKey != 'producer_id') || ($this->document->getRights() == ACCESS_FULL)) {
+        if (($fkKey != 'producer_id')) {
             $result = parent::getFKData($fkTableName, $fkKey);
         } else {
             if ($this->getState() !== self::DEFAULT_STATE_NAME) {
                 $result =
-                    $this->dbh->getForeignKeyData($fkTableName, $fkKey, $this->document->getLang(), [$fkTableName . '.producer_id' => $this->dbh->getColumn('shop_producers2sites', 'producer_id', ['site_id' => $this->document->getUser()->getSites()])]);
+                    $this->dbh->getForeignKeyData($fkTableName, $fkKey, $this->document->getLang(), [$fkTableName . '.producer_id' => $this->dbh->getColumn('shop_producers2sites', 'producer_id', ['site_id' => $this->getSites()])]);
             }
         }
 
@@ -190,9 +204,8 @@ class GoodsEditor extends Grid implements SampleGoodsEditor {
             $this->getDataDescription()->getFieldDescriptionByName('smap_id')->setType(FieldDescription::FIELD_TYPE_CUSTOM);
             $site_id = E()->getSiteManager()->getSitesByTag('shop', true);
 
-            if ($this->document->getRights() < ACCESS_FULL) {
-                $site_id = array_intersect($site_id, $this->document->getUser()->getSites());
-            }
+            $site_id = array_intersect($site_id, $this->getSites());
+
             $root = new TreeNodeList();
             $da = [];
 

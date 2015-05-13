@@ -3,9 +3,9 @@
     <container name="goodsContainer" block="alfa" widget="static">
         <component name="goodsEditor" class="Energine\shop\components\GoodsEditor">
             <params>
-                <param name="rights">2</param>
-                <param name="tableName">shop_goods</param>
-                <param name="config">core/modules/shop/config/GoodsEditor.component.xml</param>
+                <param name="rights" type="hidden">2</param>
+                <param name="tableName" type="hidden">shop_goods</param>
+                <param name="config" type="hidden">core/modules/shop/config/GoodsEditor.component.xml</param>
             </params>
         </component>
     </container>
