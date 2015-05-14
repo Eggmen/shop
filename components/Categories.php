@@ -28,8 +28,7 @@ class Categories extends PageList {
             parent::defineParams(),
             [
                 'id' => $id,
-                'bind' => false,
-                'className' =>''
+                'bind' => false
             ]
         );
     }
