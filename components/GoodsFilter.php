@@ -129,6 +129,8 @@ class GoodsFilter extends DataSet {
 
         $this->filter_data = $this->boundComponent->getFilterData();
 
+        $this->setProperty('applied', ($this->filter_data ? '1' : '0'));
+
         // если в конфиге задан фильтр по цене
         $this->buildPriceFilter();
 
