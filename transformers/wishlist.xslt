@@ -53,4 +53,9 @@
             </xsl:for-each>
         </div>
     </xsl:template>
+    <xsl:template match="component[(@class='Cart') and (@componentAction='main')]">
+            <div>
+                <strong><xsl:value-of select="@title"/>:<a href="{$BASE}{$LANG_ABBR}{@template}"><xsl:value-of select="@count"/></a></strong>
+            </div>
+        </xsl:template>
 </xsl:stylesheet>

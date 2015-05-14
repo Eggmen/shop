@@ -13,6 +13,7 @@ use Energine\share\components\PageList;
 use Energine\share\gears\UserSession;
 
 class Categories extends PageList {
+
     protected function defineParams() {
         $id = array_intersect(
             array_keys(E()->getMap()->getParents($this->document->getID())),
@@ -27,13 +28,13 @@ class Categories extends PageList {
             parent::defineParams(),
             [
                 'id' => $id,
-                'bind' => false
+                'bind' => false,
+                'className' =>''
             ]
         );
     }
 
     protected function main() {
-        UserSession::start(true);
         parent::main();
         if (!($this->getData()->isEmpty()) && ($bind = $this->getParam('bind')) && ($c = $this->document->componentManager->getBlockByName($bind))) {
             $sortSegment = substr(array_reduce($c->getSortData(), function ($p, $c) {
