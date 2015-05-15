@@ -4,7 +4,7 @@
     version="1.0">
 
     <xsl:template match="component[(@class='Wishlist') and (@componentAction='main')]">
-        <div>
+        <div id="{generate-id(recordset)}" data-url="{$BASE}{$LANG_ABBR}{@single_template}wadd/">
             <strong><xsl:value-of select="@title"/>:<a href="{$BASE}{$LANG_ABBR}{@template}"><xsl:value-of select="@count"/></a></strong>
         </div>
     </xsl:template>

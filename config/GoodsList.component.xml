@@ -29,7 +29,7 @@
         </toolbar>
         <toolbar name="product">
             <control type="button" id="buy" title="BTN_BUY"/>
-            <control type="link" id="compare" title="BTN_COMPARE"/>
+            <control type="link" id="wishlist" title="BTN_WISHLIST"/>
         </toolbar>
     </state>
     <state name="view">
@@ -53,7 +53,6 @@
         </fields>
         <toolbar name="product">
             <control type="button" id="buy" title="BTN_BUY"/>
-            <control type="link" id="compare" title="BTN_COMPARE"/>
             <control type="link" id="wishlist" title="BTN_WISHLIST" />
         </toolbar>
     </state>

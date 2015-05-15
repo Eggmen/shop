@@ -24,14 +24,22 @@
         </div>
     </xsl:template>
 
+    <xsl:template match="control[@id='wishlist' and ancestor::component[@sample='GoodsList']]">
+        <xsl:param name="ID"/>
+        <a href="#" onClick="{generate-id($COMPONENTS[@class='Wishlist' and @componentAction='main']/recordset)}.add(event, {$ID});"><xsl:value-of select="@title"/></a>
+    </xsl:template>
+
+
     <xsl:template match="toolbar[parent::component[@class='GoodsList'] and @name='product']" />
 
     <xsl:template match="toolbar[parent::component[@class='GoodsList'] and @name='product']" mode="list">
-
+        <xsl:param name="ID"/>
         <div class="goods_controls clearfix">
             <ul class="inline wo-separator">
                 <xsl:for-each select="control">
-                    <li><xsl:apply-templates select="."/></li>
+                    <li><xsl:apply-templates select=".">
+                        <xsl:with-param name="ID" select="$ID"/>
+                    </xsl:apply-templates></li>
                 </xsl:for-each>
                 <!--<button type="button" class="buy_goods">BUY</button>
                 <a href="#" class="add_to_wishlist">ADD_TO_WISHLIST</a>-->
@@ -69,7 +77,9 @@
                         <div class="goods_price">
                             <xsl:value-of select="field[@name='goods_price']"/>
                         </div>
-                        <xsl:apply-templates select="../../toolbar[@name='product']" mode="list"/>
+                        <xsl:apply-templates select="../../toolbar[@name='product']" mode="list">
+                            <xsl:with-param name="ID" select="field[@name='goods_id']"/>
+                        </xsl:apply-templates>
                     </div>
 
 	            </div>
@@ -171,7 +181,7 @@
         </xsl:template>
 
 	<xsl:template match="recordset[parent::component[@class='GoodsList' and @type='form']]">
-		<div class="goods_view clearfix" id="{generate-id(.)}" data-id="{record/field[@name='goods_id']}" data-compare-url="" data-wishlist-url="{$BASE}{$LANG_ABBR}single/wishlist/wadd/" data-basket-url="">
+		<div class="goods_view clearfix" id="{generate-id(.)}" data-id="{record/field[@name='goods_id']}">
             <xsl:for-each select="record">
                 <div class="goods_image_block">
                     <div id="goodsGalleryLarge" class="single-item slider ">
@@ -183,7 +193,6 @@
                                 </xsl:for-each>
                     </div>
                     <div id="goodsGallerySmall" class="multiple-items slider ">
-
                         <xsl:for-each select="field[@name='attachments']/recordset/record">
                             <div >
                                 <img src="{$RESIZER_URL}w100-h75/{field[@name='file']}" alt="{field[@name='name']}" />
@@ -202,7 +211,9 @@
                         <xsl:value-of select="field[@name='sell_status_id']/value" />
                     </div>
                     <div class="goods_buy">
-                        <xsl:apply-templates select="../../toolbar[@name='product']" mode="list"/>
+                        <xsl:apply-templates select="../../toolbar[@name='product']" mode="list">
+                            <xsl:with-param name="ID" select="field[@name='goods_id']"/>
+                        </xsl:apply-templates>
                     </div>
                     <div class="goods_description">
                         <xsl:value-of select="field[@name='goods_description_rtf']" disable-output-escaping="yes" />

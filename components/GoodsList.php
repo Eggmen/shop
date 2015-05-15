@@ -16,7 +16,11 @@ use Energine\share\gears\DataDescription;
 use Energine\share\gears\SimpleBuilder;
 
 class GoodsList extends DBDataSet implements SampleGoodsList{
-
+    /**
+     * Заполняются в loadData используются в main
+     * @var array
+     */
+    private $sitemapIDs = [];
     /**
      * Массив feature_id текущего раздела
      * @var array
@@ -273,10 +277,11 @@ class GoodsList extends DBDataSet implements SampleGoodsList{
             $this->addFilterCondition([$this->getTableName() . '.' . $this->getPK() => $tagFilter]);
         }
         $result = parent::loadData();
-        if (!empty($result)) {
+        if (!empty($result) && ($this->getDataDescription()->getFieldDescriptionByName('smap_id'))) {
             $map = E()->getMap();
             $result = array_map(function ($row) use ($map) {
                 if (isset($row['smap_id'])) {
+                    array_push($this->sitemapIDs, $row['smap_id']);
                     $row['smap_id'] = $map->getURLByID($row['smap_id']);
                 }
                 return $row;
@@ -578,6 +583,13 @@ class GoodsList extends DBDataSet implements SampleGoodsList{
         // tags in list
         $this->buildTags();
 
+        if(($f = $this->getData()->getFieldByName('smap_id')) && !empty($this->sitemapIDs)){
+            foreach($this->sitemapIDs as $i => $smapID){
+                $info = E()->getMap()->getDocumentInfo($smapID);
+                //$f->setRowProperty($i, 'id', $smapID);
+                $f->setRowProperty($i, 'category', $info['Name']);
+            }
+        }
         // получаем массив всех goods_id
         if ($field_goods_id = $this->getData()->getFieldByName('goods_id')) {
             $goods_ids = $field_goods_id->getData();
