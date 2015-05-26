@@ -29,6 +29,7 @@ class SearchResults extends DataSet {
             parent::defineParams(),
             [
                 'bind' => false,
+                'active' => true,
             ]
         );
     }
@@ -65,6 +66,9 @@ class SearchResults extends DataSet {
         if ($this->bindComponent and $this->getState() == 'main') {
             $this->keyword = $this->bindComponent->getKeyword();
             parent::prepare();
+        } elseif ($this->document->getProperty('single') and $this->getState() == 'main') {
+            $this->keyword = (isset($_REQUEST['keyword'])) ? $_REQUEST['keyword'] : '';
+            E()->getController()->getTransformer()->setFileName('../../../../core/modules/shop/transformers/single_search.xslt');
         } else {
             $this->disable();
         }
