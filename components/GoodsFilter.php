@@ -5,7 +5,7 @@ namespace Energine\shop\components;
 use Energine\share\components\DataSet;
 use Energine\share\gears\Field;
 use Energine\share\gears\FieldDescription;
-use Energine\shop\gears\EmptyFormBuilder;
+use Energine\shop\gears\EmptySimpleFormBuilder;
 use Energine\shop\gears\FeatureFieldAbstract;
 use Energine\shop\gears\FeatureFieldFactory;
 
@@ -25,7 +25,7 @@ class GoodsFilter extends DataSet {
     }
 
     protected function createBuilder() {
-        return new EmptyFormBuilder();
+        return new EmptySimpleFormBuilder();
     }
 
     protected function defineParams() {

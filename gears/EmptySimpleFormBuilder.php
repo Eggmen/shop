@@ -13,7 +13,7 @@ use Energine\share\gears\Builder;
 use Energine\share\gears\FieldDescription;
 use Energine\share\gears\SimpleBuilder;
 
-class EmptyFormBuilder extends SimpleBuilder {
+class EmptySimpleFormBuilder extends SimpleBuilder {
     protected function run() {
         parent::run();
 
