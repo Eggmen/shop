@@ -7,12 +7,12 @@
     </state>
     <state name="add">
         <uri_patterns>
-            <pattern>/wadd/[productID]/</pattern>
+            <pattern>/cart-add/[productID]/</pattern>
         </uri_patterns>
     </state>
     <state name="delete">
         <uri_patterns>
-            <pattern>/wdel/[productID]/</pattern>
+            <pattern>/cart-del/[productID]/</pattern>
         </uri_patterns>
     </state>
     <state name="show">

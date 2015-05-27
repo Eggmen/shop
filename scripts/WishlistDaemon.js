@@ -11,6 +11,7 @@ var WishlistDaemon = new Class({
     add: function(event, productID){
         event = new DOMEvent(event);
         event.stop();
+
         this.request.send({url:this.el.getProperty('data-url') + productID + '/'});
     }
 
