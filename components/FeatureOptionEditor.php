@@ -45,10 +45,6 @@ class FeatureOptionEditor extends Grid {
 
     }
 
-    protected function applyUserSort() {
-        $this->setOrder(['option_value' => QAL::ASC]);
-    }
-
     /**
      * @copydoc Grid::defineParams
      */
