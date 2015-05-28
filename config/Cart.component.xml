@@ -1,28 +1,31 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
-    <state name="main">
-        <uri_patterns>
-            <pattern>/</pattern>
-        </uri_patterns>
-    </state>
-    <state name="add">
-        <uri_patterns>
-            <pattern>/cart-add/[productID]/</pattern>
-        </uri_patterns>
-    </state>
-    <state name="delete">
-        <uri_patterns>
-            <pattern>/cart-del/[productID]/</pattern>
-        </uri_patterns>
-    </state>
     <state name="show">
         <javascript>
-            <behavior name="Wishlist"/>
+            <behavior name="Cart"/>
         </javascript>
         <toolbar>
             <control type="button" id="basket" title="BTN_MOVE_BASKET"/>
             <control type="separator" id="s1"/>
             <control type="button" id="delete" title="BTN_DELETE"/>
         </toolbar>
+    </state>
+    <state name="main">
+        <uri_patterns>
+            <pattern>/</pattern>
+        </uri_patterns>
+        <javascript>
+            <behavior name="CartDaemon"/>
+        </javascript>
+    </state>
+    <state name="add">
+        <uri_patterns>
+            <pattern>/add/[productID]/</pattern>
+        </uri_patterns>
+    </state>
+    <state name="delete">
+        <uri_patterns>
+            <pattern>/del/[productID]/</pattern>
+        </uri_patterns>
     </state>
 </configuration>
