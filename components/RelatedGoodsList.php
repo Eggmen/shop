@@ -64,7 +64,10 @@ class RelatedGoodsList extends DBDataSet {
 				array(
 					'relation_type' => $relation_type,
 					'goods_from_id' => $targetIds
-				)
+				),
+                array(
+                    'relation_order_num' => QAL::ASC
+                )
 			);
 
 			if (empty($goods_ids)) {

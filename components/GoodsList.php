@@ -146,8 +146,11 @@ class GoodsList extends DBDataSet implements SampleGoodsList{
                 'select f.fpv_id, f.goods_id, f.feature_id, ft.fpv_data
 				from shop_feature2good_values f
 				left join shop_feature2good_values_translation ft
-				on ft.fpv_id = f.fpv_id and ft.lang_id = %s
-				where f.feature_id in (%s) and f.goods_id in (%s)',
+				  on ft.fpv_id = f.fpv_id and ft.lang_id = %s
+				left join shop_features ff on f.feature_id = ff.feature_id
+				left join shop_feature_groups fg on ff.group_id = fg.group_id
+				where f.feature_id in (%s) and f.goods_id in (%s)
+				order by fg.group_order_num asc, ff.feature_order_num asc',
                 $this->document->getLang(),
                 $features,
                 $goods_ids
