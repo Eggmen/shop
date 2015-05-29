@@ -4,7 +4,7 @@
     version="1.0">
 
     <xsl:template match="component[(@class='Wishlist') and (@componentAction='main')]">
-        <div id="{generate-id(recordset)}" data-url="{$BASE}{$LANG_ABBR}{@single_template}wadd/">
+        <div id="{generate-id(recordset)}" data-url="{$BASE}{$LANG_ABBR}{@single_template}{@action}">
             <strong><xsl:value-of select="@title"/>:<a href="{$BASE}{$LANG_ABBR}{@template}"><xsl:value-of select="@count"/></a></strong>
         </div>
     </xsl:template>
@@ -53,9 +53,5 @@
             </xsl:for-each>
         </div>
     </xsl:template>
-    <xsl:template match="component[(@class='Cart') and (@componentAction='main')]">
-            <div>
-                <strong><xsl:value-of select="@title"/>:<a href="{$BASE}{$LANG_ABBR}{@template}"><xsl:value-of select="@count"/></a></strong>
-            </div>
-        </xsl:template>
+
 </xsl:stylesheet>

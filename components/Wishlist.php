@@ -31,6 +31,7 @@ class Wishlist extends DBDataSet {
         $this->setBuilder(new EmptyBuilder());
         $this->setProperty('count', $this->getCount());
         $this->js = $this->buildJS();
+        $this->setAction((string)$this->config->getStateConfig('add')->uri_patterns->pattern);
     }
 
     private function getCount() {
@@ -38,7 +39,6 @@ class Wishlist extends DBDataSet {
     }
 
     protected function addState($productID) {
-        E()->getController()->getTransformer()->setFileName('../../../../core/modules/shop/transformers/single_wishlist.xslt');
         $this->setBuilder(new EmptyBuilder());
         if ($this->document->getUser()->isAuthenticated() && $this->dbh->getScalar('shop_goods', 'goods_id', ['goods_id' => $productID])) {
             $this->dbh->modify(QAL::INSERT_IGNORE, $this->getTableName(), ['site_id'=>E()->getSiteManager()->getCurrentSite()->id, 'w_date' => date('Y-m-d H:i:s'), 'u_id' => $this->document->getUser()->getID(), 'goods_id' => $productID]);
@@ -72,6 +72,13 @@ class Wishlist extends DBDataSet {
         } else {
             $this->setBuilder(new EmptyBuilder());
         }
+    }
+    public function build() {
+        if ($this->document->getProperty('single')) {
+            E()->getController()->getTransformer()->setFileName('../../../../core/modules/shop/transformers/single_wishlist.xslt');
+        }
+        $result = parent::build();
+        return $result;
     }
 
 }

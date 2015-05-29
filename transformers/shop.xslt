@@ -29,6 +29,11 @@
         <a href="#" onClick="{generate-id($COMPONENTS[@class='Wishlist' and @componentAction='main']/recordset)}.add(event, {$ID});"><xsl:value-of select="@title"/></a>
     </xsl:template>
 
+    <xsl:template match="control[@id='buy' and ancestor::component[@sample='GoodsList']]">
+        <xsl:param name="ID"/>
+        <button  onClick="{generate-id($COMPONENTS[@class='Cart' and @componentAction='main']/recordset)}.add(event, {$ID});"><xsl:value-of select="@title"/></button>
+    </xsl:template>
+
 
     <xsl:template match="toolbar[parent::component[@class='GoodsList'] and @name='product']" />
 

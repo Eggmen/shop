@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <content>
-    <component name="wishlistList" class="Energine\shop\components\Wishlist">
+    <component name="cart" class="Energine\shop\components\Cart">
         <params>
-            <param name="rights">2</param>
+            <param name="active">0</param>
             <param name="state">show</param>
         </params>
     </component>

@@ -1,4 +1,4 @@
-var WishlistDaemon = new Class({
+var CartDaemon = new Class({
     initialize: function (el) {
         this.el = $(el);
         this.request = new Request.HTML({
