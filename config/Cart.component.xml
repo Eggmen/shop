@@ -5,9 +5,7 @@
             <behavior name="Cart"/>
         </javascript>
         <toolbar>
-            <control type="button" id="basket" title="BTN_MOVE_BASKET"/>
-            <control type="separator" id="s1"/>
-            <control type="button" id="delete" title="BTN_DELETE"/>
+            <control type="button" id="basket" title="BTN_ORDER"/>
         </toolbar>
     </state>
     <state name="main">
@@ -26,6 +24,14 @@
     <state name="delete">
         <uri_patterns>
             <pattern>/del/[productID]/</pattern>
+        </uri_patterns>
+        <toolbar>
+            <control type="button" id="basket" title="BTN_ORDER"/>
+        </toolbar>
+    </state>
+    <state name="edit">
+        <uri_patterns>
+            <pattern>/edit/[productID]/</pattern>
         </uri_patterns>
     </state>
 </configuration>

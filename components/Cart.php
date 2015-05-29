@@ -27,17 +27,20 @@ use Energine\shop\gears\CartBuilder;
  * @author dr.Pavka
  */
 class Cart extends DBDataSet {
+    private $id = NULL;
+
     public function __construct($name, $module, array $params = NULL) {
+        if (E()->getDocument()->getProperty('single')) {
+            $params['active'] = true;
+        }
         parent::__construct($name, $module, $params);
         $this->setTableName('shop_cart');
         $this->setFilter([
             'site_id' => E()->getSiteManager()->getCurrentSite()->id
         ]);
-        if ($this->document->getUser()->isAuthenticated()) {
-            $this->addFilterCondition(['u_id' => $this->document->getUser()->getID()]);
-        } else {
-            $this->addFilterCondition(['session_id' => UserSession::start()->getID()]);
-        }
+
+        $this->addFilterCondition(['session_id' => UserSession::start()->getID()]);
+
 
         $this->setOrder(['cart_date' => QAL::ASC]);
     }
@@ -128,8 +131,14 @@ class Cart extends DBDataSet {
     }
 
     private function getCount() {
-        return $this->dbh->getScalar($this->getTableName(), 'SUM(cart_goods_count)', $this->getFilter());
+        static $count = NULL;
+        if (is_null($count)) {
+            $count = $this->dbh->getScalar($this->getTableName(), 'SUM(cart_goods_count)', $this->getFilter());
+        }
+
+        return $count;
     }
+
 
     protected function addState($productID) {
 
@@ -146,12 +155,46 @@ class Cart extends DBDataSet {
         $this->showState();
     }
 
+    protected function deleteState($cartID) {
+        if ($cartID = $this->dbh->getScalar($this->getTableName(), 'cart_id', ['cart_id' => $cartID, 'session_id' => UserSession::start()->getID()])) {
+            try {
+                $this->dbh->modify(QAL::DELETE, $this->getTableName(), NULL, ['cart_id' => $cartID]);
+            } catch (\PDOException $e) {
+                inspect($e->getMessage(), (string)$this->document->getUser()->getID());
+            }
+
+        }
+        $this->config->setCurrentState('show');
+        $this->showState();
+    }
+    protected function editState($cartID) {
+        if ($cartID = $this->dbh->getScalar($this->getTableName(), 'cart_id', ['cart_id' => $cartID, 'session_id' => UserSession::start()->getID()])) {
+            try {
+                if(!isset($_POST['count']) || !is_numeric($_POST['count'])){
+                    $count = 1;
+                }
+                else {
+                    $count = $_POST['count'];
+                }
+
+                $this->dbh->modify(QAL::UPDATE, $this->getTableName(), ['cart_goods_count' => $count], ['cart_id' => $cartID]);
+            } catch (\PDOException $e) {
+                inspect($e->getMessage(), (string)$this->document->getUser()->getID());
+            }
+
+        }
+        $this->config->setCurrentState('show');
+        $this->showState();
+    }
     protected function showState() {
         $this->prepare();
         $am = new AttachmentManager($this->getDataDescription(), $this->getData(), 'shop_goods');
         $am->createFieldDescription();
         $am->createField('goods_id');
+
         $this->setProperty('count', $this->getCount());
+        $this->setProperty('delete', (string)$this->config->getStateConfig('delete')->uri_patterns->pattern, true);
+        $this->setProperty('edit', (string)$this->config->getStateConfig('edit')->uri_patterns->pattern, true);
 
     }
 
