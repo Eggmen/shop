@@ -39,8 +39,7 @@ class Cart extends DBDataSet {
             'site_id' => E()->getSiteManager()->getCurrentSite()->id
         ]);
 
-        $this->addFilterCondition(['session_id' => E()->UserSession->launch()->getID()]);
-
+        $this->addFilterCondition(['session_id' => E()->UserSession->start()->getID()]);
 
         $this->setOrder(['cart_date' => QAL::ASC]);
     }
@@ -143,7 +142,7 @@ class Cart extends DBDataSet {
     protected function addState($productID) {
 
         if ($productID == $this->dbh->getScalar('shop_goods', 'goods_id', ['goods_id' => $productID, 'goods_is_active' => true])) {
-            $session = UserSession::start(true);
+            $session = E()->UserSession->start();
 //            var_dump($session);
             try {
                 $this->dbh->modify('INSERT INTO ' . $this->getTableName() . ' (site_id,session_id,u_id, goods_id, cart_goods_count, cart_date) VALUES (%s,%s,%s, %s, 1, %s) ON DUPLICATE KEY UPDATE cart_goods_count=cart_goods_count+1;', (string)E()->getSiteManager()->getCurrentSite(), $session->getID(), (string)($this->document->getUser()->getID()) ?: NULL, $productID, date('Y-m-d H:i:s'));
@@ -156,7 +155,7 @@ class Cart extends DBDataSet {
     }
 
     protected function deleteState($cartID) {
-        if ($cartID = $this->dbh->getScalar($this->getTableName(), 'cart_id', ['cart_id' => $cartID, 'session_id' => UserSession::start()->getID()])) {
+        if ($cartID = $this->dbh->getScalar($this->getTableName(), 'cart_id', ['cart_id' => $cartID, 'session_id' => E()->UserSession->start()->getID()])) {
             try {
                 $this->dbh->modify(QAL::DELETE, $this->getTableName(), NULL, ['cart_id' => $cartID]);
             } catch (\PDOException $e) {
@@ -168,7 +167,7 @@ class Cart extends DBDataSet {
         $this->showState();
     }
     protected function editState($cartID) {
-        if ($cartID = $this->dbh->getScalar($this->getTableName(), 'cart_id', ['cart_id' => $cartID, 'session_id' => UserSession::start()->getID()])) {
+        if ($cartID = $this->dbh->getScalar($this->getTableName(), 'cart_id', ['cart_id' => $cartID, 'session_id' => E()->UserSession->start()->getID()])) {
             try {
                 if(!isset($_POST['count']) || !is_numeric($_POST['count'])){
                     $count = 1;

@@ -76,8 +76,8 @@ class GoodsFeatureEditor extends Grid {
     protected function loadData() {
         if ($this->getState() == 'getRawData') {
 
-            $features = (E()->UserSession->goods_feature_editor['filter_feature_id']) ?: ['-1'];
-            $goodsID = (E()->UserSession->goods_feature_editor['filter_goods_id']) ?: NULL;
+            $features = (!empty($_SESSION['goods_feature_editor']['filter_feature_id'])) ? $_SESSION['goods_feature_editor']['filter_feature_id'] : ['-1'];
+            $goodsID = (!empty($_SESSION['goods_feature_editor']['filter_goods_id'])) ? $_SESSION['goods_feature_editor']['filter_goods_id'] : NULL;
 
             if ($goodsID) {
                 $filter = '(goods_id =' . $goodsID . ')';
@@ -179,9 +179,9 @@ class GoodsFeatureEditor extends Grid {
         }
 
         // устанавливаем сессионный фильтр, который передаем в getRawData
-        E()->UserSession->goods_feature_editor['filter_feature_id'] = $features;
-        E()->UserSession->goods_feature_editor['filter_smap_id'] = $smapID;
-        E()->UserSession->goods_feature_editor['filter_goods_id'] = $goodsID;
+        $_SESSION['goods_feature_editor']['filter_feature_id'] = $features;
+        $_SESSION['goods_feature_editor']['filter_smap_id'] = $smapID;
+        $_SESSION['goods_feature_editor']['filter_goods_id'] = $goodsID;
     }
 
     /**
