@@ -17,12 +17,12 @@ class GoodsLastSeenList extends DataSet {
     protected function mainState() {
 
         UserSession::start(true);
-        if (!empty($_SESSION['last_seen_goods'])) {
+        if (!empty(E()->UserSession->last_seen_goods)) {
             $this->setBuilder($b = new ComponentProxyBuilder());
             $params = [
                 'active' => false,
                 'state' => 'main',
-                'id'    => $_SESSION['last_seen_goods'],
+                'id'    => E()->UserSession->last_seen_goods,
                 'list_features' => 'any' // вывод всех фич товаров в списке
             ];
             $b->setComponent('products',

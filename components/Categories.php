@@ -10,7 +10,6 @@ namespace Energine\shop\components;
 
 
 use Energine\share\components\PageList;
-use Energine\share\gears\UserSession;
 
 class Categories extends PageList {
 

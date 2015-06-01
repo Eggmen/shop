@@ -45,7 +45,7 @@ class GoodsCompare extends DataSet {
     private function getGoodsFromSession() {
 
         UserSession::start(true);
-        $goods_ids = (!empty($_SESSION['goods_compare'])) ? $_SESSION['goods_compare'] : [];
+        $goods_ids = (E()->UserSession->goods_compare)?: [];
 
         $goods_table = $this->getParam('goodsTableName');
         $res = $this->dbh->select(
@@ -146,9 +146,9 @@ class GoodsCompare extends DataSet {
         UserSession::start(true);
         $sp = $this->getStateParams(true);
         $goods_id = $sp['goodsId'];
-        $goods_ids = (!empty($_SESSION['goods_compare'])) ? $_SESSION['goods_compare'] : [];
+        $goods_ids = (E()->UserSession->goods_compare)?: [];
         if (!in_array($goods_id, $goods_ids)) {
-            $_SESSION['goods_compare'][] = $goods_id;
+            E()->UserSession->goods_compare[] = $goods_id;
         }
 
         $this->informer();
@@ -158,10 +158,10 @@ class GoodsCompare extends DataSet {
         UserSession::start(true);
         $sp = $this->getStateParams(true);
         $goods_id = $sp['goodsId'];
-        $goods_ids = (!empty($_SESSION['goods_compare'])) ? $_SESSION['goods_compare'] : [];
+        $goods_ids = (E()->UserSession->goods_compare)?: [];
         if (in_array($goods_id, $goods_ids)) {
             if (($key = array_search($goods_id, $goods_ids)) !== false) {
-                unset($_SESSION['goods_compare'][$key]);
+                unset(E()->UserSession->goods_compare[$key]);
             }
         }
 
@@ -170,8 +170,8 @@ class GoodsCompare extends DataSet {
 
     protected function clear() {
         UserSession::start(true);
-        if (!empty($_SESSION['goods_compare'])) {
-            $_SESSION['goods_compare'] = [];
+        if (E()->UserSession->goods_compare) {
+            E()->UserSession->goods_compare = [];
         }
 
         $this->informer();

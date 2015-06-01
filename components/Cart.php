@@ -39,7 +39,7 @@ class Cart extends DBDataSet {
             'site_id' => E()->getSiteManager()->getCurrentSite()->id
         ]);
 
-        $this->addFilterCondition(['session_id' => UserSession::start()->getID()]);
+        $this->addFilterCondition(['session_id' => E()->UserSession->launch()->getID()]);
 
 
         $this->setOrder(['cart_date' => QAL::ASC]);
