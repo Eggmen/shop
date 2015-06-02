@@ -60,6 +60,7 @@ class SearchResults extends DataSet {
             $this->addToolbar($toolbars);
         }
         $this->js = $this->buildJS();
+        // todo: pager
     }
 
     protected function prepare() {

@@ -190,6 +190,7 @@ class GoodsList extends DBDataSet implements SampleGoodsList{
                         'feature_name' => $feature->getName(),
                         'feature_title' => $feature->getTitle(),
                         'feature_sysname' => $feature->getSysName(),
+                        'feature_is_order_param' => $feature->isOrderParam(),
                         'feature_type' => $feature->getType(),
                         'feature_value' => (string)$feature,
                         'group_id' => $feature->getGroupId(),
@@ -212,6 +213,10 @@ class GoodsList extends DBDataSet implements SampleGoodsList{
 
                 $ffd = new FieldDescription('group_id');
                 $ffd->setType(FieldDescription::FIELD_TYPE_INT);
+                $dataDescription->addFieldDescription($ffd);
+
+                $ffd = new FieldDescription('feature_is_order_param');
+                $ffd->setType(FieldDescription::FIELD_TYPE_BOOL);
                 $dataDescription->addFieldDescription($ffd);
 
                 $ffd = new FieldDescription('feature_title');
@@ -727,6 +732,7 @@ class GoodsList extends DBDataSet implements SampleGoodsList{
                     'feature_name' => $feature->getName(),
                     'feature_title' => $feature->getTitle(),
                     'feature_sysname' => $feature->getSysName(),
+                    'feature_is_order_param' => $feature->isOrderParam(),
                     'feature_type' => $feature->getType(),
                     'feature_value' => (string)$feature,
                     'group_id' => $feature->getGroupId(),
@@ -753,6 +759,10 @@ class GoodsList extends DBDataSet implements SampleGoodsList{
 
             $ffd = new FieldDescription('group_id');
             $ffd->setType(FieldDescription::FIELD_TYPE_INT);
+            $dataDescription->addFieldDescription($ffd);
+
+            $ffd = new FieldDescription('feature_is_order_param');
+            $ffd->setType(FieldDescription::FIELD_TYPE_BOOL);
             $dataDescription->addFieldDescription($ffd);
 
             $ffd = new FieldDescription('feature_sysname');

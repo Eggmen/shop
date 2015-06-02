@@ -134,6 +134,10 @@ class FeatureFieldAbstract extends Object {
         return (isset($this->data['feature_is_filter'])) ? (bool)$this->data['feature_is_filter'] : false;
     }
 
+    public function isOrderParam() {
+        return (isset($this->data['feature_is_order_param'])) ? (bool)$this->data['feature_is_order_param'] : false;
+    }
+
     public function loadFeatureData() {
         if ($this->feature_id) {
             $res = $this->data = $this->dbh->select(
@@ -144,6 +148,7 @@ class FeatureFieldAbstract extends Object {
 				f.feature_filter_type,
 				f.feature_is_active,
 				f.feature_is_filter,
+				f.feature_is_order_param,
 				ft.feature_name,
 				ft.feature_description,
 				ft.feature_unit,
