@@ -7,23 +7,28 @@ use Energine\share\gears\DataDescription;
 use Energine\share\gears\FieldDescription;
 use Energine\share\gears\Field;
 use Energine\share\gears\Data;
+use Energine\share\gears\SimpleBuilder;
 
 class SearchForm extends DataSet {
 
     protected $keyword = '';
 
-    public function __construct($name, array $params = null) {
+    const KEYWORD_FIELD_NAME = 'keyword';
+
+    public function __construct($name, array $params = NULL) {
         parent::__construct($name, $params);
+        $this->setAction('search');
+        $this->setBuilder(new SimpleBuilder());
     }
 
     protected function main() {
-        $this->setKeyword(isset($_REQUEST['keyword']) ? $_REQUEST['keyword'] : '');
+        $this->setKeyword(isset($_REQUEST[KEYWORD_FIELD_NAME]) ? $_REQUEST[KEYWORD_FIELD_NAME] : '');
         parent::main();
         $this->setType(self::COMPONENT_TYPE_FORM);
     }
 
     public function setKeyword($keyword) {
-        $this -> keyword = $keyword;
+        $this->keyword = $keyword;
         return $this;
     }
 
@@ -33,14 +38,13 @@ class SearchForm extends DataSet {
 
     protected function loadData() {
         return [
-            ['keyword' => $this->keyword]
+            [KEYWORD_FIELD_NAME => $this->keyword]
         ];
     }
 
     protected function createDataDescription() {
-
         $dd = new DataDescription();
-        $fd = new FieldDescription('keyword');
+        $fd = new FieldDescription(KEYWORD_FIELD_NAME);
         $fd->setType(FieldDescription::FIELD_TYPE_TEXT);
         $dd->addFieldDescription($fd);
 

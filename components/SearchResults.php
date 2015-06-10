@@ -11,17 +11,17 @@ class SearchResults extends DataSet {
     /**
      * Bounded component.
      *
-     * @var DataSet|boolean $bindComponent
+     * @var SearchForm $bindComponent
      */
-    protected $bindComponent;
+    protected $bindComponent = null;
 
-    protected $keyword;
+    protected $keyword = '';
 
     public function __construct($name, array $params = null) {
         parent::__construct($name, $params);
-
         $this->bindComponent =
             $this->document->componentManager->getBlockByName($this->getParam('bind'));
+
     }
 
     protected function defineParams() {
@@ -29,7 +29,7 @@ class SearchResults extends DataSet {
             parent::defineParams(),
             [
                 'bind' => false,
-                'active' => true,
+                'active' => false,
             ]
         );
     }
@@ -37,12 +37,11 @@ class SearchResults extends DataSet {
     protected function main() {
         parent::main();
         $this->setType(self::COMPONENT_TYPE_LIST);
-
         $products = ($this->keyword) ? $this->dbh->getColumn(
             'shop_goods_translation',
             'goods_id',
             array(
-                'goods_name' => $this->keyword,
+                'goods_name LIKE "%'.$this->keyword.'%"',
                 'lang_id' => $this->document->getLang()
             )
         ) : [];
@@ -68,7 +67,7 @@ class SearchResults extends DataSet {
             $this->keyword = $this->bindComponent->getKeyword();
             parent::prepare();
         } elseif ($this->document->getProperty('single') and $this->getState() == 'main') {
-            $this->keyword = (isset($_REQUEST['keyword'])) ? $_REQUEST['keyword'] : '';
+            $this->keyword = (isset($_REQUEST[SearchForm::KEYWORD_FIELD_NAME])) ? $_REQUEST[SearchForm::KEYWORD_FIELD_NAME] : '';
             E()->getController()->getTransformer()->setFileName('../../../../core/modules/shop/transformers/single_search.xslt');
         } else {
             $this->disable();
