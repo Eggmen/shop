@@ -22,7 +22,7 @@ class SearchForm extends DataSet {
     }
 
     protected function main() {
-        $this->setKeyword(isset($_REQUEST[KEYWORD_FIELD_NAME]) ? $_REQUEST[KEYWORD_FIELD_NAME] : '');
+        $this->setKeyword(isset($_REQUEST[self::KEYWORD_FIELD_NAME]) ? $_REQUEST[self::KEYWORD_FIELD_NAME] : '');
         parent::main();
         $this->setType(self::COMPONENT_TYPE_FORM);
     }
@@ -38,13 +38,13 @@ class SearchForm extends DataSet {
 
     protected function loadData() {
         return [
-            [KEYWORD_FIELD_NAME => $this->keyword]
+            [self::KEYWORD_FIELD_NAME => $this->keyword]
         ];
     }
 
     protected function createDataDescription() {
         $dd = new DataDescription();
-        $fd = new FieldDescription(KEYWORD_FIELD_NAME);
+        $fd = new FieldDescription(self::KEYWORD_FIELD_NAME);
         $fd->setType(FieldDescription::FIELD_TYPE_TEXT);
         $dd->addFieldDescription($fd);
 
