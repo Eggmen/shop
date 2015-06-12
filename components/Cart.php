@@ -26,7 +26,7 @@ use Energine\shop\gears\CartBuilder;
  * @package energine
  * @author dr.Pavka
  */
-class Cart extends DBDataSet {
+class Cart extends DBDataSet implements SampleCart {
     private $id = NULL;
 
     public function __construct($name, $module, array $params = NULL) {
@@ -108,7 +108,7 @@ class Cart extends DBDataSet {
                 array_push($fields, $fd->getPropertyValue('tableName') . '.' . $fd->getName());
         }
         $request = 'select ' . implode(',', $fields) . ',goods_price*cart_goods_count as cart_goods_sum FROM ' . $this->getTableName() . ' LEFT JOIN shop_goods USING(goods_id)
-                        LEFT JOIN shop_goods_translation ON(shop_cart.goods_id=shop_goods_translation.goods_id) AND (lang_id=%s)';
+                        LEFT JOIN shop_goods_translation ON(shop_cart.goods_id=shop_goods_translation.goods_id) AND (lang_id=%s)'. $this->dbh->buildWhereCondition($this->getFilter());
         $data = $this->dbh->select($request, $this->document->getLang());
         if (!empty($data)) {
             $data = array_map(function ($row) {
@@ -126,6 +126,7 @@ class Cart extends DBDataSet {
         $this->setBuilder(new EmptyBuilder());
         $this->setProperty('count', $this->getCount());
         $this->setAction((string)$this->config->getStateConfig('add')->uri_patterns->pattern, true);
+        $this->setProperty('load', (string)$this->config->getStateConfig('show')->uri_patterns->pattern);
         $this->js = $this->buildJS();
     }
 
@@ -136,6 +137,15 @@ class Cart extends DBDataSet {
         }
 
         return $count;
+    }
+
+    private function getTotal() {
+        static $total = NULL;
+        if (is_null($total)) {
+            $total = $this->dbh->getScalar('SELECT SUM(goods_price) FROM ' . $this->getTableName() . ' LEFT JOIN shop_goods USING(goods_id) ' . $this->dbh->buildWhereCondition($this->getFilter()));
+        }
+
+        return $total;
     }
 
 
@@ -166,13 +176,13 @@ class Cart extends DBDataSet {
         $this->config->setCurrentState('show');
         $this->showState();
     }
+
     protected function editState($cartID) {
         if ($cartID = $this->dbh->getScalar($this->getTableName(), 'cart_id', ['cart_id' => $cartID, 'session_id' => E()->UserSession->start()->getID()])) {
             try {
-                if(!isset($_POST['count']) || !is_numeric($_POST['count'])){
+                if (!isset($_POST['count']) || !is_numeric($_POST['count'])) {
                     $count = 1;
-                }
-                else {
+                } else {
                     $count = $_POST['count'];
                 }
 
@@ -185,16 +195,15 @@ class Cart extends DBDataSet {
         $this->config->setCurrentState('show');
         $this->showState();
     }
+
     protected function showState() {
         $this->prepare();
         $am = new AttachmentManager($this->getDataDescription(), $this->getData(), 'shop_goods');
         $am->createFieldDescription();
         $am->createField('goods_id');
-
-        $this->setProperty('count', $this->getCount());
+        $this->setProperty('total', $this->getTotal());
         $this->setProperty('delete', (string)$this->config->getStateConfig('delete')->uri_patterns->pattern, true);
         $this->setProperty('edit', (string)$this->config->getStateConfig('edit')->uri_patterns->pattern, true);
-
     }
 
     public function build() {
@@ -204,4 +213,8 @@ class Cart extends DBDataSet {
         $result = parent::build();
         return $result;
     }
+}
+
+interface SampleCart {
+
 }

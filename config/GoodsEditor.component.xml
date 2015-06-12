@@ -45,6 +45,7 @@
 			<field name="goods_is_active"/>
 			<field name="lang_id"/>
 			<field name="goods_name"/>
+			<field name="goods_short_description"/>
 			<field name="goods_description_rtf"/>
 			<field name="goods_seo_title"/>
 			<field name="goods_seo_keywords"/>
@@ -75,6 +76,7 @@
 			<field name="goods_is_active"/>
 			<field name="lang_id"/>
 			<field name="goods_name"/>
+			<field name="goods_short_description"/>
 			<field name="goods_description_rtf"/>
 			<field name="goods_seo_title"/>
 			<field name="goods_seo_keywords"/>

@@ -4,6 +4,9 @@
         <javascript>
             <behavior name="Cart"/>
         </javascript>
+        <uri_patterns>
+                    <pattern>/show/</pattern>
+                </uri_patterns>
         <toolbar>
             <control type="button" id="basket" title="BTN_ORDER"/>
         </toolbar>

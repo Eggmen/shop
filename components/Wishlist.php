@@ -19,7 +19,7 @@ use Energine\share\gears\QAL;
  * @package energine
  * @author dr.Pavka
  */
-class Wishlist extends DBDataSet {
+class Wishlist extends DBDataSet implements SampleWishlist{
     public function __construct($name, $module, array $params = NULL) {
         parent::__construct($name, $module, $params);
         $this->setTableName('shop_wishlist');
@@ -82,3 +82,5 @@ class Wishlist extends DBDataSet {
     }
 
 }
+
+interface SampleWishlist {};
