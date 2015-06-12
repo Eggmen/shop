@@ -29,7 +29,7 @@
         </toolbar>
         <toolbar name="product">
             <control type="button" id="buy" title="BTN_BUY"/>
-            <control type="link" id="wishlist" title="BTN_WISHLIST"/>
+            <control type="link" id="wishlist" title="BTN_WISHLIST" authorized="authorized"/>
         </toolbar>
     </state>
     <state name="view">

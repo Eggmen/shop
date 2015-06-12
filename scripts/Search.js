@@ -43,7 +43,7 @@ var Search = new Class({
 
             default :
                 if (val != this.value) {
-                    if (val.length > DivanSearch.START_CHAR_COUNT) {
+                    if (val.length > Search.START_CHAR_COUNT) {
                         this.value = val;
                         this.requestValues(val);
                     }
@@ -56,7 +56,7 @@ var Search = new Class({
             this.date = new Date();
         }
 
-        if ((this.date.get('sec') - new Date().get('sec')) < DivanSearch.TIMEOUT_PERIOD) {
+        if ((this.date.get('sec') - new Date().get('sec')) < Search.TIMEOUT_PERIOD) {
             if (this.timeout) {
                 clearTimeout(this.timeout);
                 this.timeout = null;
@@ -66,7 +66,7 @@ var Search = new Class({
         this.timeout = (function () {
             this.autocomplete.hide();
             this.autocomplete.load(this.searchUrl + '&' + this.element.toQueryString());
-        }).delay(DivanSearch.TIMEOUT_PERIOD, this);
+        }).delay(Search.TIMEOUT_PERIOD, this);
 
     },
 
@@ -80,5 +80,5 @@ var Search = new Class({
 
 });
 
-DivanSearch.TIMEOUT_PERIOD = 500;
-DivanSearch.START_CHAR_COUNT = 2;
+Search.TIMEOUT_PERIOD = 500;
+Search.START_CHAR_COUNT = 2;
