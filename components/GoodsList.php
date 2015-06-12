@@ -666,6 +666,8 @@ class GoodsList extends DBDataSet implements SampleGoodsList{
             $fieldDescription->setMode(FieldDescription::FIELD_MODE_READ);
         }
 
+        $this->setSEO();
+
         // attachments in view
         $this->buildAttachments();
 
@@ -891,6 +893,13 @@ class GoodsList extends DBDataSet implements SampleGoodsList{
 
         // если не нашлось совпадений - беда
         return false;
+    }
+
+    protected function setSEO() {
+        $data = $this->getData();
+        $this->document->setProperty('title', $data->getFieldByName('goods_seo_title')->getRowData(0));
+        $this->document->setProperty('keywords', $data->getFieldByName('goods_seo_keywords')->getRowData(0));
+        $this->document->setProperty('description', $data->getFieldByName('goods_seo_description')->getRowData(0));
     }
 
 }
