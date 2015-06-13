@@ -32,6 +32,7 @@ class Wishlist extends DBDataSet implements SampleWishlist{
         $this->setProperty('count', $this->getCount());
         $this->js = $this->buildJS();
         $this->setAction((string)$this->config->getStateConfig('add')->uri_patterns->pattern);
+        $this->setProperty('load', (string)$this->config->getStateConfig('show')->uri_patterns->pattern);
     }
 
     private function getCount() {
