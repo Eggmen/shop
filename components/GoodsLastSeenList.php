@@ -5,13 +5,23 @@ namespace Energine\shop\components;
 use Energine\share\components\DataSet;
 use Energine\share\gears\ComponentProxyBuilder;
 use Energine\share\gears\EmptyBuilder;
-use Energine\share\gears\QAL;
-use Energine\share\gears\UserSession;
 
-class GoodsLastSeenList extends DataSet {
+class GoodsLastSeenList extends DataSet implements SampleGoodsLastSeenList {
+    protected function defineParams() {
+        return array_merge(
+            parent::defineParams(),
+            [
+                'active' => true
+            ]
+        );
+    }
 
-    public function __construct($name, $module, array $params = NULL) {
-        parent::__construct($name, $module, $params);
+    protected function createBuilder() {
+        return new SimpleBuilder();
+    }
+
+    private function getCount() {
+        return (isset($_SESSION['last_seen_goods']) && is_array($_SESSION['last_seen_goods'])) ? sizeof($_SESSION['last_seen_goods']) : 0;
     }
 
     protected function mainState() {
@@ -19,9 +29,9 @@ class GoodsLastSeenList extends DataSet {
         if (!empty($_SESSION['last_seen_goods'])) {
             $this->setBuilder($b = new ComponentProxyBuilder());
             $params = [
-                'active' => false,
-                'state' => 'main',
-                'id' => $_SESSION['last_seen_goods'],
+                'active'        => false,
+                'state'         => 'main',
+                'id'            => $_SESSION['last_seen_goods'],
                 'list_features' => 'any' // вывод всех фич товаров в списке
             ];
             $b->setComponent('products',
@@ -36,5 +46,27 @@ class GoodsLastSeenList extends DataSet {
             $this->setBuilder(new EmptyBuilder());
         }
     }
+
+    protected function initState() {
+        E()->UserSession->start();
+
+        $this->setBuilder(new EmptyBuilder());
+        $this->setProperty('count', $this->getCount());
+        $this->js = $this->buildJS();
+        $this->setProperty('load', (string)$this->config->getStateConfig('main')->uri_patterns->pattern);
+    }
+
+    public function build() {
+        if ($this->document->getProperty('single')) {
+            E()->getController()->getTransformer()->setFileName('../../../../core/modules/shop/transformers/single_wishlist.xslt');
+        }
+        $result = parent::build();
+
+        return $result;
+    }
+
+}
+
+interface SampleGoodsLastSeenList {
 
 }
