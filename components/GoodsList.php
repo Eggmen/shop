@@ -433,7 +433,7 @@ class GoodsList extends DBDataSet implements SampleGoodsList{
         // если в компонент пришли id-шки товаров - используем их
         if ($target_ids = $this->getParam('id')) {
             $result['goods_id'] =
-                sprintf("({$table_name}.goods_id in (%s))", implode(',', $target_ids));
+                sprintf("({$table_name}.goods_id in (%s))", (is_array($target_ids) ? implode(',', $target_ids) : $target_ids));
         } else {
             // иначе используем внешние фильтры + привязку к категории
             $documentIDs = $this->getCategories();
