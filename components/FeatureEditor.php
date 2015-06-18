@@ -42,6 +42,34 @@ class FeatureEditor extends Grid {
         $this->setOrder(['group_id' => QAL::ASC, 'feature_name' => QAL::ASC]);
     }
 
+
+    protected function defineParams() {
+        return array_merge(
+            parent::defineParams(),
+            [
+                'site' => false
+            ]
+        );
+    }
+
+    private function getSites() {
+        $result = [];
+        if ($siteID = $this->getParam('site')) {
+            $result = [$siteID];
+        } elseif ($this->document->getRights() < ACCESS_FULL) {
+            $result = $this->document->getUser()->getSites();
+            if (empty($result)) {
+                $result = [0];
+            }
+        } else {
+            foreach (E()->getSiteManager() as $site) {
+                $result[] = $site->id;
+            }
+        }
+
+        return $result;
+    }
+
     protected function createDataDescription() {
         $r = parent::createDataDescription();
         if (in_array($this->getState(), ['add', 'edit'])) {
@@ -83,22 +111,22 @@ class FeatureEditor extends Grid {
             $result = $this->dbh->getForeignKeyData($fkTableName, $fkKeyName, $this->document->getLang(), $filter);
         }
 
-        if(isset($result[0]) && ($fkKeyName == 'smap_id')) {
+        if (isset($result[0]) && ($fkKeyName == 'smap_id')) {
             $pages = $rootPages = [];
-            foreach($filter['share_sitemap.site_id'] as $siteID){
+            foreach ($filter['share_sitemap.site_id'] as $siteID) {
                 $map = E()->getMap($siteID);
-                foreach($map->getPagesByTag('catalogue') as $pageID){
+                foreach ($map->getPagesByTag('catalogue') as $pageID) {
                     $pages[] = $pageID;
                     $pages = array_merge($pages, array_keys($map->getTree()->getNodeById($pageID)->asList()));
                     $rootPages[] = $pageID;
                 }
             }
 
-            $result[0] = array_filter($result[0], function($row) use($pages){
-               return in_array($row['smap_id'], $pages);
+            $result[0] = array_filter($result[0], function ($row) use ($pages) {
+                return in_array($row['smap_id'], $pages);
             });
-            $result[0] = array_map(function($row) use ($rootPages){
-                if(in_array($row['smap_id'], $rootPages)) $row['root'] = E()->getSiteManager()->getSiteByID($row['site_id'])->name;
+            $result[0] = array_map(function ($row) use ($rootPages) {
+                if (in_array($row['smap_id'], $rootPages)) $row['root'] = E()->getSiteManager()->getSiteByID($row['site_id'])->name;
                 return $row;
             }, $result[0]);
         }
@@ -176,10 +204,10 @@ class FeatureEditor extends Grid {
     }
 
     protected function getRawData() {
-        if ($this->document->getRights() < ACCESS_FULL) {
+
             //отбираем те фичи права на которые есть у текущего пользователя
-            $this->addFilterCondition([$this->getTableName() . '.feature_id' => $this->dbh->getColumn('shop_features2sites', 'feature_id', ['site_id' => $this->document->getUser()->getSites()])]);
-        }
+            $this->addFilterCondition([$this->getTableName() . '.feature_id' => $this->dbh->getColumn('shop_features2sites', 'feature_id', ['site_id' => $this->getSites()])]);
+
         parent::getRawData();
     }
 }
