@@ -91,8 +91,9 @@ class ProducerEditor extends Grid {
             $_POST[$this->getTableName()]['producer_segment'] = Translit::asURLSegment($_POST[$this->getTranslationTableName()][E()->getLanguage()->getDefault()]['producer_name']);
         }
 
-        $_POST[$this->getTableName()]['producer_site_multi'] = $this->document->getSites();
-
+        if(!isset($_POST[$this->getTableName()]['producer_site_multi']) || !$_POST[$this->getTableName()]['producer_site_multi']){
+            $_POST[$this->getTableName()]['producer_site_multi'] = $this->getSites();
+        }
 
         $r = parent::saveData();
 
