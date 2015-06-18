@@ -1,7 +1,9 @@
 var DynListDaemon = new Class({
-    initialize: function (el) {
+    initialize: function (el, loadURL, addURL) {
         this.el = $(el);
         this.afterLoad = null;
+        this.loadURL = (!loadURL)?this.el.getProperty('data-load-url'):loadURL;
+        this.addURL = (!addURL)?this.el.getProperty('data-add-url'):addURL;
 
         this.request = new Request.HTML({
             'method': 'get',
@@ -17,10 +19,10 @@ var DynListDaemon = new Class({
         event = new DOMEvent(event);
         event.stop();
 
-        this.request.send({url:this.el.getProperty('data-add-url').replace('[productID]', productID)});
+        this.request.send({url:this.addURL.replace('[productID]', productID)});
     },
     load: function(func){
         this.afterLoad = func;
-        this.request.send({url:this.el.getProperty('data-load-url')});
+        this.request.send({url:this.loadURL});
     }
 });
