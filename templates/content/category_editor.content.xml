@@ -3,8 +3,8 @@
     <container name="smapSelector" block="alfa" widget="static">
         <component name="siteList" class="Energine\shop\components\SiteList">
             <params>
-                <param name="rights">2</param>
-                <param name="config">
+                <param name="rights" type="hidden">2</param>
+                <param name="config" type="hidden">
                     <configuration>
                         <state name="main">
                             <fields>
@@ -19,8 +19,8 @@
         </component>
         <component name="categoryDivEditor" class="Energine\shop\components\CategoryEditor">
             <params>
-                <param name="rights">2</param>
-                <param name="state">main</param>
+                <param name="rights" type="hidden">2</param>
+                <param name="state" type="hidden">main</param>
             </params>
         </component>
     </container>
