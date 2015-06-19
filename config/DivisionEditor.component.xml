@@ -117,9 +117,11 @@
             <field name="smap_features_multi" tabName="TXT_FEATURES"/>
             <field name="page_rights" type="custom" tabName="TAB_PAGE_RIGHTS"/>
             <field name="smap_name"/>
-            <field name="smap_title"/>
             <field name="smap_description_rtf"/>
             <field name="smap_html_title"/>
+            <field name="smap_title"/>
+            <field name="smap_seo_title"/>
+            <field name="smap_seo_description"/>
             <field name="smap_meta_keywords"/>
             <field name="smap_meta_description"/>
 		</fields>
@@ -157,9 +159,11 @@
             <field name="smap_features_multi" tabName="TXT_FEATURES"/>
             <field name="page_rights" type="custom" tabName="TAB_PAGE_RIGHTS"/>
 			<field name="smap_name"/>
-            <field name="smap_title"/>
             <field name="smap_description_rtf"/>
             <field name="smap_html_title"/>
+            <field name="smap_title"/>
+            <field name="smap_seo_title"/>
+            <field name="smap_seo_description"/>
             <field name="smap_meta_keywords"/>
             <field name="smap_meta_description"/>
 		</fields>
