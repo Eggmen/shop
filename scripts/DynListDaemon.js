@@ -2,27 +2,24 @@ var DynListDaemon = new Class({
     initialize: function (el, loadURL, addURL) {
         this.el = $(el);
         this.afterLoad = null;
-        this.loadURL = (!loadURL)?this.el.getProperty('data-load-url'):loadURL;
-        this.addURL = (!addURL)?this.el.getProperty('data-add-url'):addURL;
+        this.loadURL = (!loadURL) ? this.el.getProperty('data-load-url') : loadURL;
+        this.addURL = (!addURL) ? this.el.getProperty('data-add-url') : addURL;
 
         this.request = new Request.HTML({
             'method': 'get',
             'update': this.el.getElement('.body'),
-            'onSuccess': function(){
-                if(this.afterLoad){
+            'onSuccess': function () {
+                if (this.afterLoad) {
                     this.afterLoad();
                 }
             }.bind(this)
         });
     },
-    add: function(event, productID){
-        event = new DOMEvent(event);
-        event.stop();
-
-        this.request.send({url:this.addURL.replace('[productID]', productID)});
+    add: function (productID) {
+        this.request.send({url: this.addURL.replace('[productID]', productID)});
     },
-    load: function(func){
+    load: function (func) {
         this.afterLoad = func;
-        this.request.send({url:this.loadURL});
+        this.request.send({url: this.loadURL});
     }
 });
