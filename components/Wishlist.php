@@ -50,7 +50,7 @@ class Wishlist extends DBDataSet implements SampleWishlist {
     }
 
     protected function addState($productID) {
-        $this->setBuilder(new EmptyBuilder());
+        $this->setProperty('count', $this->getCount());
         if ($this->document->getUser()->isAuthenticated() && $this->dbh->getScalar('shop_goods', 'goods_id',
                 ['goods_id' => $productID])
         ) {
@@ -61,7 +61,10 @@ class Wishlist extends DBDataSet implements SampleWishlist {
                 'goods_id' => $productID
             ]);
 
-            $this->setProperty('count', $this->getCount());
+            $this->showState();
+        }
+        else {
+            $this->setBuilder(new EmptyBuilder());
         }
     }
 
