@@ -114,7 +114,7 @@
         </div>
     </xsl:template>
 
-    <xsl:template match="field[@name='feature_smap_multi' and ancestor::component[@class='FeatureEditor']]" mode="field_content">
+    <xsl:template match="field[@name='feature_smap_multi' and ancestor::component[@sample='FeatureEditor']]" mode="field_content">
         <div class="control smap_features" id="control_{@language}_{@name}">
             <xsl:variable name="OPTIONS" select="options/option"/>
             <xsl:for-each select="$OPTIONS[@root]">

@@ -117,9 +117,11 @@ class GoodsList extends DBDataSet implements SampleGoodsList {
      *
      * @param Field $field_goods_id
      * @param array $goods_ids
+     * @param bool $showOnlyMainFeatures
+     *
      * @throws \SystemException
      */
-    protected function buildFeatures($field_goods_id, $goods_ids) {
+    protected function buildFeatures($field_goods_id, $goods_ids, $showOnlyMainFeatures = false) {
 
         $list_features = $this->getParam('list_features');
 
@@ -139,6 +141,10 @@ class GoodsList extends DBDataSet implements SampleGoodsList {
 
             // получаем список фич разделов указанных товаров
             $features = $this->getGoodsDivisionFeatureIds($goods_ids);
+            $mainFeaturesCondition = '';
+            if($showOnlyMainFeatures){
+                $mainFeaturesCondition = ' AND ff.feature_is_main ';
+            }
 
             // получаем список значений fpv_data для заданного массива goods_id
             $fpv_indexed = [];
@@ -149,7 +155,7 @@ class GoodsList extends DBDataSet implements SampleGoodsList {
 				  on ft.fpv_id = f.fpv_id and ft.lang_id = %s
 				left join shop_features ff on f.feature_id = ff.feature_id
 				left join shop_feature_groups fg on ff.group_id = fg.group_id
-				where f.feature_id in (%s) and f.goods_id in (%s)
+				where f.feature_id in (%s) and f.goods_id in (%s) '.$mainFeaturesCondition.'
 				order by fg.group_order_num asc, ff.feature_order_num asc',
                 $this->document->getLang(),
                 $features,
@@ -603,7 +609,7 @@ class GoodsList extends DBDataSet implements SampleGoodsList {
             $goods_ids = $field_goods_id->getData();
 
             // features
-            $this->buildFeatures($field_goods_id, $goods_ids);
+            $this->buildFeatures($field_goods_id, $goods_ids, true);
             $this->buildPromotions($field_goods_id);
         }
 

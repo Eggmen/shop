@@ -25,7 +25,7 @@ use Energine\share\gears\QAL;
  * class FeatureEditor;
  * @endcode
  */
-class FeatureEditor extends Grid {
+class FeatureEditor extends Grid implements SampleFeatureEditor{
 
     /**
      * Options editor.
@@ -210,4 +210,8 @@ class FeatureEditor extends Grid {
 
         parent::getRawData();
     }
+}
+
+interface SampleFeatureEditor {
+
 }
