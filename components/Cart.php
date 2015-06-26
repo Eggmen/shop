@@ -27,7 +27,8 @@ use Energine\shop\gears\CartBuilder;
  * @author dr.Pavka
  */
 class Cart extends DBDataSet implements SampleCart {
-    private $id = NULL;
+
+    protected $id = NULL;
 
     public function __construct($name, $module, array $params = NULL) {
         if (E()->getDocument()->getProperty('single')) {
@@ -130,7 +131,7 @@ class Cart extends DBDataSet implements SampleCart {
         $this->js = $this->buildJS();
     }
 
-    private function getCount() {
+    protected function getCount() {
         static $count = NULL;
         if (is_null($count)) {
             $count = $this->dbh->getScalar($this->getTableName(), 'SUM(cart_goods_count)', $this->getFilter());
@@ -139,7 +140,7 @@ class Cart extends DBDataSet implements SampleCart {
         return $count;
     }
 
-    private function getTotal() {
+    protected function getTotal() {
         static $total = NULL;
         if (is_null($total)) {
             $total = $this->dbh->getScalar('SELECT SUM(goods_price) FROM ' . $this->getTableName() . ' LEFT JOIN shop_goods USING(goods_id) ' . $this->dbh->buildWhereCondition($this->getFilter()));

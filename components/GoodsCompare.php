@@ -50,7 +50,7 @@ class GoodsCompare extends DataSet {
 
         $goods_table = $this->getParam('goodsTableName');
         $res = $this->dbh->select(
-            "SELECT g.goods_id, gt.goods_name, gc.smap_id, gct.smap_name
+            "SELECT g.goods_id, gt.goods_name, g.smap_id, gct.smap_name
              FROM {$goods_table} g
              LEFT JOIN shop_goods_translation gt on g.goods_id = gt.goods_id and gt.lang_id = %s
              LEFT JOIN share_sitemap gc on g.smap_id = gc.smap_id
@@ -64,7 +64,7 @@ class GoodsCompare extends DataSet {
         $data = [];
         if ($res) {
             foreach ($res as $row) {
-                $data['smap_id'][] = $row;
+                $data[$row['smap_id']][] = $row;
             }
         }
 
