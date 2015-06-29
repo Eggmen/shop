@@ -75,7 +75,7 @@ class RelatedGoodsList extends DBDataSet {
 			}
 
 			$this->setFilter(array(
-				'goods_id' => $goods_ids
+				$this->getTableName().'.goods_id' => $goods_ids
 			));
 
 			parent::prepare();
