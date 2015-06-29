@@ -365,9 +365,12 @@ a.goods_block_inner:hover {
 
     border: 1px solid transparent;
 }
-.slick-slider button,
-.slick-slider button:hover,
-.slick-slider button:focus {
+.slick-slider button.slick-prev,
+.slick-slider button.slick-prev:hover,
+.slick-slider button.slick-prev:focus,
+.slick-slider button.slick-next,
+.slick-slider button.slick-next:hover,
+.slick-slider button.slick-next:focus {
     display: inline-block;
     background: none;
     border: 0;
