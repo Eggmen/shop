@@ -912,9 +912,10 @@ class GoodsList extends DBDataSet implements SampleGoodsList {
 
     protected function setSEO() {
         $data = $this->getData();
-        $this->document->setProperty('title', $data->getFieldByName('goods_seo_title')->getRowData(0));
-        $this->document->setProperty('keywords', $data->getFieldByName('goods_seo_keywords')->getRowData(0));
-        $this->document->setProperty('description', $data->getFieldByName('goods_seo_description')->getRowData(0));
+        foreach(['title', 'keywords', 'description'] as $key){
+            if($f = $data->getFieldByName('goods_seo_'.$key))
+                $this->document->setProperty($key, $f->getRowData(0));
+        }
     }
 
 }
