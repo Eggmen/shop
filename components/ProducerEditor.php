@@ -13,13 +13,38 @@ class ProducerEditor extends Grid {
     public function __construct($name, array $params = NULL) {
         parent::__construct($name, $params);
         $this->setTableName('shop_producers');
+    }
 
+    protected function defineParams() {
+        return array_merge(
+            parent::defineParams(),
+            [
+                'site' => false
+            ]
+        );
+    }
 
+    private function getSites() {
+        $result = [];
+        if ($siteID = $this->getParam('site')) {
+            $result = [$siteID];
+        } elseif ($this->document->getRights() < ACCESS_FULL) {
+            $result = $this->document->getUser()->getSites();
+            if (empty($result)) {
+                $result = [0];
+            }
+        } else {
+            foreach (E()->getSiteManager() as $site) {
+                $result[] = $site->id;
+            }
+        }
+
+        return $result;
     }
 
     protected function createDataDescription() {
         $r = parent::createDataDescription();
-        if (($this->document->getRights() < ACCESS_FULL) && ($fd = $r->getFieldDescriptionByName('producer_site_multi'))) {
+        if ((($this->getParam('site')) || ($this->document->getRights() < ACCESS_FULL)) && ($fd = $r->getFieldDescriptionByName('producer_site_multi')) ) {
             $fd->setType(FieldDescription::FIELD_TYPE_HIDDEN);
         }
         return $r;
@@ -33,7 +58,7 @@ class ProducerEditor extends Grid {
      * @return array
      */
     protected function getFKData($fkTableName, $fkKeyName) {
-        $filter = $order = null;
+        $filter = $order = NULL;
         if ($fkKeyName == 'site_id') {
             //оставляем только те сайты где есть магазины
             if ($sites = E()->getSiteManager()->getSitesByTag('shop')) {
@@ -53,11 +78,11 @@ class ProducerEditor extends Grid {
     }
 
     protected function getRawData() {
-        if ($this->document->getRights() < ACCESS_FULL) {
-            //отбираем тех производителей права на которые есть у текущего пользователя
-            //то есть те, у которых есть в перечен привязанных сайтов
-            $this->addFilterCondition([$this->getTableName().'.producer_id' => $this->dbh->getColumn('shop_producers2sites', 'producer_id', ['site_id' => $this->document->getUser()->getSites()])]);
-        }
+
+        //отбираем тех производителей права на которые есть у текущего пользователя
+        //то есть те, у которых есть в перечен привязанных сайтов
+        $this->addFilterCondition([$this->getTableName() . '.producer_id' => $this->dbh->getColumn('shop_producers2sites', 'producer_id', ['site_id' => $this->getSites()])]);
+
         parent::getRawData();
     }
 
@@ -66,9 +91,8 @@ class ProducerEditor extends Grid {
             $_POST[$this->getTableName()]['producer_segment'] = Translit::asURLSegment($_POST[$this->getTranslationTableName()][E()->getLanguage()->getDefault()]['producer_name']);
         }
 
-        //Для всех с не админскими правами принудительно выставляем в те сайты на которые у юзера есть права
-        if (($this->document->getRights() < ACCESS_FULL)) {
-            $_POST[$this->getTableName()]['producer_site_multi'] = $this->document->getUser()->getSites();
+        if(!isset($_POST[$this->getTableName()]['producer_site_multi']) || !$_POST[$this->getTableName()]['producer_site_multi']){
+            $_POST[$this->getTableName()]['producer_site_multi'] = $this->getSites();
         }
 
         $r = parent::saveData();

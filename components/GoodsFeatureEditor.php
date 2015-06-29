@@ -82,7 +82,7 @@ class GoodsFeatureEditor extends Grid {
             if ($goodsID) {
                 $filter = '(goods_id =' . $goodsID . ')';
             } else {
-                $filter = '(goods_id IS NULL)';
+                $filter = '(goods_id IS NULL and session_id="'. session_id() .'")';
             }
             $filter = '((' . $filter . ') AND feature_id IN (' . join(',', $features) . '))';
             $this->setFilter($filter);

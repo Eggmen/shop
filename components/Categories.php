@@ -10,9 +10,9 @@ namespace Energine\shop\components;
 
 
 use Energine\share\components\PageList;
-use Energine\share\gears\UserSession;
 
 class Categories extends PageList {
+
     protected function defineParams() {
         $id = array_intersect(
             array_keys(E()->getMap()->getParents($this->document->getID())),
@@ -33,9 +33,8 @@ class Categories extends PageList {
     }
 
     protected function main() {
-        UserSession::start(true);
         parent::main();
-        if (($bind = $this->getParam('bind')) && ($c = $this->document->componentManager->getBlockByName($bind))) {
+        if (!($this->getData()->isEmpty()) && ($bind = $this->getParam('bind')) && ($c = $this->document->componentManager->getBlockByName($bind))) {
             $sortSegment = substr(array_reduce($c->getSortData(), function ($p, $c) {
                     return $p . $c . '-';
                 }, 'sort-'), 0, -1) . '/';

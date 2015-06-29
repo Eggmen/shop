@@ -10,6 +10,10 @@
         </div>
     </xsl:template>
 
+    <xsl:template match="component[@class='GoodsList' and @type='form']">
+        <xsl:apply-templates/>
+    </xsl:template>
+
     <xsl:template match="toolbar[parent::component[@class='GoodsList'] and @name='list_type']">
         <div class="goods_view_type">
             <ul class="inline">
@@ -20,14 +24,27 @@
         </div>
     </xsl:template>
 
+    <xsl:template match="control[@id='wishlist' and ancestor::component[@sample='GoodsList']]">
+        <xsl:param name="ID"/>
+        <a href="#" onClick="{generate-id($COMPONENTS[@sample='Wishlist' and @componentAction='main']/recordset)}.add(event, {$ID});"><xsl:value-of select="@title"/></a>
+    </xsl:template>
+
+    <xsl:template match="control[@id='buy' and ancestor::component[@sample='GoodsList']]">
+        <xsl:param name="ID"/>
+        <button  onClick="{generate-id($COMPONENTS[@sample='Cart' and @componentAction='main']/recordset)}.add(event, {$ID});"><xsl:value-of select="@title"/></button>
+    </xsl:template>
+
+
     <xsl:template match="toolbar[parent::component[@class='GoodsList'] and @name='product']" />
 
     <xsl:template match="toolbar[parent::component[@class='GoodsList'] and @name='product']" mode="list">
-
+        <xsl:param name="ID"/>
         <div class="goods_controls clearfix">
             <ul class="inline wo-separator">
                 <xsl:for-each select="control">
-                    <li><xsl:apply-templates select="."/></li>
+                    <li><xsl:apply-templates select=".">
+                        <xsl:with-param name="ID" select="$ID"/>
+                    </xsl:apply-templates></li>
                 </xsl:for-each>
                 <!--<button type="button" class="buy_goods">BUY</button>
                 <a href="#" class="add_to_wishlist">ADD_TO_WISHLIST</a>-->
@@ -65,7 +82,9 @@
                         <div class="goods_price">
                             <xsl:value-of select="field[@name='goods_price']"/>
                         </div>
-                        <xsl:apply-templates select="../../toolbar[@name='product']" mode="list"/>
+                        <xsl:apply-templates select="../../toolbar[@name='product']" mode="list">
+                            <xsl:with-param name="ID" select="field[@name='goods_id']"/>
+                        </xsl:apply-templates>
                     </div>
 
 	            </div>
@@ -79,29 +98,33 @@
     </xsl:template>
 
 	<xsl:template match="recordset[parent::component[(@class='GoodsList') and (@type='list') and (descendant::javascript/behavior/@name = 'ProductCarousel')]]">
-		<div class="multiple-items">
-            <xsl:for-each select="record">
-                <xsl:variable name="URL">
-                    <xsl:value-of select="$BASE"/><xsl:value-of select="$LANG_ABBR"/><xsl:value-of
-                        select="field[@name='smap_id']"/>view/<xsl:value-of
-                        select="field[@name='goods_segment']"/>/</xsl:variable>
-                <div class="item goods_block">
-                    <a href="{$URL}" class="goods_block_inner">
-                        <div class="goods_image">
-                            <img src="{$RESIZER_URL}w200-h150/{field[@name='attachments']/recordset/record[1]/field[@name='file']}"
-                                 alt="{field[@name='attachments']/recordset/record[1]/field[@name='title']}"/>
-                        </div>
-                        <div class="goods_name">
-                            <xsl:value-of select="field[@name='goods_name']"/>
-                        </div>
-                        <div class="goods_price">
-                            <xsl:value-of select="field[@name='goods_price']"/>
-                        </div>
-                    </a>
-                </div>
-            </xsl:for-each>
-		</div>
-	</xsl:template>
+        <xsl:if test="not(@empty)">
+            <div class="multiple-items">
+                <xsl:for-each select="record">
+                    <xsl:variable name="URL">
+                        <xsl:value-of select="$BASE"/><xsl:value-of select="$LANG_ABBR"/><xsl:value-of
+                            select="field[@name='smap_id']"/>view/<xsl:value-of
+                            select="field[@name='goods_segment']"/>/
+                    </xsl:variable>
+                    <div class="item goods_block">
+                        <a href="{$URL}" class="goods_block_inner">
+                            <div class="goods_image">
+                                <img src="{$RESIZER_URL}w200-h150/{field[@name='attachments']/recordset/record[1]/field[@name='file']}"
+                                     alt="{field[@name='attachments']/recordset/record[1]/field[@name='title']}"/>
+                            </div>
+                            <div class="goods_name">
+                                <xsl:value-of select="field[@name='goods_name']"/>
+                            </div>
+                            <div class="goods_price">
+                                <xsl:value-of select="field[@name='goods_price']"/>
+                            </div>
+                        </a>
+                    </div>
+                </xsl:for-each>
+            </div>
+        </xsl:if>
+
+    </xsl:template>
 
     <xsl:template match="component[@class='GoodsSort']">
         <div class="goods_sort">
@@ -122,48 +145,14 @@
     </xsl:template>
 
     <xsl:template match="component[@class='GoodsFilter']">
-        <form method="get" action="{$BASE}{$LANG_ABBR}{@template}{@action}" data-filter-name="{@filter-name}">
-            <xsl:apply-templates/>
-        </form>
+        <xsl:if test="count(recordset/record)&gt;0">
+            <form method="get" action="{$BASE}{$LANG_ABBR}{@template}{@action}" data-filter-name="{@filter-name}">
+                <xsl:apply-templates/>
+            </form>
+        </xsl:if>
     </xsl:template>
 
-    <!--<xsl:template match="field[ancestor::component[@type='form'] and (@subtype='RANGE')]" mode="field_input">
-        <span><xsl:value-of select="@text-from"/>:</span>
-            <input class="text inp_filter"  type="text">
-                <xsl:attribute name="name"><xsl:value-of select="@tableName"/>[<xsl:value-of select="@name"/>][begin]</xsl:attribute>
-                <xsl:if test="@range-begin">
-                    <xsl:attribute name="value"><xsl:value-of select="@range-begin"/></xsl:attribute>
-                </xsl:if>
-                <xsl:choose>
-                    <xsl:when test="@range-min">
-                        <xsl:attribute name="placeholder"><xsl:value-of select="@range-min"/></xsl:attribute>
-                        <xsl:attribute name="min"><xsl:value-of select="@range-min"/></xsl:attribute>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:attribute name="placeholder">0</xsl:attribute>
-                        <xsl:attribute name="min">0</xsl:attribute>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </input>
-        <span style="padding-left:10px;"><xsl:value-of select="@text-to"/>:</span>
-            <input class="text inp_filter" type="text">
-                <xsl:attribute name="name"><xsl:value-of select="@tableName"/>[<xsl:value-of select="@name"/>][end]</xsl:attribute>
-                <xsl:if test="@range-end">
-                    <xsl:attribute name="value"><xsl:value-of select="@range-end"/></xsl:attribute>
-                </xsl:if>
-                <xsl:choose>
-                    <xsl:when test="@range-max">
-                        <xsl:attribute name="placeholder"><xsl:value-of select="@range-max"/></xsl:attribute>
-                        <xsl:attribute name="max"><xsl:value-of select="@range-max"/></xsl:attribute>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:attribute name="placeholder">0</xsl:attribute>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </input>
-    </xsl:template>-->
-
-    <xsl:template match="field[ancestor::component[@type='form'] and (@subtype='RANGE')]" mode="field_input">
+     <xsl:template match="field[ancestor::component[@type='form'] and (@subtype='RANGE')]" mode="field_input">
         <xsl:variable name="NAME"><xsl:value-of select="@tableName"/>[<xsl:value-of select="@name"/>]</xsl:variable>
             <div class="range">
                 <xsl:if test="@range-begin">
@@ -196,80 +185,82 @@
             </div>
         </xsl:template>
 
-	<xsl:template match="component[@class='GoodsList' and @type='form']/recordset/record">
-		<div class="goods_view clearfix">
-			<div class="goods_image_block">
-				<div id="goodsGalleryLarge" class="single-item slider ">
+	<xsl:template match="recordset[parent::component[@class='GoodsList' and @type='form']]">
+		<div class="goods_view clearfix" id="{generate-id(.)}" data-id="{record/field[@name='goods_id']}">
+            <xsl:for-each select="record">
+                <div class="goods_image_block">
+                    <div id="goodsGalleryLarge" class="single-item slider ">
 
-							<xsl:for-each select="field[@name='attachments']/recordset/record">
-								<div >
-									<img src="{$RESIZER_URL}w400-h300/{field[@name='file']}" alt="{field[@name='name']}" />
-								</div>
-							</xsl:for-each>
-				</div>
-                <div id="goodsGallerySmall" class="multiple-items slider ">
-
-                    <xsl:for-each select="field[@name='attachments']/recordset/record">
-                        <div >
-                            <img src="{$RESIZER_URL}w100-h75/{field[@name='file']}" alt="{field[@name='name']}" />
-                        </div>
-                    </xsl:for-each>
-                </div>
-			</div>
-			<div class="goods_info">
-				<div class="goods_name">
-					<xsl:value-of select="field[@name='goods_name']" />
-				</div>
-				<div class="goods_price">
-					<xsl:value-of select="field[@name='goods_price']" />
-				</div>
-				<div class="goods_status available">
-					<xsl:value-of select="field[@name='sell_status_id']/value" />
-				</div>
-				<div class="goods_buy">
-					<button type="button" class="buy_goods">BUY</button>
-				</div>
-				<div class="goods_description">
-					<xsl:value-of select="field[@name='goods_description_rtf']" disable-output-escaping="yes" />
-				</div>
-			</div>
-            <xsl:variable name="RECORDSET" select="field[@name='features']/recordset"/>
-            <xsl:if test="not($RECORDSET/@empty)">
-                <div class="goods_features_block">
-                    <table class="goods_features">
-                        <thead>
-                            <tr>
-                                <th colspan="2">
-                                    <xsl:value-of select="field[@name='features']/@title"/>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <xsl:for-each select="set:distinct($RECORDSET/record/field[@name='group_id'])">
-                                <xsl:variable name="GROUP_ID" select="."/>
-                                <xsl:if test="$GROUP_ID!=''">
-                                    <tr>
-                                        <td colspan="2" class="group">
-                                            <xsl:value-of select="../field[@name='group_title']"/>
-                                        </td>
-                                    </tr>
-                                </xsl:if>
-                                <xsl:for-each select="$RECORDSET/record[field[@name='group_id'] =$GROUP_ID]">
-                                    <tr>
-                                        <th>
-                                            <xsl:value-of select="field[@name='feature_title']"/>
-                                        </th>
-                                        <td>
-                                            <xsl:value-of select="field[@name='feature_value']"/>
-                                        </td>
-                                    </tr>
+                                <xsl:for-each select="field[@name='attachments']/recordset/record">
+                                    <div >
+                                        <img src="{$RESIZER_URL}w400-h300/{field[@name='file']}" alt="{field[@name='name']}" />
+                                    </div>
                                 </xsl:for-each>
-                            </xsl:for-each>
-                        </tbody>
-                    </table>
+                    </div>
+                    <div id="goodsGallerySmall" class="multiple-items slider ">
+                        <xsl:for-each select="field[@name='attachments']/recordset/record">
+                            <div >
+                                <img src="{$RESIZER_URL}w100-h75/{field[@name='file']}" alt="{field[@name='name']}" />
+                            </div>
+                        </xsl:for-each>
+                    </div>
                 </div>
-            </xsl:if>
-
+                <div class="goods_info">
+                    <div class="goods_name">
+                        <xsl:value-of select="field[@name='goods_name']" />
+                    </div>
+                    <div class="goods_price">
+                        <xsl:value-of select="field[@name='goods_price']" />
+                    </div>
+                    <div class="goods_status available">
+                        <xsl:value-of select="field[@name='sell_status_id']/value" />
+                    </div>
+                    <div class="goods_buy">
+                        <xsl:apply-templates select="../../toolbar[@name='product']" mode="list">
+                            <xsl:with-param name="ID" select="field[@name='goods_id']"/>
+                        </xsl:apply-templates>
+                    </div>
+                    <div class="goods_description">
+                        <xsl:value-of select="field[@name='goods_description_rtf']" disable-output-escaping="yes" />
+                    </div>
+                </div>
+                <xsl:variable name="RECORDSET" select="field[@name='features']/recordset"/>
+                <xsl:if test="not($RECORDSET/@empty)">
+                    <div class="goods_features_block">
+                        <table class="goods_features">
+                            <thead>
+                                <tr>
+                                    <th colspan="2">
+                                        <xsl:value-of select="field[@name='features']/@title"/>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <xsl:for-each select="set:distinct($RECORDSET/record/field[@name='group_id'])">
+                                    <xsl:variable name="GROUP_ID" select="."/>
+                                    <xsl:if test="$GROUP_ID!=''">
+                                        <tr>
+                                            <td colspan="2" class="group">
+                                                <xsl:value-of select="../field[@name='group_title']"/>
+                                            </td>
+                                        </tr>
+                                    </xsl:if>
+                                    <xsl:for-each select="$RECORDSET/record[field[@name='group_id'] =$GROUP_ID]">
+                                        <tr>
+                                            <th>
+                                                <xsl:value-of select="field[@name='feature_title']"/>
+                                            </th>
+                                            <td>
+                                                <xsl:value-of select="field[@name='feature_value']"/>
+                                            </td>
+                                        </tr>
+                                    </xsl:for-each>
+                                </xsl:for-each>
+                            </tbody>
+                        </table>
+                    </div>
+                </xsl:if>
+            </xsl:for-each>
         </div>
 	</xsl:template>
 
