@@ -14,6 +14,7 @@ use Energine\share\gears\Field;
 use Energine\share\gears\Data;
 use Energine\share\gears\DataDescription;
 use Energine\share\gears\SimpleBuilder;
+use Energine\shop\gears\SampleGoodsList;
 
 class GoodsList extends DBDataSet implements SampleGoodsList {
     /**
@@ -917,9 +918,5 @@ class GoodsList extends DBDataSet implements SampleGoodsList {
                 $this->document->setProperty($key, $f->getRowData(0));
         }
     }
-
-}
-
-interface SampleGoodsList {
 
 }
