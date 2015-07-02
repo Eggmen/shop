@@ -35,7 +35,8 @@ class GoodsFilter extends DataSet {
                 'bind' => false,
                 'tableName' => 'shop_goods',
                 'active' => false,
-                'showForProduct' => false
+                'showForProduct' => false,
+                'removeEmptyPriceFilter' => true,
             ]
         );
     }
@@ -68,7 +69,7 @@ class GoodsFilter extends DataSet {
                 $fd->setProperty('range-begin', (string)$begin);
                 $fd->setProperty('range-end', (string)$end);
                 $fd->setProperty('range-step', 1);
-            } else {
+            } elseif ($this->getParam('removeEmptyPriceFilter')) {
                 $this->getDataDescription()->removeFieldDescription($fd);
             }
 
