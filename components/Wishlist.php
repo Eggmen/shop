@@ -37,15 +37,21 @@ class Wishlist extends DBDataSet implements SampleWishlist {
         );
     }
 
+    protected function getGoodsIds() {
+        $res = $this->dbh->getColumn($this->getTableName(), 'goods_id', $this->getFilter());
+        return ($res) ? implode(',', $res) : '';
+    }
+
     protected function mainState() {
         $this->setBuilder(new EmptyBuilder());
         $this->setProperty('count', $this->getCount());
+        $this->setProperty('goods_ids', $this->getGoodsIds());
         $this->js = $this->buildJS();
         $this->setAction((string)$this->config->getStateConfig('add')->uri_patterns->pattern);
         $this->setProperty('load', (string)$this->config->getStateConfig('show')->uri_patterns->pattern);
     }
 
-    private function getCount() {
+    protected function getCount() {
         return $this->dbh->getScalar($this->getTableName(), 'COUNT(w_id)', $this->getFilter());
     }
 
@@ -68,7 +74,7 @@ class Wishlist extends DBDataSet implements SampleWishlist {
         }
     }
 
-    protected function deleteState() {
+    protected function deleteState($productID) {
 
     }
 
