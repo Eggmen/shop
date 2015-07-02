@@ -743,6 +743,7 @@ class GoodsList extends DBDataSet implements SampleGoodsList {
                     'feature_title' => $feature->getTitle(),
                     'feature_sysname' => $feature->getSysName(),
                     'feature_is_order_param' => $feature->isOrderParam(),
+                    'feature_is_main' => $feature->isMain(),
                     'feature_type' => $feature->getType(),
                     'feature_value' => (string)$feature,
                     'group_id' => $feature->getGroupId(),
@@ -772,6 +773,10 @@ class GoodsList extends DBDataSet implements SampleGoodsList {
             $dataDescription->addFieldDescription($ffd);
 
             $ffd = new FieldDescription('feature_is_order_param');
+            $ffd->setType(FieldDescription::FIELD_TYPE_BOOL);
+            $dataDescription->addFieldDescription($ffd);
+
+            $ffd = new FieldDescription('feature_is_main');
             $ffd->setType(FieldDescription::FIELD_TYPE_BOOL);
             $dataDescription->addFieldDescription($ffd);
 

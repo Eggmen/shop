@@ -137,6 +137,9 @@ class FeatureFieldAbstract extends Object {
     public function isOrderParam() {
         return (isset($this->data['feature_is_order_param'])) ? (bool)$this->data['feature_is_order_param'] : false;
     }
+    public function isMain() {
+        return (isset($this->data['feature_is_main'])) ? (bool)$this->data['feature_is_main'] : false;
+    }
 
     public function loadFeatureData() {
         if ($this->feature_id) {
@@ -149,6 +152,7 @@ class FeatureFieldAbstract extends Object {
 				f.feature_is_active,
 				f.feature_is_filter,
 				f.feature_is_order_param,
+				f.feature_is_main,
 				ft.feature_name,
 				ft.feature_description,
 				ft.feature_unit,
