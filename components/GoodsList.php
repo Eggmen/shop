@@ -808,6 +808,7 @@ class GoodsList extends DBDataSet implements SampleGoodsList {
             $f->setRowData(0, $builder->getResult());
             // на выходе получаем строковые значения поля
             $this->buildPromotions($this->getData()->getFieldByName($this->getPK()));
+            $this->addTranslation('TXT_ALL_FEATURES', 'TXT_MAIN_FEATURES');
         }
     }
 

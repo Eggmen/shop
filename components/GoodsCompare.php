@@ -42,7 +42,7 @@ class GoodsCompare extends DataSet {
         $this->js = $this->buildJS();
     }
 
-    private function getGoodsFromSession() {
+    protected function getGoodsFromSession() {
 
         E()->UserSession->start();
 
