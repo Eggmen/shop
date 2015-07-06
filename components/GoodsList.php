@@ -144,7 +144,7 @@ class GoodsList extends DBDataSet implements SampleGoodsList {
             $features = $this->getGoodsDivisionFeatureIds($goods_ids);
             $mainFeaturesCondition = '';
             if($showOnlyMainFeatures){
-                $mainFeaturesCondition = ' AND ff.feature_is_main ';
+                $mainFeaturesCondition = ' AND (ff.feature_is_main) ';
             }
 
             // получаем список значений fpv_data для заданного массива goods_id
@@ -154,9 +154,9 @@ class GoodsList extends DBDataSet implements SampleGoodsList {
 				from shop_feature2good_values f
 				left join shop_feature2good_values_translation ft
 				  on ft.fpv_id = f.fpv_id and ft.lang_id = %s
-				left join shop_features ff on f.feature_id = ff.feature_id
+				left join shop_features ff on (f.feature_id = ff.feature_id)
 				left join shop_feature_groups fg on ff.group_id = fg.group_id
-				where f.feature_id in (%s) and f.goods_id in (%s) '.$mainFeaturesCondition.'
+				where (f.feature_id in (%s)) and (f.goods_id in (%s)) '.$mainFeaturesCondition.'
 				order by fg.group_order_num asc, ff.feature_order_num asc',
                 $this->document->getLang(),
                 $features,
@@ -167,6 +167,9 @@ class GoodsList extends DBDataSet implements SampleGoodsList {
                 foreach ($fpv as $row) {
                     $fpv_indexed[$row['goods_id']][$row['feature_id']] = $row;
                 }
+            if($showOnlyMainFeatures){
+                $features = array_unique(array_column($fpv, 'feature_id'));
+            }
 
             // проходимся по всем данным, создаем каждую фичу через фабрику, передаем feature_id и fpv_data
             foreach ($field_goods_id->getData() as $key => $goods_id) {
@@ -174,7 +177,6 @@ class GoodsList extends DBDataSet implements SampleGoodsList {
                 $feature_data = [];
 
                 foreach ($features as $feature_id) {
-
                     $fpv_data = (isset($fpv_indexed[$goods_id][$feature_id]['fpv_data'])) ? $fpv_indexed[$goods_id][$feature_id]['fpv_data'] : '';
                     $feature = FeatureFieldFactory::getField($feature_id, $fpv_data);
 
