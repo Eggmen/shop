@@ -136,14 +136,13 @@ class Cart extends DBDataSet implements SampleCart {
         if (is_null($count)) {
             $count = $this->dbh->getScalar($this->getTableName(), 'SUM(cart_goods_count)', $this->getFilter());
         }
-
         return $count;
     }
 
     protected function getTotal() {
         static $total = NULL;
         if (is_null($total)) {
-            $total = $this->dbh->getScalar('SELECT SUM(goods_price) FROM ' . $this->getTableName() . ' LEFT JOIN shop_goods USING(goods_id) ' . $this->dbh->buildWhereCondition($this->getFilter()));
+            $total = $this->dbh->getScalar('SELECT SUM(goods_price*cart_goods_count) FROM ' . $this->getTableName() . ' LEFT JOIN shop_goods USING(goods_id) ' . $this->dbh->buildWhereCondition($this->getFilter()));
         }
 
         return $total;
@@ -202,6 +201,7 @@ class Cart extends DBDataSet implements SampleCart {
         $am = new AttachmentManager($this->getDataDescription(), $this->getData(), 'shop_goods');
         $am->createFieldDescription();
         $am->createField('goods_id');
+        $this->setProperty('count', $this->getCount());
         $this->setProperty('total', $this->getTotal());
         $this->setProperty('delete', (string)$this->config->getStateConfig('delete')->uri_patterns->pattern, true);
         $this->setProperty('edit', (string)$this->config->getStateConfig('edit')->uri_patterns->pattern, true);

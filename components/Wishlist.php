@@ -47,7 +47,7 @@ class Wishlist extends DBDataSet implements SampleWishlist {
         $this->setProperty('count', $this->getCount());
         $this->setProperty('goods_ids', $this->getGoodsIds());
         $this->js = $this->buildJS();
-        $this->setAction((string)$this->config->getStateConfig('add')->uri_patterns->pattern);
+        $this->setAction((string)$this->config->getStateConfig('add')->uri_patterns->pattern, true);
         $this->setProperty('load', (string)$this->config->getStateConfig('show')->uri_patterns->pattern);
     }
 
@@ -56,7 +56,6 @@ class Wishlist extends DBDataSet implements SampleWishlist {
     }
 
     protected function addState($productID) {
-        $this->setProperty('count', $this->getCount());
         if ($this->document->getUser()->isAuthenticated() && $this->dbh->getScalar('shop_goods', 'goods_id',
                 ['goods_id' => $productID])
         ) {
@@ -72,6 +71,7 @@ class Wishlist extends DBDataSet implements SampleWishlist {
         else {
             $this->setBuilder(new EmptyBuilder());
         }
+        $this->setProperty('count', $this->getCount());
     }
 
     protected function deleteState($productID) {
