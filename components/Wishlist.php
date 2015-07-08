@@ -75,7 +75,36 @@ class Wishlist extends DBDataSet implements SampleWishlist {
     }
 
     protected function deleteState($productID) {
+        if ($wishlistID = $this->dbh->getScalar($this->getTableName(), 'w_id', ['goods_id' => $productID, 'session_id' => E()->UserSession->start()->getID()])) {
+            try {
+                $this->dbh->modify(QAL::DELETE, $this->getTableName(), NULL, ['w_id' => $wishlistID]);
+            } catch (\PDOException $e) {
+                inspect($e->getMessage(), (string)$this->document->getUser()->getID());
+            }
 
+        }
+        $this->config->setCurrentState('show');
+        $this->showState();
+    }
+
+    protected function basketState($productID) {
+        if ($wishlistID = $this->dbh->getScalar($this->getTableName(), 'w_id', ['goods_id' => $productID, 'session_id' => E()->UserSession->start()->getID()])) {
+            try {
+                $this->dbh->modify(QAL::DELETE, $this->getTableName(), NULL, ['w_id' => $wishlistID]);
+                $this->dbh->modify(QAL::INSERT_IGNORE, 'shop_cart', [
+                    'goods_id' => $productID,
+                    'session_id' => E()->UserSession->start()->getID(),
+                    'u_id' => $this->document->getUser()->getID(),
+                    'cart_goods_count' => 1,
+                    'cart_date' => date('Y-m-d H:i:s'),
+                    'site_id' => E()->getSiteManager()->getCurrentSite()->id
+                ]);
+            } catch (\PDOException $e) {
+                inspect($e->getMessage(), (string)$this->document->getUser()->getID());
+            }
+        }
+        $this->config->setCurrentState('show');
+        $this->showState();
     }
 
     protected function showState() {

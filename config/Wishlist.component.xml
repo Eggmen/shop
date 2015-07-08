@@ -18,6 +18,11 @@
             <pattern>/wdel/[productID]/</pattern>
         </uri_patterns>
     </state>
+	<state name="basket">
+		<uri_patterns>
+			<pattern>/wbasket/[productID]/</pattern>
+		</uri_patterns>
+	</state>
     <state name="show">
         <javascript>
             <behavior name="Wishlist"/>
