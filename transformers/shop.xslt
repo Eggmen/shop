@@ -166,8 +166,6 @@
                 </xsl:if>
                 <xsl:if test="@range-max">
                     <xsl:attribute name="data-max"><xsl:value-of select="@range-max"/></xsl:attribute>
-                </xsl:if><xsl:if test="@range-max">
-                    <xsl:attribute name="data-max"><xsl:value-of select="@range-max"/></xsl:attribute>
                 </xsl:if>
                 <xsl:if test="@range-step">
                     <xsl:attribute name="data-step"><xsl:value-of select="@range-step"/></xsl:attribute>
