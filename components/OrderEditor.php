@@ -44,9 +44,16 @@ class OrderEditor extends Grid implements SampleOrderEditor {
     public function __construct($name, array $params = NULL) {
         parent::__construct($name, $params);
         $this->setTableName('shop_orders');
-        $this->setFilter([
-            'site_id' => E()->getSiteManager()->getCurrentSite()->id,
-        ]);
+
+        if ($sites = E()->getSiteManager()->getSitesByTag('shop')) {
+            $site_ids = array_map(function ($site) {
+                return (string)$site;
+            }, $sites);
+
+            $this->setFilter([
+                'site_id' => $site_ids
+            ]);
+        }
     }
 
     /**

@@ -6,7 +6,7 @@
         </javascript>
         <fields>
             <field name="og_id"/>
-            <field name="order_id"/>
+            <field name="order_id" type="hidden"/>
             <field name="goods_title"/>
             <field name="goods_price"/>
             <field name="goods_quantity"/>
@@ -26,13 +26,14 @@
             <pattern>/add/</pattern>
         </uri_patterns>
         <javascript>
-            <behavior name="Form"/>
+            <behavior name="OrderGoodsForm"/>
         </javascript>
 		<fields>
             <field name="og_id"/>
             <field name="order_id"/>
             <field name="goods_id" type="lookup" editor="Energine\shop\components\GoodsLookup"/>
             <field name="goods_title"/>
+			<field name="goods_description"/>
             <field name="goods_price"/>
             <field name="goods_quantity"/>
             <field name="goods_amount"/>
@@ -58,14 +59,15 @@
             <pattern>/[int]/edit/</pattern>
         </uri_patterns>
         <javascript>
-            <behavior name="Form"/>
+            <behavior name="OrderGoodsForm"/>
         </javascript>
 		<fields>
             <field name="og_id"/>
             <field name="order_id"/>
             <field name="goods_id" type="lookup" editor="Energine\shop\components\GoodsLookup"/>
             <field name="goods_title"/>
-            <field name="goods_price"/>
+			<field name="goods_description"/>
+			<field name="goods_price"/>
             <field name="goods_quantity"/>
             <field name="goods_amount"/>
             <field name="session_id"/>
@@ -137,6 +139,17 @@
 	<state name="down" rights="3">
 		<uri_patterns>
 			<pattern>/[int]/down/</pattern>
+		</uri_patterns>
+	</state>
+	<state name="goodsTotal">
+		<uri_patterns>
+			<pattern>/goods-total/</pattern>
+			<pattern>/[goods_id]/goods-total/</pattern>
+		</uri_patterns>
+	</state>
+	<state name="goodsDetails">
+		<uri_patterns>
+			<pattern>/[goods_id]/goods-details/</pattern>
 		</uri_patterns>
 	</state>
 </configuration>
