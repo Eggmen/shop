@@ -13,7 +13,7 @@ use Energine\shop\gears\FeatureFieldAbstract;
 use Energine\shop\gears\FeatureFieldFactory;
 use Energine\share\gears\UserSession;
 
-class GoodsCompare extends DataSet {
+class GoodsCompare extends DataSet implements SampleGoodsCompare{
     public function __construct($name, array $params = NULL) {
         parent::__construct($name, $params);
         // active only in single mode
@@ -230,3 +230,4 @@ class GoodsCompare extends DataSet {
     }
 
 }
+interface SampleGoodsCompare{};
