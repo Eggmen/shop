@@ -446,7 +446,20 @@ class GoodsList extends DBDataSet implements SampleGoodsList {
         } else {
             // иначе используем внешние фильтры + привязку к категории
             $documentIDs = $this->getCategories();
-            $result = ['smap_id' => sprintf('(smap_id IN (%s))', implode(',', $documentIDs))];
+
+            // дополнительные категории
+            if ($this->dbh->tableExists('shop_goods_additional_categories')) {
+                $additional_goods = $this->dbh->getColumn(
+                    'shop_goods_additional_categories', 'goods_id', ['smap_id' => $documentIDs]
+                );
+                if (!$additional_goods) {
+                    $additional_goods = ['-1'];
+                }
+                $result = ['smap_id' => sprintf(
+                    '(smap_id IN (%s) or goods_id in (%s))', implode(',', $documentIDs), implode(',', $additional_goods))];
+            } else {
+                $result = ['smap_id' => sprintf('(smap_id IN (%s))', implode(',', $documentIDs))];
+            }
 
             $filter_data = $this->filter_data;
             if ($filter_data) {
