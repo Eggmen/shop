@@ -145,8 +145,7 @@ class GoodsCompare extends DataSet implements SampleGoodsCompare{
 
     protected function add() {
         E()->UserSession->start();
-        $sp = $this->getStateParams(true);
-        $goods_id = $sp['goodsId'];
+        list($goods_id) = $this->getStateParams();
         $goods_ids = (!empty($_SESSION['goods_compare'])) ? $_SESSION['goods_compare'] : [];
         if (!in_array($goods_id, $goods_ids)) {
             $_SESSION['goods_compare'][] = $goods_id;
