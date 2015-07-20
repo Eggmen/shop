@@ -374,6 +374,9 @@ class GoodsList extends DBDataSet implements SampleGoodsList {
             if (isset($filter['producers']) && !empty($filter['producers'])) {
                 $result['producers'] = $filter['producers'];
             }
+            if (isset($filter['divisions']) && !empty($filter['divisions'])) {
+                $result['divisions'] = $filter['divisions'];
+            }
             // features filter
             foreach ($this->div_feature_ids as $feature_id) {
                 $feature = FeatureFieldFactory::getField($feature_id);
@@ -436,7 +439,7 @@ class GoodsList extends DBDataSet implements SampleGoodsList {
      * Получение значения WHERE для фильтра (внешняя фильтрация по цене / характеристикам)
      * @return string
      */
-    protected function getFilterWhereConditions() {
+    public function getFilterWhereConditions() {
         $table_name = $this->getTableName();
 
         // если в компонент пришли id-шки товаров - используем их
@@ -446,7 +449,20 @@ class GoodsList extends DBDataSet implements SampleGoodsList {
         } else {
             // иначе используем внешние фильтры + привязку к категории
             $documentIDs = $this->getCategories();
-            $result = ['smap_id' => sprintf('(smap_id IN (%s))', implode(',', $documentIDs))];
+
+            // дополнительные категории
+            if ($this->dbh->tableExists('shop_goods_additional_categories')) {
+                $additional_goods = $this->dbh->getColumn(
+                    'shop_goods_additional_categories', 'goods_id', ['smap_id' => $documentIDs]
+                );
+                if (!$additional_goods) {
+                    $additional_goods = ['-1'];
+                }
+                $result = ['smap_id' => sprintf(
+                    '(smap_id IN (%s) or goods_id in (%s))', implode(',', $documentIDs), implode(',', $additional_goods))];
+            } else {
+                $result = ['smap_id' => sprintf('(smap_id IN (%s))', implode(',', $documentIDs))];
+            }
 
             $filter_data = $this->filter_data;
             if ($filter_data) {
