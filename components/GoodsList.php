@@ -374,6 +374,9 @@ class GoodsList extends DBDataSet implements SampleGoodsList {
             if (isset($filter['producers']) && !empty($filter['producers'])) {
                 $result['producers'] = $filter['producers'];
             }
+            if (isset($filter['divisions']) && !empty($filter['divisions'])) {
+                $result['divisions'] = $filter['divisions'];
+            }
             // features filter
             foreach ($this->div_feature_ids as $feature_id) {
                 $feature = FeatureFieldFactory::getField($feature_id);
@@ -436,7 +439,7 @@ class GoodsList extends DBDataSet implements SampleGoodsList {
      * Получение значения WHERE для фильтра (внешняя фильтрация по цене / характеристикам)
      * @return string
      */
-    protected function getFilterWhereConditions() {
+    public function getFilterWhereConditions() {
         $table_name = $this->getTableName();
 
         // если в компонент пришли id-шки товаров - используем их

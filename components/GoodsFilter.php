@@ -16,7 +16,7 @@ class GoodsFilter extends DataSet {
     /**
      * @var GoodsList
      */
-    private $boundComponent;
+    protected $boundComponent;
 
     public function __construct($name, array $params = NULL) {
         parent::__construct($name, $params);
