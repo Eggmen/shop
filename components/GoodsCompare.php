@@ -3,6 +3,7 @@
 namespace Energine\shop\components;
 
 use Energine\share\components\DataSet;
+use Energine\share\gears\ComponentProxyBuilder;
 use Energine\share\gears\EmptyBuilder;
 use Energine\share\gears\SimpleBuilder;
 use Energine\share\gears\FieldDescription;
@@ -13,13 +14,13 @@ use Energine\shop\gears\FeatureFieldAbstract;
 use Energine\shop\gears\FeatureFieldFactory;
 use Energine\share\gears\UserSession;
 
-class GoodsCompare extends DataSet implements SampleGoodsCompare{
+class GoodsCompare extends DataSet implements SampleGoodsCompare {
     public function __construct($name, array $params = NULL) {
         parent::__construct($name, $params);
         // active only in single mode
         $this->setParam('active', ($this->getProperty('single') != 'single') ? false : true);
         $this->setTitle($this->translate('TXT_COMPARE'));
-        $this->setProperty('recordsPerPage', false);
+        $this->setParam('recordsPerPage', false);
     }
 
     protected function defineParams() {
@@ -72,6 +73,7 @@ class GoodsCompare extends DataSet implements SampleGoodsCompare{
     }
 
     protected function informer() {
+        //$this->setType(self::COMPONENT_TYPE_LIST);
         $goods = $this->getGoodsFromSession();
         $counter = 0;
 
@@ -138,7 +140,10 @@ class GoodsCompare extends DataSet implements SampleGoodsCompare{
             );
             $this->setData($data);
             $this->setDataDescription($dataDescription);
-            E()->getController()->getTransformer()->setFileName($this->getParam('singleTemplate'));
+
+            if ($this->document->getProperty('single'))
+                E()->getController()->getTransformer()->setFileName($this->getParam('singleTemplate'));
+
             $this->setBuilder($this->createBuilder());
         }
     }
@@ -156,9 +161,9 @@ class GoodsCompare extends DataSet implements SampleGoodsCompare{
 
     protected function remove() {
         E()->UserSession->start();
-        $sp = $this->getStateParams(true);
-        $goods_id = $sp['goodsId'];
+        list($goods_id) = $this->getStateParams();
         $goods_ids = (!empty($_SESSION['goods_compare'])) ? $_SESSION['goods_compare'] : [];
+
         if (in_array($goods_id, $goods_ids)) {
             if (($key = array_search($goods_id, $goods_ids)) !== false) {
                 unset($_SESSION['goods_compare'][$key]);
@@ -177,56 +182,31 @@ class GoodsCompare extends DataSet implements SampleGoodsCompare{
         $this->informer();
     }
 
-    public function build() {
-
-        $doc = parent::build();
-
-        if ($this->getState() == 'compare') {
-            $doc = $this->buildCompare($doc);
-        }
-
-        return $doc;
-    }
-
-    protected function buildCompare(\DOMDocument $builderDoc) {
-        $sp = $this->getStateParams(true);
+    protected function compare() {
+        $this->setType(self::COMPONENT_TYPE_LIST);
+        $this->setBuilder($b = new ComponentProxyBuilder());
+        list($sp) = $this->getStateParams();
 
         $params = [
             'active' => false,
             'state' => 'main',
-            'id' => implode(',', array_filter(explode(',', $sp['goodsIds']), 'is_numeric')), // вывод только заданных id
+            'id' => implode(',', array_filter(explode(',', $sp), 'is_numeric')), // вывод только заданных id
             'list_features' => 'any' // вывод всех фич товаров в списке
         ];
-
-        $goodsList = $this->document->componentManager->createComponent(
+        $b->setComponent(
             'compareGoodsList',
             $this->getParam('goodsListClass'),
             $params
         );
-        $goodsList->run();
-        $goodsDoc = $goodsList->build();
-
-        $builderXpath = new \DOMXPath($builderDoc);
-        $recordsets = $builderXpath->query("/component/recordset");
-
-        $goodsXpath = new \DOMXPath($goodsDoc);
-        $records = $goodsXpath->query("/component/recordset/record");
-
-        foreach ($records as $record) {
-            $record = $builderDoc->importNode($record, true);
-
-            foreach ($recordsets as $recordset) {
-                $recordset->appendChild($record);
-            }
+        $toolbars = $this->createToolbar();
+        if (!empty($toolbars)) {
+            $this->addToolbar($toolbars);
         }
-
-        return $builderDoc;
-    }
-
-    protected function compare() {
-        parent::prepare();
-        $this->setBuilder(new EmptyBuilder());
+        $this->js = $this->buildJS();
     }
 
 }
-interface SampleGoodsCompare{};
+
+interface SampleGoodsCompare {
+}
+
