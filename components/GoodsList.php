@@ -687,6 +687,9 @@ class GoodsList extends DBDataSet implements SampleGoodsList {
         //$this->document->componentManager->getBlockByName('breadCrumbs')->addCrumb('0001', '111', '222');
 
         $this->prepare();
+        if($this->getData()->isEmpty()){
+            throw new SystemException('ERR_404', SystemException::ERR_404);
+        }
 
         foreach ($this->getDataDescription() as $fieldDescription) {
             $fieldDescription->setMode(FieldDescription::FIELD_MODE_READ);
