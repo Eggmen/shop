@@ -89,7 +89,7 @@
     </xsl:template>
 
     <xsl:template match="component[@class='SiteList' and (following::component[@class='CategoryEditor'] or preceding::component[@class='CategoryEditor'])]"  mode="insideEditor">
-            <select onchange="document.location = '{$BASE}{$LANG_ABBR}{@template}show-shop/' + this.options[this.selectedIndex].value + '/';" id="site_selector">
+            <select onchange="document.location = '{$BASE}{$LANG_ABBR}{$TEMPLATE}show-shop/' + this.options[this.selectedIndex].value + '/';" id="site_selector">
                 <xsl:for-each select="recordset/record">
                     <option value="{field[@name='site_id']}">
                         <xsl:if test="field[@name='site_id'] = $COMPONENTS[@sample='DivisionEditor']/@site">
