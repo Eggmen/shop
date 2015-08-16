@@ -39,7 +39,7 @@ var GoodsForm = new Class(/** @lends GoodsForm# */{
 		if (this.currentTab.hasAttribute('data-src') && this.currentTab.getProperty('data-src').test("feature/show")) {
 			var smapID = this.element.getElement('[name=shop_goods[smap_id]]').get('value');
 			var goodsID = this.element.getElementById('goods_id').get('value');
-			this.currentTab.setProperty('data-src', this.element.getProperty('template').replace(Energine['base'], '') + goodsID + '/feature/show/' + smapID + '/');
+			this.currentTab.setProperty('data-src', this.element.getProperty('single_template').replace(Energine['base'], '') + goodsID + '/feature/show/' + smapID + '/');
 			this.currentTab.loaded = false;
 			if (!smapID) {
 				this.currentTab.pane.empty();
