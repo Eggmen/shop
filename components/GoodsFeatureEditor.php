@@ -227,7 +227,7 @@ class GoodsFeatureEditor extends Grid {
 
     public function build() {
         $result = parent::build();
-        if (in_array($this->getDataDescription()->getFieldDescriptionByName('fpv_data')->getType(), [FieldDescription::FIELD_TYPE_MULTI, FieldDescription::FIELD_TYPE_SELECT, FieldDescription::FIELD_TYPE_INT])) {
+        if (in_array($this->getDataDescription()->getFieldDescriptionByName('fpv_data')->getType(), [FieldDescription::FIELD_TYPE_MULTI, FieldDescription::FIELD_TYPE_SELECT, FieldDescription::FIELD_TYPE_INT, FieldDescription::FIELD_TYPE_BOOL])) {
             $xp = new \DOMXPath($result);
             if ($nodes = $xp->query('//field[@name="fpv_data" and @language!=' . $this->document->getLang() . ']')) {
                 foreach ($nodes as $node) {

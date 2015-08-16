@@ -859,7 +859,7 @@ class GoodsList extends DBDataSet implements SampleGoodsList {
                 				from shop_promotions p
                 				join shop_goods2promotions gp on p.promotion_id = gp.promotion_id and gp.goods_id in (%s)
                 				left join shop_promotions_translation pt on p.promotion_id = pt.promotion_id
-                				where p.promotion_is_active = 1 and p.promotion_start_date <= NOW() and p.promotion_end_date >= NOW() and pt.lang_id = %s',
+                				where p.promotion_is_active = 1 and p.promotion_start_date <= NOW() and p.promotion_end_date >= NOW() and pt.lang_id = %s  order by promotion_end_date ASC LIMIT 1',
                     $id,
                     $this->document->getLang()
                 );

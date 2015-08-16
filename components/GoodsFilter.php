@@ -56,18 +56,18 @@ class GoodsFilter extends DataSet {
                 $this->getParam('tableName') .
                 ' where smap_id IN (%s)', $this->boundComponent->getCategories()
             ));
-            $begin = (isset($this->filter_data['price']['begin'])) ? (int)$this->filter_data['price']['begin'] : $min;
-            $end = (isset($this->filter_data['price']['end'])) ? (int)$this->filter_data['price']['end'] : $max;
+            $begin = (isset($this->filter_data['price']['begin'])) ? (float)$this->filter_data['price']['begin'] : $min;
+            $end = (isset($this->filter_data['price']['end'])) ? (float)$this->filter_data['price']['end'] : $max;
             if ($begin < $min) $begin = $min;
             if ($end > $max) $end = $max;
             if (($min && $max && $begin && $end)) {
                 $fd->setProperty('text-from', $this->translate('TXT_FROM'));
                 $fd->setProperty('text-to', $this->translate('TXT_TO'));
 
-                $fd->setProperty('range-min', (string)$min);
-                $fd->setProperty('range-max', (string)$max);
-                $fd->setProperty('range-begin', (string)$begin);
-                $fd->setProperty('range-end', (string)$end);
+                foreach(['min', 'max', 'begin', 'end'] as $var){
+                    $fd->setProperty('range-' . $var, number_format($$var, 2, '.', ''));
+                }
+
                 $fd->setProperty('range-step', 1);
             } elseif ($this->getParam('removeEmptyPriceFilter')) {
                 $this->getDataDescription()->removeFieldDescription($fd);
@@ -159,8 +159,7 @@ class GoodsFilter extends DataSet {
                     $this->getData()->addField($f);
 
                 }
-            }
-            else {
+            } else {
                 $this->getDataDescription()->removeFieldDescription($fd);
             }
         }

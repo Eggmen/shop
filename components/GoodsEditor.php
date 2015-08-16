@@ -21,6 +21,7 @@ use Energine\share\components\Grid,
     Energine\share\gears\Sitemap;
 use Energine\share\gears\Data;
 use Energine\share\gears\DataDescription;
+use Energine\share\gears\QAL;
 use Energine\share\gears\Translit;
 use Energine\share\gears\TreeBuilder;
 use Energine\share\gears\TreeNode;
@@ -60,6 +61,7 @@ class GoodsEditor extends Grid implements SampleGoodsEditor {
         parent::__construct($name, $params);
         $this->setTableName('shop_goods');
         $this->addFilterCondition('smap_id IN (SELECT smap_id FROM share_sitemap WHERE site_id IN (' . implode(',', $this->getSites()) . '))');
+        $this->setOrder(['goods_date' => QAL::DESC]);
     }
 
     private function getSites() {

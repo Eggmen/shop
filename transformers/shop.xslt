@@ -129,7 +129,6 @@
     <xsl:template match="component[@class='GoodsSort']">
         <div class="goods_sort">
             <xsl:variable name="GET"><xsl:if test="@get!=''">?<xsl:value-of select="@get"/></xsl:if></xsl:variable>
-            <xsl:variable name="TEMPLATE" select="@template"/>
             <xsl:variable name="RECORDS" select="recordset/record"/>
             <ul class="inline">
             <xsl:for-each select="$RECORDS/field[@name='field']/options/option">
@@ -146,7 +145,7 @@
 
     <xsl:template match="component[@class='GoodsFilter']">
         <xsl:if test="count(recordset/record)&gt;0">
-            <form method="get" action="{$BASE}{$LANG_ABBR}{@template}{@action}" data-filter-name="{@filter-name}">
+            <form method="get" action="{$BASE}{$LANG_ABBR}{$TEMPLATE}{@action}" data-filter-name="{@filter-name}">
                 <xsl:apply-templates/>
             </form>
         </xsl:if>
