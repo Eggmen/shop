@@ -304,6 +304,7 @@ class GoodsList extends DBDataSet implements SampleGoodsList {
                 return $row;
             }, $result);
         }
+
         return $result;
     }
 
