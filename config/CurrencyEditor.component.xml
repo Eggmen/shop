@@ -4,11 +4,9 @@
     <state name="main">
         <fields>
             <field name="currency_id"/>
-            <field name="currency_name"/>
-            <field name="currency_code"/>
-            <field name="currency_rate"/>
-            <field name="currency_is_default"/>
             <field name="currency_is_active"/>
+            <field name="currency_name"/>
+            <field name="currency_rate"/>
         </fields>
         <javascript>
             <behavior name="GridManager"/>
