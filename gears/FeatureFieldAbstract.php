@@ -5,11 +5,11 @@ namespace Energine\shop\gears;
 use Energine\share\gears\DataDescription;
 use Energine\share\gears\DBWorker;
 use Energine\share\gears\FieldDescription;
-use Energine\share\gears\Object;
+use Energine\share\gears\Primitive;
 use Energine\share\gears\SystemException;
 use Energine\share\gears\Field;
 
-class FeatureFieldAbstract extends Object {
+class FeatureFieldAbstract extends Primitive {
     use DBWorker;
 
     const FEATURE_TYPE_STRING = 'STRING';
