@@ -10,8 +10,6 @@ namespace Energine\shop\components;
 
 
 use Energine\share\components\DataSet;
-use Energine\share\gears\Data;
-use Energine\share\gears\DataDescription;
 use Energine\share\gears\SimpleBuilder;
 
 class Currencies extends DataSet {
@@ -25,14 +23,9 @@ class Currencies extends DataSet {
     }
 
     protected function main() {
-        $dd = new DataDescription();
-        $dd->load($this->dbh->getColumnsInfo('shop_currencies'));
-        $this->setDataDescription($dd);
-
-        $d = new Data();
-
-        $d->load($this->dbh->select('shop_currencies', true, ['currency_is_active' => true]));
-        $this->setData($d);
+        $this->setType(self::COMPONENT_TYPE_LIST);
+        $this->setDataDescription(E()['Energine\\shop\\gears\\Currency']->asDataDescription());
+        $this->setData(E()['Energine\\shop\\gears\\Currency']->asData());
         $this->setBuilder(new SimpleBuilder());
     }
 }

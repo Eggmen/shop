@@ -4,6 +4,18 @@
         xmlns:set="http://exslt.org/sets"
         extension-element-prefixes="set"
         version="1.0">
+    <xsl:template match="component[@class='Currencies']">
+        <ul>
+            <xsl:for-each select="recordset/record">
+                <li>
+                    <a>
+                        <xsl:value-of select="field[@name='currency_code']"/>
+                    </a>
+                </li>
+            </xsl:for-each>
+        </ul>
+    </xsl:template>
+
     <xsl:template match="component[@class='GoodsList' and @type='list']">
         <div class="products" id="{generate-id(recordset)}">
             <xsl:apply-templates/>

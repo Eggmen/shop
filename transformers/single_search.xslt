@@ -18,7 +18,7 @@
                                 <xsl:value-of select="position()"/>. <xsl:value-of select="field[@name='goods_name']"/>
                             </div>
                             <div class="goods_price">
-                                EUR <xsl:value-of select="field[@name='goods_price']"/>
+                                <xsl:value-of select="field[@name='goods_price']/@value" disable-output-escaping="yes"/>
                             </div>
                             <i class="icon icon_chevron_circle_right"></i>
                         </a>
