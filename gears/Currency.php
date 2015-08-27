@@ -26,7 +26,7 @@ class Currency extends Primitive {
     private $map = [];
 
     function __construct() {
-        $this->data = $this->dbh->select('shop_currencies', true, ['currency_is_active' => true]);
+        $this->data = $this->dbh->select('SELECT * FROM shop_currencies c LEFT JOIN shop_currencies_translation ct USING(currency_id) WHERE  currency_is_active AND lang_id = %s', E()->getLanguage()->getCurrent());
         if (empty($this->data)) throw new \InvalidArgumentException("ERR_NO_CURR_DATA");
 
         if (isset($_COOKIE['currency']) || E()->getSiteManager()->getCurrentSite()->CURRENCY) {
