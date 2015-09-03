@@ -21,10 +21,18 @@ class Currency extends Primitive {
      * @var array $data
      */
     private $data;
-
+    /**
+     * @var int
+     */
     private $currentID = NULL;
+    /**
+     * @var array
+     */
     private $map = [];
 
+    /**
+     * @throws \Energine\share\gears\SystemException
+     */
     function __construct() {
         $this->data = $this->dbh->select('SELECT * FROM shop_currencies c LEFT JOIN shop_currencies_translation ct USING(currency_id) WHERE  currency_is_active AND lang_id = %s', E()->getLanguage()->getCurrent());
         if (empty($this->data)) throw new \InvalidArgumentException("ERR_NO_CURR_DATA");
@@ -71,6 +79,9 @@ class Currency extends Primitive {
         return $result;
     }
 
+    /**
+     * @return \Energine\share\gears\DataDescription
+     */
     public function asDataDescription() {
         $dd = new DataDescription();
         $str = $this->dbh->getColumnsInfo('shop_currencies');
@@ -104,9 +115,11 @@ class Currency extends Primitive {
      * @param string $fmt format template, where currency fields are used
      * @param int $currID currency ID
      * @param mixed $value price
+     * @throws \LogicException
+     * @return string
      */
     public function format($fmt, $currID, $value) {
-        if(!isset($this->map[$currID])){
+        if (!isset($this->map[$currID])) {
             throw new \LogicException($currID);
         }
         $text = $value;
@@ -118,6 +131,14 @@ class Currency extends Primitive {
         error_reporting($errorLevel);
 
         return $text;
+    }
+
+    public function getInfo($currID = null) {
+        if(is_null($currID)){
+            $currID = $this->currentID;
+        }
+
+        return $this->data[$this->map[$currID]];
     }
 
     /**
