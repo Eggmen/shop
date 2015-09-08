@@ -620,10 +620,10 @@ class GoodsList extends DBDataSet implements SampleGoodsList {
         if (($f = $this->getData()->getFieldByName('smap_id')) && !empty($this->sitemapIDs)) {
             foreach ($this->sitemapIDs as $i => $smapID) {
                 $info = E()->getMap()->getDocumentInfo($smapID);
-                //$f->setRowProperty($i, 'id', $smapID);
                 $f->setRowProperty($i, 'category', $info['Name']);
             }
         }
+
         // получаем массив всех goods_id
         if ($field_goods_id = $this->getData()->getFieldByName('goods_id')) {
             $goods_ids = $field_goods_id->getData();
