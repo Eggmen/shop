@@ -110,6 +110,7 @@ class Wishlist extends DBDataSet implements SampleWishlist {
     protected function showState() {
         $products = $this->dbh->getColumn($this->getTableName(), 'goods_id', $this->getFilter());
         if (!empty($products)) {
+            $this->setProperty('delete', (string)$this->config->getStateConfig('show')->uri_patterns->pattern);
             $this->setBuilder($b = new ComponentProxyBuilder());
             $params = [
                 'active'        => false,
