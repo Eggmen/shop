@@ -165,7 +165,7 @@ class FeatureFieldAbstract extends Primitive {
 				on ft.feature_id = f.feature_id and ft.lang_id = %1$s
 				where f.feature_id = %s LIMIT 1',
 
-                E()->getDocument()->getLang(),
+                E()->Document->getLang(),
                 $this->feature_id
             );
             if ($res) {
@@ -186,7 +186,7 @@ class FeatureFieldAbstract extends Primitive {
 		left join share_uploads u on o.option_img = u.upl_path
 		where o.feature_id = %s
 		order by o.option_order_num asc',
-            E()->getDocument()->getLang(),
+            E()->Document->getLang(),
             $this->getFeatureId()
         );
         if ($res) {

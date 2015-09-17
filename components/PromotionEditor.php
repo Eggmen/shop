@@ -24,7 +24,7 @@ class PromotionEditor extends Grid {
         if (in_array($this->getState(), ['add', 'edit'])) {
             if ($fkKeyName == 'site_id') {
                 $result =
-                    $this->dbh->getForeignKeyData($fkTableName, $fkKeyName, $this->document->getLang(), [$fkTableName.'.site_id' => E()->getSiteManager()->getSitesByTag('shop', true)]);
+                    $this->dbh->getForeignKeyData($fkTableName, $fkKeyName, $this->document->getLang(), [$fkTableName.'.site_id' => E()->SiteManager->getSitesByTag('shop', true)]);
             } else {
                 $result = parent::getFKData($fkTableName, $fkKeyName);
             }

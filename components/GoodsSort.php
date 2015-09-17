@@ -52,7 +52,7 @@ class GoodsSort extends DataSet {
     }
 
     public function main() {
-        $goodsList = E()->getDocument()->componentManager->getBlockByName($this->getParam('bind'));
+        $goodsList = E()->Document->componentManager->getBlockByName($this->getParam('bind'));
         if ($goodsList->getState() == 'view') $this->disable();
         else {
 

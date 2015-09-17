@@ -22,7 +22,7 @@ class Wishlist extends DBDataSet implements SampleWishlist {
         parent::__construct($name, $module, $params);
         $this->setTableName('shop_wishlist');
         $this->setFilter([
-            'site_id' => E()->getSiteManager()->getCurrentSite()->id,
+            'site_id' => E()->SiteManager->getCurrentSite()->id,
             'u_id'    => $this->document->getUser()->getID()
         ]);
         $this->setOrder(['w_date' => QAL::ASC]);
@@ -60,7 +60,7 @@ class Wishlist extends DBDataSet implements SampleWishlist {
                 ['goods_id' => $productID])
         ) {
             $this->dbh->modify(QAL::INSERT_IGNORE, $this->getTableName(), [
-                'site_id'  => E()->getSiteManager()->getCurrentSite()->id,
+                'site_id'  => E()->SiteManager->getCurrentSite()->id,
                 'w_date'   => date('Y-m-d H:i:s'),
                 'u_id'     => $this->document->getUser()->getID(),
                 'goods_id' => $productID
@@ -97,7 +97,7 @@ class Wishlist extends DBDataSet implements SampleWishlist {
                     'u_id' => $this->document->getUser()->getID(),
                     'cart_goods_count' => 1,
                     'cart_date' => date('Y-m-d H:i:s'),
-                    'site_id' => E()->getSiteManager()->getCurrentSite()->id
+                    'site_id' => E()->SiteManager->getCurrentSite()->id
                 ]);
             } catch (\PDOException $e) {
                 inspect($e->getMessage(), (string)$this->document->getUser()->getID());

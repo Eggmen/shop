@@ -114,7 +114,7 @@ class GoodsFilter extends DataSet {
     }
 
     public function main() {
-        $this->boundComponent = E()->getDocument()->componentManager->getBlockByName($this->getParam('bind'));
+        $this->boundComponent = E()->Document->componentManager->getBlockByName($this->getParam('bind'));
         if (!$this->getParam('showForProduct') && ($this->boundComponent->getState() == 'view')) {
             $this->disable();
             return;

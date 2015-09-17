@@ -76,7 +76,7 @@ class GoodsEditor extends Grid implements SampleGoodsEditor {
             }
         }
         else {
-            foreach(E()->getSiteManager() as $site){
+            foreach(E()->SiteManager as $site){
                 $result[] = $site->id;
             }
         }
@@ -204,7 +204,7 @@ class GoodsEditor extends Grid implements SampleGoodsEditor {
                 $currentSmapID = $result->getFieldByName('smap_id')->getRowData(0);
             }
             $this->getDataDescription()->getFieldDescriptionByName('smap_id')->setType(FieldDescription::FIELD_TYPE_CUSTOM);
-            $site_id = E()->getSiteManager()->getSitesByTag('shop', true);
+            $site_id = E()->SiteManager->getSitesByTag('shop', true);
 
             $site_id = array_intersect($site_id, $this->getSites());
 
@@ -218,7 +218,7 @@ class GoodsEditor extends Grid implements SampleGoodsEditor {
                     $siteRoot = $root->add(new TreeNode($siteID . '-0'));
                     array_push($da, [
                         'id' => $siteID . '-0',
-                        'name' => E()->getSiteManager()->getSiteByID($siteID)->name,
+                        'name' => E()->SiteManager->getSiteByID($siteID)->name,
                         'isLabel' => true,
                         'selected' => false
                     ]);
@@ -351,7 +351,7 @@ class GoodsEditor extends Grid implements SampleGoodsEditor {
      */
     protected function saveData() {
         if (empty($_POST[$this->getTableName()]['goods_segment'])) {
-            $_POST[$this->getTableName()]['goods_segment'] = Translit::asURLSegment($_POST[$this->getTranslationTableName()][E()->getLanguage()->getDefault()]['goods_name']);
+            $_POST[$this->getTableName()]['goods_segment'] = Translit::asURLSegment($_POST[$this->getTranslationTableName()][E()->Language->getDefault()]['goods_name']);
         }
 
         if (empty($_POST[$this->getTableName()]['currency_id'])) {

@@ -31,13 +31,13 @@ class Cart extends DBDataSet implements SampleCart {
     protected $id = NULL;
 
     public function __construct($name, $module, array $params = NULL) {
-        if (E()->getDocument()->getProperty('single')) {
+        if (E()->Document->getProperty('single')) {
             $params['active'] = true;
         }
         parent::__construct($name, $module, $params);
         $this->setTableName('shop_cart');
         $this->setFilter([
-            'site_id' => E()->getSiteManager()->getCurrentSite()->id
+            'site_id' => E()->SiteManager->getCurrentSite()->id
         ]);
 
         $this->addFilterCondition(['session_id' => E()->UserSession->start()->getID()]);
@@ -155,7 +155,7 @@ class Cart extends DBDataSet implements SampleCart {
             $session = E()->UserSession->start();
 //            var_dump($session);
             try {
-                $this->dbh->modify('INSERT INTO ' . $this->getTableName() . ' (site_id,session_id,u_id, goods_id, cart_goods_count, cart_date) VALUES (%s,%s,%s, %s, 1, %s) ON DUPLICATE KEY UPDATE cart_goods_count=cart_goods_count+1;', (string)E()->getSiteManager()->getCurrentSite(), $session->getID(), (string)($this->document->getUser()->getID()) ?: NULL, $productID, date('Y-m-d H:i:s'));
+                $this->dbh->modify('INSERT INTO ' . $this->getTableName() . ' (site_id,session_id,u_id, goods_id, cart_goods_count, cart_date) VALUES (%s,%s,%s, %s, 1, %s) ON DUPLICATE KEY UPDATE cart_goods_count=cart_goods_count+1;', (string)E()->SiteManager->getCurrentSite(), $session->getID(), (string)($this->document->getUser()->getID()) ?: NULL, $productID, date('Y-m-d H:i:s'));
             } catch (\PDOException $e) {
                 inspect($e->getMessage(), (string)$this->document->getUser()->getID());
             }

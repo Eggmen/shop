@@ -34,7 +34,7 @@ class ProducerEditor extends Grid {
                 $result = [0];
             }
         } else {
-            foreach (E()->getSiteManager() as $site) {
+            foreach (E()->SiteManager as $site) {
                 $result[] = $site->id;
             }
         }
@@ -61,7 +61,7 @@ class ProducerEditor extends Grid {
         $filter = $order = NULL;
         if ($fkKeyName == 'site_id') {
             //оставляем только те сайты где есть магазины
-            if ($sites = E()->getSiteManager()->getSitesByTag('shop')) {
+            if ($sites = E()->SiteManager->getSitesByTag('shop')) {
                 $filter = array_map(function ($site) {
                     return (string)$site;
                 }, $sites);
@@ -88,7 +88,7 @@ class ProducerEditor extends Grid {
 
     protected function saveData() {
         if (empty($_POST[$this->getTableName()]['producer_segment'])) {
-            $_POST[$this->getTableName()]['producer_segment'] = Translit::asURLSegment($_POST[$this->getTranslationTableName()][E()->getLanguage()->getDefault()]['producer_name']);
+            $_POST[$this->getTableName()]['producer_segment'] = Translit::asURLSegment($_POST[$this->getTranslationTableName()][E()->Language->getDefault()]['producer_name']);
         }
 
         if(!isset($_POST[$this->getTableName()]['producer_site_multi']) || !$_POST[$this->getTableName()]['producer_site_multi']){

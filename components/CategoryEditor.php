@@ -12,7 +12,7 @@ class CategoryEditor extends DivisionEditor {
         parent::__construct($name, $params);
         $sp = $this->getStateParams(true);
         if (!isset($sp['site_id'])) {
-            $shopIDs = E()->getSiteManager()->getSitesByTag('shop', true);
+            $shopIDs = E()->SiteManager->getSitesByTag('shop', true);
             if (empty($shopIDs)) {
                 throw new SystemException('ERR_NO_SHOP', SystemException::ERR_CRITICAL);
             }

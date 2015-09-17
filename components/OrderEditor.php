@@ -45,7 +45,7 @@ class OrderEditor extends Grid implements SampleOrderEditor {
         parent::__construct($name, $params);
         $this->setTableName('shop_orders');
 
-        if ($sites = E()->getSiteManager()->getSitesByTag('shop')) {
+        if ($sites = E()->SiteManager->getSitesByTag('shop')) {
             $site_ids = array_map(function ($site) {
                 return (string)$site;
             }, $sites);

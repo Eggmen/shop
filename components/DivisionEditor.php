@@ -37,7 +37,7 @@ class DivisionEditor extends \Energine\share\components\DivisionEditor {
                 if (isset($params['site_id'])) {
                     $siteID = $params['site_id'];
                 } else {
-                    $siteID = E()->getSiteManager()->getCurrentSite()->id;
+                    $siteID = E()->SiteManager->getCurrentSite()->id;
                 }
                 $result = $this->dbh->getForeignKeyData($tableName, $keyName, $this->document->getLang(), ['shop_features.feature_is_active' => true, "shop_features.feature_id IN (SELECT feature_id FROM shop_features2sites where site_id=$siteID)"], ['shop_features.group_id' => QAL::ASC, 'shop_features_translation.feature_name' => QAL::ASC]);
             }

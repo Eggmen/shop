@@ -112,7 +112,7 @@ class GoodsFeatureEditor extends Grid {
                     }
                 }
             }
-            $langs = array_keys(E()->getLanguage()->getLanguages());
+            $langs = array_keys(E()->Language->getLanguages());
             if (($count = sizeof($langs) - sizeof($data)) != 0) {
                 foreach ($langs as $idx => $langID) {
                     if (!isset($data[$idx])) {
@@ -144,7 +144,7 @@ class GoodsFeatureEditor extends Grid {
         $this->setProperty('smap_id', $smapID);
         $this->setProperty('goods_id', $goodsID);
 
-        $languages = E()->getLanguage()->getLanguages();
+        $languages = E()->Language->getLanguages();
         $features = [];
 
         if ($smapID) {
@@ -211,7 +211,7 @@ class GoodsFeatureEditor extends Grid {
             $fd = new FieldDescription('feature_name');
             $fd->setType(FieldDescription::FIELD_TYPE_STRING);
             $fd->setMode(FieldDescription::FIELD_MODE_READ);
-            $fd->setProperty('tabName', E()->getLanguage()->getNameByID(E()->getLanguage()->getCurrent()));
+            $fd->setProperty('tabName', E()->Language->getNameByID(E()->Language->getCurrent()));
             $dd->addFieldDescription($fd, DataDescription::FIELD_POSITION_AFTER, 'feature_id');
 
             $f= new Field('feature_name');

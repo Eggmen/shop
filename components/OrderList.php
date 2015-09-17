@@ -29,7 +29,7 @@ class OrderList extends DBDataSet implements SampleOrderList {
         parent::__construct($name, $module, $params);
         $this->setTableName('shop_orders');
         $this->setFilter([
-            'site_id' => E()->getSiteManager()->getCurrentSite()->id,
+            'site_id' => E()->SiteManager->getCurrentSite()->id,
             'u_id'    => $this->document->getUser()->getID()
         ]);
         $this->setOrder(['order_created' => QAL::DESC]);

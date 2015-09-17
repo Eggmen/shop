@@ -13,7 +13,7 @@ class RoleEditor extends \Energine\user\components\RoleEditor {
     protected function getFKData($table, $key) {
         $filter = $order = [];
         if ($table == 'share_sites' && $key == 'site_id') {
-            foreach (E()->getSiteManager()->getSitesByTag('shop') as $site) {
+            foreach (E()->SiteManager->getSitesByTag('shop') as $site) {
                 $filter['share_sites.site_id'][] = (string)$site;
             }
         }
