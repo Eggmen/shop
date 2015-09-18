@@ -34,11 +34,11 @@ class Currency extends Primitive {
      * @throws \Energine\share\gears\SystemException
      */
     function __construct() {
-        $this->data = $this->dbh->select('SELECT * FROM shop_currencies c LEFT JOIN shop_currencies_translation ct USING(currency_id) WHERE  currency_is_active AND lang_id = %s', E()->getLanguage()->getCurrent());
+        $this->data = $this->dbh->select('SELECT * FROM shop_currencies c LEFT JOIN shop_currencies_translation ct USING(currency_id) WHERE  currency_is_active AND lang_id = %s', E()->Language->getCurrent());
         if (empty($this->data)) throw new \InvalidArgumentException("ERR_NO_CURR_DATA");
 
-        if (isset($_COOKIE['currency']) || E()->getSiteManager()->getCurrentSite()->CURRENCY) {
-            $dirtyCurrency = (isset($_COOKIE['currency'])) ? $_COOKIE['currency'] : E()->getSiteManager()->getCurrentSite()->CURRENCY;
+        if (isset($_COOKIE['currency']) || E()->SiteManager->getCurrentSite()->CURRENCY) {
+            $dirtyCurrency = (isset($_COOKIE['currency'])) ? $_COOKIE['currency'] : E()->SiteManager->getCurrentSite()->CURRENCY;
             $this->currentID = array_reduce($this->data, function ($carry, $row) use ($dirtyCurrency) {
                 if ($row['currency_code'] == $dirtyCurrency) {
                     $carry = $row['currency_id'];
@@ -108,7 +108,11 @@ class Currency extends Primitive {
             $to = $this->currentID;
         }
 
-        return $value;
+        if ($from != $to) {
+            $value = $value * (1/$this->data[$this->map[$to]]['currency_rate']);
+        }
+
+        return round($value, 2);
     }
 
     /**
@@ -118,23 +122,29 @@ class Currency extends Primitive {
      * @throws \LogicException
      * @return string
      */
-    public function format($fmt, $currID, $value) {
+    public function format($value, $currID) {
         if (!isset($this->map[$currID])) {
             throw new \LogicException($currID);
         }
-        $text = $value;
+        $prop = $this->getConfigValue('shop.currency.property', $defaultProp = 'currency_shortname');
+
         $data = $this->data[$this->map[$currID]];
-        extract($data);
-        $errorLevel = error_reporting(E_ERROR);
-        $fmt = addslashes($fmt);
-        eval("\$text = \"$fmt\";");
-        error_reporting($errorLevel);
+        if(isset($data[$defaultProp])){
+            $prop = $defaultProp;
+        }
+
+        if(($prop == 'currency_shortname') && ($data['currency_shortname_order'] == 'before')){
+            $text = $data[$prop].$value;
+        }
+        else {
+            $text = $value . '&nbsp;'.$data[$prop];
+        }
 
         return $text;
     }
 
-    public function getInfo($currID = null) {
-        if(is_null($currID)){
+    public function getInfo($currID = NULL) {
+        if (is_null($currID)) {
             $currID = $this->currentID;
         }
 
