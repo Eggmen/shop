@@ -114,8 +114,8 @@
             <field name="smap_redirect_url"/>
             <field name="smap_meta_robots"/>
             <field name="smap_is_disabled"/>
-            <field name="smap_features_multi" tabName="TXT_FEATURES"/>
-            <field name="page_rights" type="custom" tabName="TAB_PAGE_RIGHTS"/>
+            <field name="smap_features_multi" tabName="trans(TXT_FEATURES)"/>
+            <field name="page_rights" type="custom" tabName="trans(TAB_PAGE_RIGHTS)"/>
             <field name="smap_name"/>
             <field name="smap_description_rtf"/>
             <field name="smap_html_title"/>
@@ -156,8 +156,8 @@
             <field name="smap_redirect_url"/>
             <field name="smap_meta_robots"/>
             <field name="smap_is_disabled"/>
-            <field name="smap_features_multi" tabName="TXT_FEATURES"/>
-            <field name="page_rights" type="custom" tabName="TAB_PAGE_RIGHTS"/>
+            <field name="smap_features_multi" tabName="trans(TXT_FEATURES)"/>
+            <field name="page_rights" type="custom" tabName="trans(TAB_PAGE_RIGHTS)"/>
 			<field name="smap_name"/>
             <field name="smap_description_rtf"/>
             <field name="smap_html_title"/>
