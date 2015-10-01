@@ -33,8 +33,22 @@ var ShopDivForm = new Class(/** @lends ShopDivForm# */{
 
     // constructor
     initialize: function (element) {
+        var PROPS_TAB_IDX = 3;
         this.parent(element);
 		// todo: инициализация слушателя изменения pid - обновлять вкладку характеристик при изменении родителя
+        var switchPropTab = function(select){
+            if(select.options[select.selectedIndex].get('value').contains('catalog_products')){
+                this.tabPane.enableTab(PROPS_TAB_IDX);
+            }
+            else {
+                this.tabPane.disableTab(PROPS_TAB_IDX);
+            }
+            return select;
+        }.bind(this);
+
+        switchPropTab($('smap_content')).addEvent('change', function(e){
+            switchPropTab($(e.target));
+        }.bind(this));
     },
 
     /**
