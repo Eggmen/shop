@@ -26,6 +26,9 @@ class Wishlist extends DBDataSet implements SampleWishlist {
             'u_id'    => $this->document->getUser()->getID()
         ]);
         $this->setOrder(['w_date' => QAL::ASC]);
+        $curr = E()['Energine\\shop\\gears\\Currency'];
+        $this->setProperty('currency', $curr->getInfo()['currency_shortname']);
+        $this->setProperty('currency-order', $curr->getInfo()['currency_shortname_order']);
     }
 
     protected function defineParams() {

@@ -20,7 +20,9 @@ class SearchResults extends DataSet {
     public function __construct($name, array $params = NULL) {
         parent::__construct($name, $params);
         $this->bindComponent = $this->document->componentManager->getBlockByName($this->getParam('bind'));
-
+        $curr = E()['Energine\\shop\\gears\\Currency'];
+        $this->setProperty('currency', $curr->getInfo()['currency_shortname']);
+        $this->setProperty('currency-order', $curr->getInfo()['currency_shortname_order']);
     }
 
     protected function defineParams() {

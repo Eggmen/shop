@@ -64,7 +64,9 @@ class GoodsList extends DBDataSet implements SampleGoodsList {
             $this->setParam('recordsPerPage', false);
             $this->setLimit([$limit]);
         }
-
+        $curr = E()['Energine\\shop\\gears\\Currency'];
+        $this->setProperty('currency', $curr->getInfo()['currency_shortname']);
+        $this->setProperty('currency-order', $curr->getInfo()['currency_shortname_order']);
     }
 
     protected function createBuilder() {
