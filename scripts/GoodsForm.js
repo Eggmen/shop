@@ -32,17 +32,17 @@ var GoodsForm = new Class(/** @lends GoodsForm# */{
 	},
 
 	onTabChange: function () {
-		// warning: контекст this тут не формы, а TabPane !!!
-
+		var currentTab = this.tabPane.currentTab;
+		var element = this.element;
 		// принудительно переписовываем вкладку с характеристиками при каждой активации
 		// передаем в нее текущий goodsID и smapID
-		if (this.currentTab.hasAttribute('data-src') && this.currentTab.getProperty('data-src').test("feature/show")) {
-			var smapID = this.element.getElement('[name=shop_goods[smap_id]]').get('value');
-			var goodsID = this.element.getElementById('goods_id').get('value');
-			this.currentTab.setProperty('data-src', this.element.getProperty('single_template').replace(Energine['base'], '') + goodsID + '/feature/show/' + smapID + '/');
-			this.currentTab.loaded = false;
+		if (currentTab.hasAttribute('data-src') && currentTab.getProperty('data-src').test("feature/show")) {
+			var smapID = element.getElement('[name=shop_goods[smap_id]]').get('value');
+			var goodsID = element.getElementById('goods_id').get('value');
+			currentTab.setProperty('data-src', element.getProperty('single_template').replace(Energine['base'], '') + goodsID + '/feature/show/' + smapID + '/');
+			currentTab.loaded = false;
 			if (!smapID) {
-				this.currentTab.pane.empty();
+				currentTab.pane.empty();
 				alert('No smap id selected');
 			} else {
 				this.parent();

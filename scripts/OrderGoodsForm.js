@@ -45,8 +45,6 @@ var OrderGoodsForm = new Class(/** @lends OrderGoodsForm# */{
 	},
 
 	onTabChange: function () {
-		// warning: контекст this тут не формы, а TabPane !!!
-
 		$(window).fireEvent('orderGoodsTabMain');
 		this.parent();
 	},

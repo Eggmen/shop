@@ -45,10 +45,10 @@ var OrderForm = new Class(/** @lends OrderForm# */{
 	},
 
 	onTabChange: function () {
-		// warning: контекст this тут не формы, а TabPane !!!
+		var currentTab = this.tabPane.currentTab;
 
 		// вкладка "товары заказа"
-		if (this.currentTab.hasAttribute('data-src') && this.currentTab.getProperty('data-src').test("goods")) {
+		if (currentTab.hasAttribute('data-src') && currentTab.getProperty('data-src').test("goods")) {
 			$(window).fireEvent('orderTabGoods');
 			this.parent();
 		}
