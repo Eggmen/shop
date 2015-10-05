@@ -9,13 +9,18 @@ use Energine\share\gears\DataDescription;
 use Energine\share\gears\Field;
 use Energine\share\gears\FieldDescription;
 use Energine\share\gears\JSONBuilder;
+use Energine\share\gears\JSONCustomBuilder;
+use Energine\share\gears\QAL;
+use Energine\share\gears\Request;
 use Energine\share\gears\SimplestBuilder;
+use Energine\share\gears\Toolbar;
 use Energine\shop\gears\EmptySimpleFormBuilder;
 use Energine\shop\gears\FeatureFieldAbstract;
 use Energine\shop\gears\FeatureFieldFactory;
 
 
-class GoodsFilter extends DataSet {
+class GoodsFilter extends DataSet
+{
     const FILTER_GET = 'filter';
     protected $filter_data = [];
     /**
@@ -23,64 +28,106 @@ class GoodsFilter extends DataSet {
      */
     protected $boundComponent;
 
-    public function __construct($name, array $params = NULL) {
+    public function __construct($name, array $params = NULL)
+    {
         parent::__construct($name, $params);
 
         $this->setTitle($this->translate('TXT_FILTER'));
     }
 
-    protected function showParams(){
+    protected function showParams()
+    {
         $this->setBuilder(new SimplestBuilder());
         $this->setTitle($this->translate('TXT_FILTER_LIB'));
         $dd = new DataDescription();
         $dd->load([
-           'sf_id' =>[
-               'type' => FieldDescription::FIELD_TYPE_INT,
-               'key' => true,
-               'index' => 'PRI'
-           ],
+            'sf_id' => [
+                'type' => FieldDescription::FIELD_TYPE_INT,
+                'key' => true,
+                'index' => 'PRI'
+            ],
             'sf_name' => [
                 'type' => FieldDescription::FIELD_TYPE_STRING
             ],
-            'sf_get_params' =>[
+            'sf_url' => [
                 'type' => FieldDescription::FIELD_TYPE_STRING
             ]
         ]);
 
         $this->setDataDescription($dd);
         $d = new Data();
-        $d->load($this->dbh->select(
-            'shop_saved_filters', ['sf_id', 'sf_name'], ['u_id' => E()->getUser()->getID(), 'site_id' => E()->getSiteManager()->getCurrentSite()->id]
-        ));
+        $d->load(array_map(function($row){
+            $row['sf_url'] = E()->getMap()->getURLByID($row['smap_id']).'?'.http_build_query([self::FILTER_GET => $row['sf_data']]);
+            unset($row['sf_data']);
+            return $row;
+        }, $this->dbh->select(
+            'shop_saved_filters', ['sf_id', 'sf_name', 'smap_id','sf_data'], ['u_id' => E()->getUser()->getID(), 'site_id' => E()->getSiteManager()->getCurrentSite()->id]
+        )));
         $this->setData($d);
         E()->getController()->getTransformer()->setFileName('single_products.xslt');
     }
 
-    protected function showSaveFilterForm(){
-        $this->addTranslation('TXT_SAVE_FILTER_FORM');
+    protected function saveFilterForm()
+    {
+        $this->setBuilder($b = new JSONCustomBuilder());
+        try {
+            if(!E()->getUser()->isAuthenticated()){
+                throw new \InvalidArgumentException(E()->Utils->translate('ERR_BAD_USER'));
+            }
+            if(!isset($_POST['name']) || !isset($_GET[self::FILTER_GET]) || empty($_POST['name']) || empty($_GET[self::FILTER_GET])){
+                throw new \InvalidArgumentException(E()->Utils->translate('ERR_NO_FILTER_NAME'));
+            }
+            $name= $_POST['name'];
+            if($this->dbh->getScalar('shop_saved_filters', 'COUNT(*)', ['sf_name' => $name, 'u_id' => E()->getUser()->getID(), 'site_id' => E()->getSiteManager()->getCurrentSite()->id])){
+                throw new \InvalidArgumentException(E()->Utils->translate('ERR_DUPLICATE_FILTER_NAME'));
+            }
+            if($this->dbh->getScalar('shop_saved_filters', 'COUNT(*)', ['sf_data' => $_GET[self::FILTER_GET], 'u_id' => E()->getUser()->getID(), 'smap_id' => $this->document->getID(), 'site_id' => E()->getSiteManager()->getCurrentSite()->id])){
+                throw new \InvalidArgumentException(E()->Utils->translate('ERR_DUPLICATE_FILTER_DATA'));
+            }
+            $this->dbh->modify(QAL::INSERT, 'shop_saved_filters', ['sf_name' => $name, 'sf_data' => $_GET[self::FILTER_GET], 'smap_id' => $this->document->getID(), 'u_id' => E()->getUser()->getID(), 'site_id' => E()->getSiteManager()->getCurrentSite()->id]);
+        }
+        catch(\Exception $e){
+            $b->setProperty('result', false);
+            $b->setProperty('message', $e->getMessage());
+        }
+    }
 
+    protected function showSaveFilterForm()
+    {
+        $this->setAction((string)$this->config->getStateConfig('saveFilterForm')->uri_patterns->pattern, true);
         $this->setTitle($this->translate('TXT_TITLE_SAVE_FILTER_FORM'));
         $dd = new DataDescription();
         $dd->load([
+            'message' => [
+                'type' => FieldDescription::FIELD_TYPE_HTML_BLOCK,
+                'mode' => FieldDescription::FIELD_MODE_READ
+            ],
             'sf_name' => [
                 'type' => FieldDescription::FIELD_TYPE_STRING
             ]
         ]);
 
         $this->setDataDescription($dd);
-        $this->createBuilder();
-        $tb = $this->loadToolbar();
-        $tb->attachControl(new Button('save'));
-        $this->addToolbar($tb);
+        $this->setBuilder(new EmptySimpleFormBuilder());
+        $tb = new Toolbar('main');
+        $tb->attachControl($b = new Button('save'));
+        $b->setTitle(E()->Utils->translate('BTN_SAVE_FILTER'));
 
+        $this->addToolbar($tb);
+        $this->setData($d = new Data());
+        $f = new Field('message');
+        $f->setData(E()->Utils->translate('TXT_SAVE_FILTER_FORM'));
+        $d->addField($f);
         E()->getController()->getTransformer()->setFileName('single_products.xslt');
     }
 
-    protected function createBuilder() {
+    protected function createBuilder()
+    {
         return new EmptySimpleFormBuilder();
     }
 
-    protected function defineParams() {
+    protected function defineParams()
+    {
         return array_merge(
             parent::defineParams(),
             [
@@ -93,7 +140,8 @@ class GoodsFilter extends DataSet {
         );
     }
 
-    protected function buildPriceFilter() {
+    protected function buildPriceFilter()
+    {
         if ($fd = $this->getDataDescription()->getFieldDescriptionByName('price')) {
             $fd->setType(FieldDescription::FIELD_TYPE_CUSTOM);
             $fd->setProperty('title', $this->translate('FILTER_PRICE'));
@@ -116,7 +164,7 @@ class GoodsFilter extends DataSet {
                 $fd->setProperty('text-from', $this->translate('TXT_FROM'));
                 $fd->setProperty('text-to', $this->translate('TXT_TO'));
 
-                foreach(['min', 'max', 'begin', 'end'] as $var){
+                foreach (['min', 'max', 'begin', 'end'] as $var) {
                     $fd->setProperty('range-' . $var, number_format($$var, 2, '.', ''));
                 }
 
@@ -128,14 +176,16 @@ class GoodsFilter extends DataSet {
         }
     }
 
-    protected function buildDivisionFilter() {
+    protected function buildDivisionFilter()
+    {
         if ($fd = $this->getDataDescription()->getFieldDescriptionByName('divisions')) {
             // todo: ничего не делаем, фильтр по разделам на совести xslt
             //$this -> getDataDescription() -> removeFieldDescription($fd);
         }
     }
 
-    protected function buildFeatureFilter() {
+    protected function buildFeatureFilter()
+    {
         if ($fd = $this->getDataDescription()->getFieldDescriptionByName('features')) {
 
             // убираем field description, ибо это фейковое поле
@@ -165,7 +215,8 @@ class GoodsFilter extends DataSet {
         }
     }
 
-    public function main() {
+    public function main()
+    {
         $this->boundComponent = E()->getDocument()->componentManager->getBlockByName($this->getParam('bind'));
         if (!$this->getParam('showForProduct') && ($this->boundComponent->getState() == 'view')) {
             $this->disable();
@@ -197,7 +248,8 @@ class GoodsFilter extends DataSet {
 
     }
 
-    protected function buildProducersFilter() {
+    protected function buildProducersFilter()
+    {
         if ($fd = $this->getDataDescription()->getFieldDescriptionByName('producers')) {
 
             $producers = $this->dbh->getColumn('SELECT DISTINCT producer_id  FROM shop_goods WHERE smap_id IN (%s)', $this->boundComponent->getCategories());
@@ -217,17 +269,20 @@ class GoodsFilter extends DataSet {
         }
     }
 
-    public function build() {
-        $this->setProperty('filter-name', self::FILTER_GET);
-        foreach ($this->getDataDescription() as $fd) {
-            $fd->setProperty('tableName', self::FILTER_GET);
+    public function build()
+    {
+        if ($this->getState() == 'main') {
+            $this->setProperty('filter-name', self::FILTER_GET);
+            foreach ($this->getDataDescription() as $fd) {
+                $fd->setProperty('tableName', self::FILTER_GET);
+            }
         }
+
         $result = parent::build();
 
         if ($this->getState() == 'showParams' && $result->documentElement->childNodes->item(0)->hasAttributes()) {
             $result->documentElement->childNodes->item(0)->setAttribute('empty', E()->Utils->translate('TXT_EMPTY_SAVED_FILTER'));
         }
-
 
 
         return $result;
