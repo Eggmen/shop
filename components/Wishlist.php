@@ -124,10 +124,7 @@ class Wishlist extends DBDataSet implements SampleWishlist {
             $b->setComponent('products',
                 '\\Energine\\shop\\components\\GoodsList',
                 $params);
-            $toolbars = $this->createToolbar();
-            if (!empty($toolbars)) {
-                $this->addToolbar($toolbars);
-            }
+            $this->addToolbar($this->loadToolbar());
             $this->js = $this->buildJS();
         } else {
             $this->setBuilder(new EmptyBuilder());

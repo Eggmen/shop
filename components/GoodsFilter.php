@@ -3,8 +3,13 @@
 namespace Energine\shop\components;
 
 use Energine\share\components\DataSet;
+use Energine\share\gears\Button;
+use Energine\share\gears\Data;
+use Energine\share\gears\DataDescription;
 use Energine\share\gears\Field;
 use Energine\share\gears\FieldDescription;
+use Energine\share\gears\JSONBuilder;
+use Energine\share\gears\SimplestBuilder;
 use Energine\shop\gears\EmptySimpleFormBuilder;
 use Energine\shop\gears\FeatureFieldAbstract;
 use Energine\shop\gears\FeatureFieldFactory;
@@ -20,8 +25,55 @@ class GoodsFilter extends DataSet {
 
     public function __construct($name, array $params = NULL) {
         parent::__construct($name, $params);
-        $this->setParam('active', false);
+
         $this->setTitle($this->translate('TXT_FILTER'));
+    }
+
+    protected function showParams(){
+        $this->setBuilder(new SimplestBuilder());
+        $this->setTitle($this->translate('TXT_FILTER_LIB'));
+        $dd = new DataDescription();
+        $dd->load([
+           'sf_id' =>[
+               'type' => FieldDescription::FIELD_TYPE_INT,
+               'key' => true,
+               'index' => 'PRI'
+           ],
+            'sf_name' => [
+                'type' => FieldDescription::FIELD_TYPE_STRING
+            ],
+            'sf_get_params' =>[
+                'type' => FieldDescription::FIELD_TYPE_STRING
+            ]
+        ]);
+
+        $this->setDataDescription($dd);
+        $d = new Data();
+        $d->load($this->dbh->select(
+            'shop_saved_filters', ['sf_id', 'sf_name'], ['u_id' => E()->getUser()->getID(), 'site_id' => E()->getSiteManager()->getCurrentSite()->id]
+        ));
+        $this->setData($d);
+        E()->getController()->getTransformer()->setFileName('single_products.xslt');
+    }
+
+    protected function showSaveFilterForm(){
+        $this->addTranslation('TXT_SAVE_FILTER_FORM');
+
+        $this->setTitle($this->translate('TXT_TITLE_SAVE_FILTER_FORM'));
+        $dd = new DataDescription();
+        $dd->load([
+            'sf_name' => [
+                'type' => FieldDescription::FIELD_TYPE_STRING
+            ]
+        ]);
+
+        $this->setDataDescription($dd);
+        $this->createBuilder();
+        $tb = $this->loadToolbar();
+        $tb->attachControl(new Button('save'));
+        $this->addToolbar($tb);
+
+        E()->getController()->getTransformer()->setFileName('single_products.xslt');
     }
 
     protected function createBuilder() {
@@ -34,7 +86,7 @@ class GoodsFilter extends DataSet {
             [
                 'bind' => false,
                 'tableName' => 'shop_goods',
-                'active' => false,
+                'active' => true,
                 'showForProduct' => false,
                 'removeEmptyPriceFilter' => true,
             ]
@@ -171,6 +223,12 @@ class GoodsFilter extends DataSet {
             $fd->setProperty('tableName', self::FILTER_GET);
         }
         $result = parent::build();
+
+        if ($this->getState() == 'showParams' && $result->documentElement->childNodes->item(0)->hasAttributes()) {
+            $result->documentElement->childNodes->item(0)->setAttribute('empty', E()->Utils->translate('TXT_EMPTY_SAVED_FILTER'));
+        }
+
+
 
         return $result;
     }

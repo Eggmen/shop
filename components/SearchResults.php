@@ -55,10 +55,7 @@ class SearchResults extends DataSet {
             'list_features' => 'any' // вывод всех фич товаров в списке
         ];
         $b->setComponent('products', '\\Energine\\shop\\components\\GoodsList', $params);
-        $toolbars = $this->createToolbar();
-        if (!empty($toolbars)) {
-            $this->addToolbar($toolbars);
-        }
+        $this->addToolbar($this->loadToolbar());
         $this->js = $this->buildJS();
         // todo: pager
     }

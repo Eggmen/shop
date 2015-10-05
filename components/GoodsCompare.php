@@ -198,10 +198,7 @@ class GoodsCompare extends DataSet implements SampleGoodsCompare {
             $this->getParam('goodsListClass'),
             $params
         );
-        $toolbars = $this->createToolbar();
-        if (!empty($toolbars)) {
-            $this->addToolbar($toolbars);
-        }
+        $this->addToolbar($this->loadToolbar());
         $this->js = $this->buildJS();
     }
 
