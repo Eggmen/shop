@@ -35,6 +35,8 @@ class ShopEditor extends SiteEditor {
 
             $dd->getFieldDescriptionByName('site_is_default')->setType(FieldDescription::FIELD_TYPE_HIDDEN);
             $dd->getFieldDescriptionByName('site_folder')->setType(FieldDescription::FIELD_TYPE_HIDDEN);
+            $dd->getFieldDescriptionByName('currency_id')->removeProperty('nullable');
+            $dd->getFieldDescriptionByName('country_id')->removeProperty('nullable');
 
             $dd->removeFieldDescription($dd->getFieldDescriptionByName('site_meta_robots'));
             $dd->removeFieldDescription($dd->getFieldDescriptionByName('site_is_indexed'));

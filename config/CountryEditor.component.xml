@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
+
 <configuration>
     <state name="main">
         <fields>
-            <field name="currency_id"/>
-            <field name="currency_is_active"/>
-            <field name="currency_name"/>
-            <field name="currency_rate"/>
+            <field name="country_id"/>
+            <field name="country_name"/>
         </fields>
         <javascript>
             <behavior name="GridManager"/>

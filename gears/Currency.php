@@ -37,8 +37,8 @@ class Currency extends Primitive {
         $this->data = $this->dbh->select('SELECT * FROM shop_currencies c LEFT JOIN shop_currencies_translation ct USING(currency_id) WHERE  currency_is_active AND lang_id = %s', E()->Language->getCurrent());
         if (empty($this->data)) throw new \InvalidArgumentException("ERR_NO_CURR_DATA");
 
-        if (isset($_COOKIE['currency']) || E()->SiteManager->getCurrentSite()->CURRENCY) {
-            $dirtyCurrency = (isset($_COOKIE['currency'])) ? $_COOKIE['currency'] : E()->SiteManager->getCurrentSite()->CURRENCY;
+        if (isset($_COOKIE['currency']) || E()->SiteManager->getCurrentSite()->currencyId) {
+            $dirtyCurrency = (isset($_COOKIE['currency'])) ? $_COOKIE['currency'] : E()->SiteManager->getCurrentSite()->currencyId;
             $this->currentID = array_reduce($this->data, function ($carry, $row) use ($dirtyCurrency) {
                 if ($row['currency_code'] == $dirtyCurrency) {
                     $carry = $row['currency_id'];

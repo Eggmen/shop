@@ -43,7 +43,7 @@
             <field name="smap_pid"/>
             <field name="lang_id"/>
             <field name="smap_name"/>
-			<!--<field name="colour_id"/>-->
+            <!--<field name="colour_id"/>-->
         </fields>
         <toolbar name="e-divtree-toolbar">
             <control id="add" title="BTN_ADD" type="button" icon="images/toolbar/add.gif" onclick="add"/>
@@ -114,8 +114,6 @@
             <field name="smap_redirect_url"/>
             <field name="smap_meta_robots"/>
             <field name="smap_is_disabled"/>
-            <field name="smap_features_multi" tabName="trans(TXT_FEATURES)"/>
-            <field name="page_rights" type="custom" tabName="trans(TAB_PAGE_RIGHTS)"/>
             <field name="smap_name"/>
             <field name="smap_description_rtf"/>
             <field name="smap_html_title"/>
@@ -124,7 +122,9 @@
             <field name="smap_seo_description"/>
             <field name="smap_meta_keywords"/>
             <field name="smap_meta_description"/>
-		</fields>
+            <field name="smap_features_multi" tabName="trans(TXT_FEATURES)"/>
+            <field name="page_rights" type="custom" tabName="trans(TAB_PAGE_RIGHTS)"/>
+        </fields>
         <javascript>
             <behavior name="ShopDivForm"/>
         </javascript>
@@ -156,9 +156,7 @@
             <field name="smap_redirect_url"/>
             <field name="smap_meta_robots"/>
             <field name="smap_is_disabled"/>
-            <field name="smap_features_multi" tabName="trans(TXT_FEATURES)"/>
-            <field name="page_rights" type="custom" tabName="trans(TAB_PAGE_RIGHTS)"/>
-			<field name="smap_name"/>
+            <field name="smap_name"/>
             <field name="smap_description_rtf"/>
             <field name="smap_html_title"/>
             <field name="smap_title"/>
@@ -166,7 +164,9 @@
             <field name="smap_seo_description"/>
             <field name="smap_meta_keywords"/>
             <field name="smap_meta_description"/>
-		</fields>
+            <field name="smap_features_multi" tabName="trans(TXT_FEATURES)"/>
+            <field name="page_rights" type="custom" tabName="trans(TAB_PAGE_RIGHTS)"/>
+        </fields>
         <javascript>
             <behavior name="ShopDivForm"/>
         </javascript>
@@ -201,7 +201,7 @@
         </uri_patterns>
         <toolbar name="main_toolbar">
             <!--<control id="showSidebar" title="BTN_SIDEBAR" type="button" icon="images/toolbar/structure.gif"-->
-                     <!--onclick="toggleSidebar"/>-->
+            <!--onclick="toggleSidebar"/>-->
             <!--<control id="sep1" type="separator"/>-->
             <control id="editMode" title="BTN_EDIT_MODE" type="switcher" onclick="editMode"/>
             <control id="sep2" type="separator"/>
