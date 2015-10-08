@@ -9,10 +9,6 @@
 namespace Energine\shop\components;
 
 use Energine\share\components\Grid;
-use Energine\share\gears\FieldDescription;
-use Energine\share\gears\Filter;
-use Energine\share\gears\FilterData;
-use Energine\share\gears\FilterField;
 
 /**
  * Test
