@@ -52,8 +52,21 @@ class SavedFilters extends DBDataSet {
             if (!isset($_POST['id']) && !isset($_POST['name'])) {
                 throw new \InvalidArgumentException(E()->Utils->translate('ERR_NO_DATA'));
             }
-            $this->dbh->modify(QAL::UPDATE, ['sf_name' => filter_var($_POST['name'], FILTER_SANITIZE_STRING)], ['u_id' => E()->getUser()->getID(), 'site_id' => E()->getSiteManager()->getCurrentSite()->id, 'sf_id' => (int)$_POST['id']]);
+            $this->dbh->modify(QAL::UPDATE, $this->getTableName(), ['sf_name' => $realName = filter_var($_POST['name'], FILTER_SANITIZE_STRING)], ['u_id' => E()->getUser()->getID(), 'site_id' => E()->getSiteManager()->getCurrentSite()->id, 'sf_id' => (int)$_POST['id']]);
 
+            $this->dbh->commit();
+            $b->setProperty('name', $realName);
+        } catch (\Exception $e) {
+            $this->dbh->rollback();
+            $b->setProperty('result', false);
+            $b->setProperty('message', $e->getMessage());
+        }
+    }
+    protected function delete($id) {
+        $this->setBuilder($b = new JSONCustomBuilder());
+        $this->dbh->beginTransaction();
+        try {
+            $this->dbh->modify(QAL::DELETE, $this->getTableName(), false, ['u_id' => E()->getUser()->getID(), 'site_id' => E()->getSiteManager()->getCurrentSite()->id, 'sf_id' => $id]);
             $this->dbh->commit();
         } catch (\Exception $e) {
             $this->dbh->rollback();
