@@ -149,12 +149,12 @@ class GoodsFilter extends DataSet
             $min = ceil($this->dbh->getScalar(
                 'select min(goods_price) from ' .
                 $this->getParam('tableName') .
-                ' where smap_id IN( %s)', $this->boundComponent->getCategories()
+                ' where smap_id IN( %s) AND goods_is_active', $this->boundComponent->getCategories()
             ));
             $max = ceil($this->dbh->getScalar(
                 'select max(goods_price) from ' .
                 $this->getParam('tableName') .
-                ' where smap_id IN (%s)', $this->boundComponent->getCategories()
+                ' where smap_id IN (%s) AND goods_is_active', $this->boundComponent->getCategories()
             ));
             $begin = (isset($this->filter_data['price']['begin'])) ? (float)$this->filter_data['price']['begin'] : $min;
             $end = (isset($this->filter_data['price']['end'])) ? (float)$this->filter_data['price']['end'] : $max;
