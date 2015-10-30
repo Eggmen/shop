@@ -41,7 +41,8 @@ class AltRelatedGoodsList extends DataSet implements SampleGoodsList {
                 'state' => 'init',
                 'bind' => false,
                 'bind_state' => 'view',
-                'relation_type' => 'similar'
+                'relation_type' => 'similar',
+                'className' =>'\\Energine\\shop\\components\\GoodsList'
             ]
         );
     }
@@ -62,6 +63,9 @@ class AltRelatedGoodsList extends DataSet implements SampleGoodsList {
     }
 
     protected function mainState() {
+        $curr = E()['Energine\\shop\\gears\\Currency'];
+                $this->setProperty('currency', $curr->getInfo()['currency_shortname']);
+                $this->setProperty('currency-order', $curr->getInfo()['currency_shortname_order']);
         $this->setType(self::COMPONENT_TYPE_LIST);
         $segments = array_reverse($this->request->getPath());
         list($segment) = array_slice($segments, array_search(Document::SINGLE_SEGMENT, $segments) + 1, 1);
@@ -92,17 +96,7 @@ class AltRelatedGoodsList extends DataSet implements SampleGoodsList {
                 'id' => $goods_ids,
                 'list_features' => 'any' // вывод всех фич товаров в списке
             ];
-            $b->setComponent('products',
-                '\\Energine\\shop\\components\\GoodsList',
-                $params);
-            /*$toolbars = $this->createToolbar();
-            if (!empty($toolbars)) {
-                $this->addToolbar($toolbars);
-            }
-            $this->js = $this->buildJS();*/
-
-
-            /*parent::prepare();*/
+            $b->setComponent('products', $this->getParam('className'), $params);
 
         } else {
             $this->disable();
